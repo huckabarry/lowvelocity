@@ -235,10 +235,13 @@
             var currentPath = url.pathname.replace(/\/$/, '') || '/';
             document.querySelectorAll('.cactus-nav a, .cactus-footer-nav a').forEach(function (link) {
                 var linkPath = new URL(link.href, window.location.href).pathname.replace(/\/$/, '') || '/';
+                var item = link.closest('li');
                 if (linkPath === currentPath) {
                     link.setAttribute('aria-current', 'page');
+                    if (item) item.classList.add('nav-current');
                 } else {
                     link.removeAttribute('aria-current');
+                    if (item) item.classList.remove('nav-current');
                 }
             });
         }
