@@ -1,0 +1,23 @@
+{{!< default}}
+
+{{#contentFor "body_class"}} afterword-section-template afterword-urbanism-template{{/contentFor}}
+
+<main class="site-main afterword-section">
+
+    <section class="afterword-section-head gh-canvas">
+        <p class="afterword-section-kicker">Urbanism</p>
+        <h1 class="afterword-section-title">Urbanism</h1>
+        <p class="afterword-section-description">Planning, housing, transportation, public finance, and civic life.</p>
+    </section>
+
+    <div class="post-feed gh-feed gh-canvas">
+        {{#foreach posts}}
+            {{> "loop"}}
+        {{else}}
+            <p class="afterword-empty">No urbanism posts are published yet.</p>
+        {{/foreach}}
+    </div>
+
+    {{pagination}}
+
+</main>

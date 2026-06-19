@@ -1,0 +1,34 @@
+routes:
+  /urbanism/:
+    controller: channel
+    template: custom-urbanism
+    filter: 'tag:[urbanism,housing,transportation,public-finance]'
+    data: tag.urbanism
+
+  /field-notes/:
+    controller: channel
+    template: custom-field-notes
+    filter: 'tag:field-notes'
+    data: tag.field-notes
+
+  /notes/:
+    controller: channel
+    template: custom-notes
+    filter: 'tag:[status,note,notes]'
+    data: tag.status
+
+  /gallery/:
+    controller: channel
+    template: custom-gallery
+    filter: 'tag:[gallery,photography]'
+    data: tag.gallery
+
+collections:
+  /:
+    permalink: /{slug}/
+    template: index
+    filter: 'tag:-urbanism+tag:-housing+tag:-transportation+tag:-public-finance+tag:-field-notes+tag:-status+tag:-note+tag:-notes+tag:-gallery+tag:-photography'
+
+taxonomies:
+  tag: /tag/{slug}/
+  author: /author/{slug}/

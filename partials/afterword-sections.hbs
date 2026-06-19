@@ -1,0 +1,169 @@
+<style>
+    .afterword-section {
+        padding-top: clamp(2rem, 4vw, 4rem);
+    }
+
+    .afterword-section-head {
+        margin-bottom: clamp(3rem, 7vw, 7rem);
+    }
+
+    .afterword-section-kicker {
+        margin: 0 0 1rem;
+        color: var(--brand-color);
+        font-size: 1.2rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .afterword-section-title {
+        margin: 0;
+        font-size: clamp(4rem, 9vw, 9rem);
+        line-height: 0.95;
+        letter-spacing: -0.05em;
+    }
+
+    .afterword-section-description {
+        max-width: 62rem;
+        margin: 1.6rem 0 0;
+        color: var(--secondary-text-color);
+        font-size: clamp(1.8rem, 2.4vw, 2.4rem);
+        line-height: 1.35;
+    }
+
+    .afterword-empty {
+        color: var(--secondary-text-color);
+        font-size: 1.6rem;
+    }
+
+    .afterword-note-feed {
+        align-items: flex-start;
+    }
+
+    .afterword-note-feed .feed-title {
+        white-space: normal;
+    }
+
+    .afterword-note-feed-body {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding-right: 2rem;
+    }
+
+    .afterword-note-title {
+        margin-bottom: 0.6rem;
+    }
+
+    .afterword-note-excerpt {
+        display: -webkit-box;
+        margin: 0;
+        overflow: hidden;
+        color: var(--secondary-text-color);
+        font-size: 1.5rem;
+        line-height: 1.45;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+
+    .afterword-gallery-grid {
+        columns: 3 24rem;
+        column-gap: 1.6rem;
+    }
+
+    .afterword-gallery-card {
+        position: relative;
+        break-inside: avoid;
+        margin: 0 0 1.6rem;
+    }
+
+    .afterword-gallery-link {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        border-radius: 0.3rem;
+        background: var(--light-gray-color);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .afterword-gallery-image {
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: transform 180ms var(--animation-base), filter 180ms var(--animation-base);
+    }
+
+    .afterword-gallery-placeholder {
+        display: grid;
+        min-height: 20rem;
+        place-items: center;
+        padding: 2rem;
+        color: var(--secondary-text-color);
+        font-size: 1.6rem;
+        text-align: center;
+    }
+
+    .afterword-gallery-caption {
+        position: absolute;
+        inset: auto 0 0;
+        display: grid;
+        gap: 0.3rem;
+        padding: 5rem 1.4rem 1.4rem;
+        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
+        opacity: 0;
+        transform: translateY(0.6rem);
+        transition: opacity 180ms var(--animation-base), transform 180ms var(--animation-base);
+    }
+
+    .afterword-gallery-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        line-height: 1.15;
+    }
+
+    .afterword-gallery-date {
+        font-size: 1.2rem;
+        opacity: 0.82;
+    }
+
+    .afterword-gallery-link:hover .afterword-gallery-image,
+    .afterword-gallery-link:focus-visible .afterword-gallery-image {
+        transform: scale(1.018);
+        filter: saturate(1.04);
+    }
+
+    .afterword-gallery-link:hover .afterword-gallery-caption,
+    .afterword-gallery-link:focus-visible .afterword-gallery-caption {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @media (hover: none) {
+        .afterword-gallery-caption {
+            position: static;
+            opacity: 1;
+            transform: none;
+            color: var(--primary-text-color);
+            background: transparent;
+            padding: 1rem 0 0;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .afterword-section-title {
+            font-size: clamp(3.4rem, 17vw, 5.4rem);
+        }
+
+        .afterword-note-feed {
+            gap: 1rem;
+        }
+
+        .afterword-note-feed-body {
+            padding-right: 0;
+        }
+
+        .afterword-note-feed .feed-right {
+            display: none;
+        }
+    }
+</style>

@@ -1,0 +1,45 @@
+{{!< default}}
+
+{{#contentFor "body_class"}} afterword-section-template afterword-notes-template{{/contentFor}}
+
+<main class="site-main afterword-section">
+
+    <section class="afterword-section-head gh-canvas">
+        <p class="afterword-section-kicker">Notes</p>
+        <h1 class="afterword-section-title">Notes</h1>
+        <p class="afterword-section-description">Short status-style posts, quick observations, and smaller updates.</p>
+    </section>
+
+    <div class="post-feed gh-feed gh-canvas afterword-notes-feed">
+        {{#foreach posts}}
+            <article class="feed afterword-note-feed {{visibility}} {{post_class}}">
+                <div class="feed-calendar">
+                    <div class="feed-calendar-day">{{date published_at format="DD"}}</div>
+                    <div class="feed-calendar-month">{{date published_at format="MMM"}}</div>
+                </div>
+
+                <div class="afterword-note-feed-body">
+                    <h2 class="feed-title afterword-note-title">{{title}}</h2>
+                    {{#if custom_excerpt}}
+                        <p class="afterword-note-excerpt">{{custom_excerpt}}</p>
+                    {{else}}
+                        <p class="afterword-note-excerpt">{{excerpt words="34"}}</p>
+                    {{/if}}
+                </div>
+
+                <div class="feed-right">
+                    {{> "icons/star"}}
+                    <div class="feed-length">{{reading_time minute=(t "1 min read") minutes=(t "% min read")}}</div>
+                </div>
+
+                {{> "icons/chevron-right"}}
+                <a class="u-permalink" href="{{url}}" aria-label="{{title}}"></a>
+            </article>
+        {{else}}
+            <p class="afterword-empty">No notes are published yet.</p>
+        {{/foreach}}
+    </div>
+
+    {{pagination}}
+
+</main>
