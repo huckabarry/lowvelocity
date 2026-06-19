@@ -70,7 +70,7 @@ body {
     background: var(--color-global-bg);
     color: var(--color-global-text);
     font-family: var(--font-mono);
-    font-size: 1.2rem;
+    font-size: 1.0625rem;
     line-height: 1.7;
     letter-spacing: 0;
     transition: background 300ms ease-in-out, color 300ms ease-in-out;
@@ -183,7 +183,7 @@ button {
 .cactus-footer-nav a {
     display: block;
     color: var(--color-accent);
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     text-decoration: none;
 }
@@ -289,7 +289,7 @@ html[data-theme="light"] .theme-icon-light {
 
 .post-list-item time {
     color: var(--color-muted);
-    font-size: 1.05rem;
+    font-size: 0.9rem;
 }
 
 .post-list-item a {
@@ -632,7 +632,7 @@ html[data-theme="light"] .theme-icon-light {
 
 @media (max-width: 639px) {
     body {
-        font-size: 1.125rem;
+        font-size: 1.0625rem;
         line-height: 1.7;
     }
 
