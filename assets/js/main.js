@@ -18,49 +18,7 @@
     function initPageFeatures(isClientNavigation) {
         initBlueskyNotes();
         initPhotoFeed();
-        initPostGalleries();
         if (isClientNavigation) initGhostCardEnhancements();
-    }
-
-    function initPostGalleries() {
-        if (typeof imagesLoaded === 'undefined' || typeof Masonry === 'undefined') return;
-
-        document.querySelectorAll('.cactus-content .kg-gallery-container:not([data-post-masonry-ready])').forEach(function (container) {
-            var images = Array.prototype.slice.call(container.querySelectorAll('.kg-gallery-image'));
-            if (!images.length) return;
-
-            container.setAttribute('data-post-masonry-ready', 'true');
-            container.classList.add('post-masonry-gallery', 'post-masonry-count-' + Math.min(images.length, 3));
-
-            var sizer = document.createElement('div');
-            sizer.className = 'post-masonry-sizer';
-            container.replaceChildren(sizer);
-            images.forEach(function (image) {
-                container.appendChild(image);
-            });
-
-            imagesLoaded(container, function () {
-                var masonry = new Masonry(container, {
-                    itemSelector: '.kg-gallery-image',
-                    columnWidth: '.post-masonry-sizer',
-                    percentPosition: true,
-                    transitionDuration: 0,
-                });
-
-                function relayout() {
-                    if (!document.documentElement.contains(container)) return;
-                    masonry.reloadItems();
-                    masonry.layout();
-                    container.classList.add('initialized');
-                }
-
-                relayout();
-                window.requestAnimationFrame(function () {
-                    window.requestAnimationFrame(relayout);
-                });
-                window.setTimeout(relayout, 400);
-            });
-        });
     }
 
     function initGhostCardEnhancements() {
