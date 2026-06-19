@@ -6,6 +6,8 @@ A highly functional [Ghost](https://github.com/TryGhost/Ghost) theme that adapts
 
 Every push to `main` is validated, built, uploaded to Low Velocity through the Ghost Admin API, and activated automatically by GitHub Actions. The workflow uses the encrypted repository secrets `GHOST_ADMIN_URL` and `GHOST_ADMIN_API_KEY`.
 
+This repository tracks the official [Ghost Dawn theme](https://github.com/TryGhost/Dawn) as its upstream. A scheduled workflow checks weekly for Dawn updates and opens a draft pull request. Upstream changes are never merged or deployed automatically.
+
 **Demo: https://dawn.ghost.io**
 
 # Instructions
@@ -15,14 +17,14 @@ Every push to `main` is validated, built, uploaded to Low Velocity through the G
 
 # Development
 
-Styles are compiled using Gulp/PostCSS to polyfill future CSS spec. You'll need [Node](https://nodejs.org/), [Yarn](https://yarnpkg.com/) and [Gulp](https://gulpjs.com) installed globally. After that, from the theme's root directory:
+Styles are compiled using Gulp/PostCSS to polyfill future CSS spec. You'll need [Node](https://nodejs.org/), [pnpm](https://pnpm.io/) and [Gulp](https://gulpjs.com) installed globally. After that, from the theme's root directory:
 
 ```bash
 # Install
-yarn
+pnpm install
 
 # Run build & watch for changes
-yarn dev
+pnpm dev
 ```
 
 Now you can edit `/assets/css/` files, which will be compiled to `/assets/built/` automatically.
@@ -30,7 +32,7 @@ Now you can edit `/assets/css/` files, which will be compiled to `/assets/built/
 The `zip` Gulp task packages the theme files into `dist/dawn.zip`, which you can then upload to your site.
 
 ```bash
-yarn zip
+pnpm zip
 ```
 
 # Contribution
