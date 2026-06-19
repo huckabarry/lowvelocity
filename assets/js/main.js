@@ -11,9 +11,14 @@
         initThemeToggle();
         initMenuToggle();
         initSearchBackdrop();
+        initClientNavigation();
+        initPageFeatures();
+    });
+
+    function initPageFeatures() {
         initBlueskyNotes();
         initPhotoFeed();
-    });
+    }
 
     function initThemeToggle() {
         var toggle = document.querySelector('[data-theme-toggle]');
@@ -144,6 +149,157 @@
         });
 
         prepareSearchFrame();
+    }
+
+    function initClientNavigation() {
+        if (!window.fetch || !window.DOMParser || !window.history || !window.history.pushState) return;
+
+        var pageCache = new Map();
+        var activeController = null;
+
+        function canNavigate(anchor, event) {
+            if (!anchor || anchor.target || anchor.hasAttribute('download') || anchor.hasAttribute('data-no-client-nav')) return false;
+            if (event && (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return false;
+
+            var url = new URL(anchor.href, window.location.href);
+            if (url.origin !== window.location.origin || !/^https?:$/.test(url.protocol)) return false;
+            if (url.pathname.indexOf('/ghost/') === 0 || /\.(?:xml|json|rss|atom|zip)$/i.test(url.pathname)) return false;
+            if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return false;
+
+            return true;
+        }
+
+        function fetchPage(url, signal) {
+            var key = url.href;
+            if (pageCache.has(key)) return pageCache.get(key);
+
+            var request = fetch(key, {
+                credentials: 'same-origin',
+                headers: {'X-Requested-With': 'CactusNavigation'},
+                signal: signal,
+            }).then(function (response) {
+                if (!response.ok || !response.headers.get('content-type') || response.headers.get('content-type').indexOf('text/html') === -1) {
+                    throw new Error('Page cannot be loaded in place');
+                }
+                return response.text();
+            }).catch(function (error) {
+                pageCache.delete(key);
+                throw error;
+            });
+
+            pageCache.set(key, request);
+            return request;
+        }
+
+        function updateHead(nextDocument) {
+            var selectors = [
+                'link[rel="canonical"]',
+                'meta[name="description"]',
+                'meta[property^="og:"]',
+                'meta[name^="twitter:"]',
+                'script[type="application/ld+json"]',
+            ].join(',');
+
+            document.querySelectorAll(selectors).forEach(function (element) {
+                element.remove();
+            });
+
+            nextDocument.querySelectorAll(selectors).forEach(function (element) {
+                document.head.appendChild(document.importNode(element, true));
+            });
+
+            document.title = nextDocument.title;
+        }
+
+        function runScripts(container) {
+            container.querySelectorAll('script').forEach(function (oldScript) {
+                var newScript = document.createElement('script');
+                Array.prototype.forEach.call(oldScript.attributes, function (attribute) {
+                    newScript.setAttribute(attribute.name, attribute.value);
+                });
+                newScript.textContent = oldScript.textContent;
+                oldScript.replaceWith(newScript);
+            });
+        }
+
+        function closeMenu() {
+            var header = document.getElementById('main-header');
+            var toggle = document.querySelector('[data-menu-toggle]');
+            if (header) header.classList.remove('menu-open');
+            document.body.classList.remove('is-menu-open');
+            if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        }
+
+        function swapPage(html, url, shouldPush) {
+            var nextDocument = new DOMParser().parseFromString(html, 'text/html');
+            var nextMain = nextDocument.querySelector('#main');
+            var currentMain = document.querySelector('#main');
+            if (!nextMain || !currentMain) throw new Error('Page content is missing');
+
+            function swap() {
+                updateHead(nextDocument);
+                document.body.className = nextDocument.body.className;
+                currentMain.replaceWith(document.importNode(nextMain, true));
+                closeMenu();
+            }
+
+            var transition = document.startViewTransition ? document.startViewTransition(swap) : null;
+            if (!transition) swap();
+
+            return (transition ? transition.updateCallbackDone : Promise.resolve()).then(function () {
+                if (shouldPush) window.history.pushState({}, '', url.href);
+                runScripts(document.querySelector('#main'));
+                initPageFeatures();
+
+                if (url.hash) {
+                    var target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+                    if (target) target.scrollIntoView();
+                } else {
+                    window.scrollTo(0, 0);
+                }
+
+                document.dispatchEvent(new CustomEvent('cactus:page-load', {detail: {url: url.href}}));
+            });
+        }
+
+        function navigate(url, shouldPush) {
+            if (activeController) activeController.abort();
+            var controller = new AbortController();
+            activeController = controller;
+            document.documentElement.classList.add('is-navigating');
+
+            fetchPage(url, controller.signal)
+                .then(function (html) {
+                    return swapPage(html, url, shouldPush);
+                })
+                .catch(function (error) {
+                    if (error.name !== 'AbortError') window.location.href = url.href;
+                })
+                .finally(function () {
+                    if (activeController === controller) {
+                        document.documentElement.classList.remove('is-navigating');
+                        activeController = null;
+                    }
+                });
+        }
+
+        document.addEventListener('click', function (event) {
+            var anchor = event.target.closest && event.target.closest('a[href]');
+            if (!canNavigate(anchor, event)) return;
+
+            event.preventDefault();
+            navigate(new URL(anchor.href, window.location.href), true);
+        });
+
+        document.addEventListener('pointerover', function (event) {
+            var anchor = event.target.closest && event.target.closest('a[href]');
+            if (!canNavigate(anchor)) return;
+            fetchPage(new URL(anchor.href, window.location.href)).catch(function () {});
+        });
+
+        window.addEventListener('popstate', function () {
+            navigate(new URL(window.location.href), false);
+        });
     }
 
     function initPhotoFeed() {

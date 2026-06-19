@@ -78,6 +78,15 @@ body {
     transition: background 300ms ease-in-out, color 300ms ease-in-out;
 }
 
+html.is-navigating {
+    cursor: progress;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 140ms;
+}
+
 /* Keep Ghost search translucent in Safari, where its srcdoc iframe can otherwise
    be composited as an opaque canvas. The page-level layer owns the blur. */
 #sodo-search-root .gh-root-frame {
