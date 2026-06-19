@@ -1,0 +1,105 @@
+name: Sync Dawn upstream
+
+on:
+  schedule:
+    - cron: "17 15 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-dawn-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Open upstream update PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out downstream theme
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Merge current Dawn changes
+        id: merge
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add upstream https://github.com/TryGhost/Dawn.git
+          git fetch upstream main
+
+          if git merge-base --is-ancestor upstream/main HEAD; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          branch="chore/sync-dawn"
+          git switch --create "$branch"
+
+          set +e
+          git merge --no-commit --no-ff upstream/main
+          merge_status=$?
+          set -e
+
+          conflicts=""
+          if [[ $merge_status -ne 0 ]]; then
+            conflicts=$(git diff --name-only --diff-filter=U | paste -sd ', ' -)
+            git merge --abort
+            git merge --no-ff -X ours upstream/main -m "Sync official Dawn upstream"
+          else
+            git commit -m "Sync official Dawn upstream"
+          fi
+
+          git fetch origin "$branch:refs/remotes/origin/$branch" 2>/dev/null || true
+          git push --force-with-lease origin "$branch"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+          {
+            echo "conflicts<<EOF"
+            echo "${conflicts:-None}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open or update draft pull request
+        if: steps.merge.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.merge.outputs.branch }}
+          CONFLICTS: ${{ steps.merge.outputs.conflicts }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          body_file=$(mktemp)
+          cat > "$body_file" <<EOF
+          ## What changed
+
+          This PR synchronizes Low Velocity with the latest commits from the official [Ghost Dawn theme](https://github.com/TryGhost/Dawn).
+
+          ## Conflict handling
+
+          Files that conflicted with Low Velocity customizations: ${CONFLICTS}
+
+          When conflicts occur, the workflow keeps the Low Velocity version in the proposed merge and lists the files above for manual comparison. Nothing deploys until this PR is reviewed and merged into \`main\`.
+
+          ## Validation
+
+          The repository's theme test workflow runs GScan and builds the distributable ZIP for this PR.
+          EOF
+
+          existing=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number // empty')
+          if [[ -n "$existing" ]]; then
+            gh pr edit "$existing" --title "[upstream] Sync official Dawn updates" --body-file "$body_file"
+          else
+            gh pr create --draft --base main --head "$BRANCH" \
+              --title "[upstream] Sync official Dawn updates" \
+              --body-file "$body_file"
+          fi
