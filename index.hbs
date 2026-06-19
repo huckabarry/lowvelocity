@@ -32,7 +32,7 @@
     {{pagination}}
 </section>
 
-{{#get "posts" filter="tag:notes" limit="5" include="tags" as |notes|}}
+{{#get "posts" filter="tag:[status,note,notes]" limit="5" include="tags" as |notes|}}
     {{#if notes}}
         <section class="cactus-section">
             <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/tag/notes/">{{t "Notes"}}</a></h2>
