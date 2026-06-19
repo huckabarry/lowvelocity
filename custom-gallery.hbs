@@ -4,41 +4,52 @@
 
 <main class="site-main lowvelocity-section lowvelocity-gallery">
 
-    <section class="lowvelocity-section-head gh-canvas">
-        <p class="lowvelocity-section-kicker">Gallery</p>
+    <header class="lowvelocity-gallery-head">
         <h1 class="lowvelocity-section-title">Gallery</h1>
         <p class="lowvelocity-section-description">A visual archive of image-forward posts and photo essays.</p>
-    </section>
+    </header>
 
-    <section class="lowvelocity-gallery-grid gh-canvas" aria-label="Gallery posts">
+    <section class="lowvelocity-gallery-feed gh-feed" aria-label="Gallery posts">
+        <div class="lowvelocity-gallery-item lowvelocity-gallery-sizer" aria-hidden="true"></div>
         {{#foreach posts}}
-            <article class="lowvelocity-gallery-card {{post_class}}">
-                <a class="lowvelocity-gallery-link" href="{{url}}" aria-label="{{title}}">
-                    {{#if feature_image}}
-                        <img
-                            class="lowvelocity-gallery-image"
-                            srcset="{{img_url feature_image size="s"}} 400w,
-                                    {{img_url feature_image size="m"}} 750w,
-                                    {{img_url feature_image size="l"}} 960w"
-                            sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 33vw"
-                            src="{{img_url feature_image size="m"}}"
-                            alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
-                            loading="lazy"
+            {{#if feature_image}}
+                <div class="lowvelocity-gallery-item">
+                    <figure class="lowvelocity-gallery-card {{post_class}}">
+                        <a class="lowvelocity-gallery-post-link" href="{{url}}" aria-label="View {{title}}">
+                            <img
+                                class="lowvelocity-gallery-image"
+                                srcset="{{img_url feature_image size="s"}} 400w,
+                                        {{img_url feature_image size="m"}} 750w,
+                                        {{img_url feature_image size="l"}} 960w,
+                                        {{img_url feature_image size="xl"}} 1140w"
+                                sizes="(max-width: 640px) 50vw, (max-width: 1019px) 33vw, 330px"
+                                src="{{img_url feature_image size="m"}}"
+                                alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                                loading="lazy"
+                            >
+                        </a>
+
+                        <a
+                            class="lowvelocity-gallery-expand"
+                            href="{{img_url feature_image}}"
+                            aria-label="Expand image: {{title}}"
                         >
-                    {{else}}
-                        <span class="lowvelocity-gallery-placeholder">{{title}}</span>
-                    {{/if}}
-                    <span class="lowvelocity-gallery-caption">
-                        <span class="lowvelocity-gallery-title">{{title}}</span>
-                        <time class="lowvelocity-gallery-date" datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
-                    </span>
-                </a>
-            </article>
+                            {{> "icons/maximize"}}
+                        </a>
+
+                        <figcaption class="lowvelocity-gallery-caption">
+                            <h2 class="lowvelocity-gallery-title">{{title}}</h2>
+                            <time class="lowvelocity-gallery-date" datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
+                        </figcaption>
+                    </figure>
+                </div>
+            {{/if}}
         {{else}}
             <p class="lowvelocity-empty">No gallery posts are published yet.</p>
         {{/foreach}}
     </section>
 
     {{pagination}}
+    {{> "pswp"}}
 
 </main>
