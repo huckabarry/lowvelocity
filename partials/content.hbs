@@ -39,9 +39,9 @@
             {{#if feature_image}}
             {{#unless no_image}}
                 <figure class="single-media kg-width-{{width}}">
-                    <div class="u-placeholder horizontal">
+                    <div class="single-media-image-wrapper">
                         <img
-                            class="u-object-fit"
+                            class="single-media-image"
                             srcset="{{> srcset}}"
                             sizes="(min-width: 1200px) 920px, 92vw"
                             src="{{img_url feature_image size="l"}}"

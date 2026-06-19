@@ -51,6 +51,16 @@
     margin-top: 4.5rem;
 }
 
+.single-media-image-wrapper {
+    background-color: var(--lighter-gray-color);
+}
+
+.single-media-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
 .single-cta {
     padding: 3rem;
     margin-top: 4rem !important;
