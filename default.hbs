@@ -19,8 +19,7 @@
         :root {
             --space-shell: min(calc(100% - 2rem), {{@custom.content_width}});
             --header-font-weight: {{#match @custom.header_font_weight "Regular"}}400{{else match @custom.header_font_weight "Medium"}}500{{else match @custom.header_font_weight "Semibold"}}600{{else match @custom.header_font_weight "Extra Bold"}}800{{else match @custom.header_font_weight "Black"}}900{{else}}700{{/match}};
-            --font-body: {{#match @custom.site_font "IBM Plex Mono"}}"IBM Plex Mono", monospace{{else match @custom.site_font "Roboto Mono"}}"Roboto Mono", monospace{{else}}var(--gh-font-body, var(--font-mono)){{/match}};
-            --font-heading: {{#match @custom.site_font "IBM Plex Mono"}}"IBM Plex Mono", monospace{{else match @custom.site_font "Roboto Mono"}}"Roboto Mono", monospace{{else}}var(--gh-font-heading, var(--font-mono)){{/match}};
+            --font-body: {{#match @custom.body_font "IBM Plex Mono"}}"IBM Plex Mono", monospace{{else match @custom.body_font "Roboto Mono"}}"Roboto Mono", monospace{{else}}var(--gh-font-body, var(--font-mono)){{/match}};
             --color-accent: {{@site.accent_color}};
             --color-link: {{@site.accent_color}};
             --color-quote: {{@site.accent_color}};

@@ -203,6 +203,10 @@ h6,
     font-family: var(--font-heading);
 }
 
+.cactus-header {
+    font-family: var(--font-heading);
+}
+
 .skip-link {
     position: fixed;
     top: 1rem;

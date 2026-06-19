@@ -72,7 +72,7 @@
                 "default": "Bold",
                 "description": "Weight of the site title and desktop navigation"
             },
-            "site_font": {
+            "body_font": {
                 "type": "select",
                 "options": [
                     "Ghost typography",
@@ -80,7 +80,7 @@
                     "IBM Plex Mono"
                 ],
                 "default": "Ghost typography",
-                "description": "Override Ghost's heading and body font choices for this theme"
+                "description": "Font used for articles and general site text"
             },
             "bluesky_handle": {
                 "type": "text",
