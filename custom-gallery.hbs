@@ -1,22 +1,22 @@
 {{!< default}}
 
-{{#contentFor "body_class"}} afterword-section-template afterword-gallery-template{{/contentFor}}
+{{#contentFor "body_class"}} lowvelocity-section-template lowvelocity-gallery-template{{/contentFor}}
 
-<main class="site-main afterword-section afterword-gallery">
+<main class="site-main lowvelocity-section lowvelocity-gallery">
 
-    <section class="afterword-section-head gh-canvas">
-        <p class="afterword-section-kicker">Gallery</p>
-        <h1 class="afterword-section-title">Gallery</h1>
-        <p class="afterword-section-description">A visual archive of image-forward posts and photo essays.</p>
+    <section class="lowvelocity-section-head gh-canvas">
+        <p class="lowvelocity-section-kicker">Gallery</p>
+        <h1 class="lowvelocity-section-title">Gallery</h1>
+        <p class="lowvelocity-section-description">A visual archive of image-forward posts and photo essays.</p>
     </section>
 
-    <section class="afterword-gallery-grid gh-canvas" aria-label="Gallery posts">
+    <section class="lowvelocity-gallery-grid gh-canvas" aria-label="Gallery posts">
         {{#foreach posts}}
-            <article class="afterword-gallery-card {{post_class}}">
-                <a class="afterword-gallery-link" href="{{url}}" aria-label="{{title}}">
+            <article class="lowvelocity-gallery-card {{post_class}}">
+                <a class="lowvelocity-gallery-link" href="{{url}}" aria-label="{{title}}">
                     {{#if feature_image}}
                         <img
-                            class="afterword-gallery-image"
+                            class="lowvelocity-gallery-image"
                             srcset="{{img_url feature_image size="s"}} 400w,
                                     {{img_url feature_image size="m"}} 750w,
                                     {{img_url feature_image size="l"}} 960w"
@@ -26,16 +26,16 @@
                             loading="lazy"
                         >
                     {{else}}
-                        <span class="afterword-gallery-placeholder">{{title}}</span>
+                        <span class="lowvelocity-gallery-placeholder">{{title}}</span>
                     {{/if}}
-                    <span class="afterword-gallery-caption">
-                        <span class="afterword-gallery-title">{{title}}</span>
-                        <time class="afterword-gallery-date" datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
+                    <span class="lowvelocity-gallery-caption">
+                        <span class="lowvelocity-gallery-title">{{title}}</span>
+                        <time class="lowvelocity-gallery-date" datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
                     </span>
                 </a>
             </article>
         {{else}}
-            <p class="afterword-empty">No gallery posts are published yet.</p>
+            <p class="lowvelocity-empty">No gallery posts are published yet.</p>
         {{/foreach}}
     </section>
 

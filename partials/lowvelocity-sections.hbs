@@ -1,13 +1,13 @@
 <style>
-    .afterword-section {
+    .lowvelocity-section {
         padding-top: clamp(2rem, 4vw, 4rem);
     }
 
-    .afterword-section-head {
+    .lowvelocity-section-head {
         margin-bottom: clamp(3rem, 7vw, 7rem);
     }
 
-    .afterword-section-kicker {
+    .lowvelocity-section-kicker {
         margin: 0 0 1rem;
         color: var(--brand-color);
         font-size: 1.2rem;
@@ -16,14 +16,14 @@
         text-transform: uppercase;
     }
 
-    .afterword-section-title {
+    .lowvelocity-section-title {
         margin: 0;
         font-size: clamp(4rem, 9vw, 9rem);
         line-height: 0.95;
         letter-spacing: -0.05em;
     }
 
-    .afterword-section-description {
+    .lowvelocity-section-description {
         max-width: 62rem;
         margin: 1.6rem 0 0;
         color: var(--secondary-text-color);
@@ -31,30 +31,30 @@
         line-height: 1.35;
     }
 
-    .afterword-empty {
+    .lowvelocity-empty {
         color: var(--secondary-text-color);
         font-size: 1.6rem;
     }
 
-    .afterword-note-feed {
+    .lowvelocity-note-feed {
         align-items: flex-start;
     }
 
-    .afterword-note-feed .feed-title {
+    .lowvelocity-note-feed .feed-title {
         white-space: normal;
     }
 
-    .afterword-note-feed-body {
+    .lowvelocity-note-feed-body {
         flex: 1 1 auto;
         min-width: 0;
         padding-right: 2rem;
     }
 
-    .afterword-note-title {
+    .lowvelocity-note-title {
         margin-bottom: 0.6rem;
     }
 
-    .afterword-note-excerpt {
+    .lowvelocity-note-excerpt {
         display: -webkit-box;
         margin: 0;
         overflow: hidden;
@@ -65,18 +65,18 @@
         -webkit-line-clamp: 3;
     }
 
-    .afterword-gallery-grid {
+    .lowvelocity-gallery-grid {
         columns: 3 24rem;
         column-gap: 1.6rem;
     }
 
-    .afterword-gallery-card {
+    .lowvelocity-gallery-card {
         position: relative;
         break-inside: avoid;
         margin: 0 0 1.6rem;
     }
 
-    .afterword-gallery-link {
+    .lowvelocity-gallery-link {
         position: relative;
         display: block;
         overflow: hidden;
@@ -86,14 +86,14 @@
         text-decoration: none;
     }
 
-    .afterword-gallery-image {
+    .lowvelocity-gallery-image {
         display: block;
         width: 100%;
         height: auto;
         transition: transform 180ms var(--animation-base), filter 180ms var(--animation-base);
     }
 
-    .afterword-gallery-placeholder {
+    .lowvelocity-gallery-placeholder {
         display: grid;
         min-height: 20rem;
         place-items: center;
@@ -103,7 +103,7 @@
         text-align: center;
     }
 
-    .afterword-gallery-caption {
+    .lowvelocity-gallery-caption {
         position: absolute;
         inset: auto 0 0;
         display: grid;
@@ -115,31 +115,31 @@
         transition: opacity 180ms var(--animation-base), transform 180ms var(--animation-base);
     }
 
-    .afterword-gallery-title {
+    .lowvelocity-gallery-title {
         font-size: 1.6rem;
         font-weight: 800;
         line-height: 1.15;
     }
 
-    .afterword-gallery-date {
+    .lowvelocity-gallery-date {
         font-size: 1.2rem;
         opacity: 0.82;
     }
 
-    .afterword-gallery-link:hover .afterword-gallery-image,
-    .afterword-gallery-link:focus-visible .afterword-gallery-image {
+    .lowvelocity-gallery-link:hover .lowvelocity-gallery-image,
+    .lowvelocity-gallery-link:focus-visible .lowvelocity-gallery-image {
         transform: scale(1.018);
         filter: saturate(1.04);
     }
 
-    .afterword-gallery-link:hover .afterword-gallery-caption,
-    .afterword-gallery-link:focus-visible .afterword-gallery-caption {
+    .lowvelocity-gallery-link:hover .lowvelocity-gallery-caption,
+    .lowvelocity-gallery-link:focus-visible .lowvelocity-gallery-caption {
         opacity: 1;
         transform: translateY(0);
     }
 
     @media (hover: none) {
-        .afterword-gallery-caption {
+        .lowvelocity-gallery-caption {
             position: static;
             opacity: 1;
             transform: none;
@@ -150,19 +150,19 @@
     }
 
     @media (max-width: 767px) {
-        .afterword-section-title {
+        .lowvelocity-section-title {
             font-size: clamp(3.4rem, 17vw, 5.4rem);
         }
 
-        .afterword-note-feed {
+        .lowvelocity-note-feed {
             gap: 1rem;
         }
 
-        .afterword-note-feed-body {
+        .lowvelocity-note-feed-body {
             padding-right: 0;
         }
 
-        .afterword-note-feed .feed-right {
+        .lowvelocity-note-feed .feed-right {
             display: none;
         }
     }

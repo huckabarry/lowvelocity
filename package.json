@@ -1,6 +1,6 @@
 {
-    "name": "dawn-afterword",
-    "description": "Dawn adapted for Afterword section routing and gallery archives",
+    "name": "dawn-lowvelocity",
+    "description": "Dawn adapted for Low Velocity section routing and gallery archives",
     "version": "1.0.1",
     "private": true,
     "engines": {

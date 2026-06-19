@@ -1,20 +1,20 @@
 {{!< default}}
 
-{{#contentFor "body_class"}} afterword-section-template afterword-field-notes-template{{/contentFor}}
+{{#contentFor "body_class"}} lowvelocity-section-template lowvelocity-field-notes-template{{/contentFor}}
 
-<main class="site-main afterword-section">
+<main class="site-main lowvelocity-section">
 
-    <section class="afterword-section-head gh-canvas">
-        <p class="afterword-section-kicker">Field Notes</p>
-        <h1 class="afterword-section-title">Field Notes</h1>
-        <p class="afterword-section-description">Travel, photography, observations from walks, and notes from being out in the world.</p>
+    <section class="lowvelocity-section-head gh-canvas">
+        <p class="lowvelocity-section-kicker">Field Notes</p>
+        <h1 class="lowvelocity-section-title">Field Notes</h1>
+        <p class="lowvelocity-section-description">Travel, photography, observations from walks, and notes from being out in the world.</p>
     </section>
 
     <div class="post-feed gh-feed gh-canvas">
         {{#foreach posts}}
             {{> "loop"}}
         {{else}}
-            <p class="afterword-empty">No field notes are published yet.</p>
+            <p class="lowvelocity-empty">No field notes are published yet.</p>
         {{/foreach}}
     </div>
 
