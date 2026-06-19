@@ -28,14 +28,32 @@
         if (typeof imagesLoaded === 'undefined' || typeof Masonry === 'undefined') return;
 
         document.querySelectorAll('.cactus-content .kg-gallery-card:not([data-ghost-gallery-ready])').forEach(function (card) {
+            if (card.hasAttribute('data-ghost-gallery-ready')) return;
+
+            var galleryCards = [card];
+            var nextCard = card.nextElementSibling;
+
+            while (nextCard && nextCard.matches('.kg-gallery-card:not([data-ghost-gallery-ready])')) {
+                galleryCards.push(nextCard);
+                nextCard = nextCard.nextElementSibling;
+            }
+
             var container = card.querySelector('.kg-gallery-container');
             if (!container) return;
 
-            var images = Array.prototype.slice.call(container.querySelectorAll('.kg-gallery-image'));
+            var images = [];
+            var captions = [];
+
+            galleryCards.forEach(function (galleryCard) {
+                images = images.concat(Array.prototype.slice.call(galleryCard.querySelectorAll('.kg-gallery-image')));
+                captions = captions.concat(Array.prototype.slice.call(galleryCard.querySelectorAll(':scope > figcaption')));
+                galleryCard.setAttribute('data-ghost-gallery-ready', 'true');
+            });
+
             if (!images.length) return;
 
-            card.setAttribute('data-ghost-gallery-ready', 'true');
             card.classList.add('ghost-gallery-card');
+            if (galleryCards.length > 1) card.classList.add('ghost-gallery-run');
 
             var sizer = document.createElement('div');
             sizer.className = 'kg-gallery-sizer';
@@ -43,6 +61,14 @@
 
             images.forEach(function (image) {
                 container.appendChild(image);
+            });
+
+            captions.forEach(function (caption) {
+                card.appendChild(caption);
+            });
+
+            galleryCards.slice(1).forEach(function (galleryCard) {
+                galleryCard.remove();
             });
 
             imagesLoaded(container, function () {

@@ -728,8 +728,8 @@ html[data-theme="light"] .theme-icon-light {
     width: 50%;
 }
 
-.ghost-gallery-card .kg-gallery-image {
-    margin: 0;
+.ghost-gallery-card .kg-gallery-container > .kg-gallery-image {
+    margin: 0 !important;
     padding: 0.4rem;
     box-sizing: border-box;
 }
