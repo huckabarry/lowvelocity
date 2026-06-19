@@ -424,6 +424,7 @@
         document.addEventListener('pointerover', function (event) {
             var anchor = event.target.closest && event.target.closest('a[href]');
             if (!canNavigate(anchor)) return;
+            if (!anchor.closest('.cactus-nav, .cactus-footer-nav')) return;
             fetchPage(new URL(anchor.href, window.location.href)).catch(function () {});
         });
 
