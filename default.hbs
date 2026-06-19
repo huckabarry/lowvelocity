@@ -7,6 +7,41 @@
     <title>{{meta_title page=(t " (Page %)")}}</title>
     <link rel="stylesheet" href="{{asset "built/screen.css"}}">
     {{> "lowvelocity-sections"}}
+    <style>
+        :root,
+        .theme-light:root {
+            --primary-text-color: {{@custom.light_mode_text_color}};
+            --darker-gray-color: {{@custom.light_mode_text_color}};
+            --color-primary-text: {{@custom.light_mode_text_color}};
+            --color-darker-gray: {{@custom.light_mode_text_color}};
+            --white-color: {{@custom.light_mode_background_color}};
+            --color-white: {{@custom.light_mode_background_color}};
+        }
+
+        .theme-dark:root {
+            --primary-text-color: {{@custom.dark_mode_text_color}};
+            --dark-gray-color: {{@custom.dark_mode_text_color}};
+            --darker-gray-color: {{@custom.dark_mode_text_color}};
+            --color-primary-text: {{@custom.dark_mode_text_color}};
+            --color-dark-gray: {{@custom.dark_mode_text_color}};
+            --color-darker-gray: {{@custom.dark_mode_text_color}};
+            --white-color: {{@custom.dark_mode_background_color}};
+            --color-white: {{@custom.dark_mode_background_color}};
+        }
+
+        @media (prefers-color-scheme: dark) {
+            html:not(.theme-light):root {
+                --primary-text-color: {{@custom.dark_mode_text_color}};
+                --dark-gray-color: {{@custom.dark_mode_text_color}};
+                --darker-gray-color: {{@custom.dark_mode_text_color}};
+                --color-primary-text: {{@custom.dark_mode_text_color}};
+                --color-dark-gray: {{@custom.dark_mode_text_color}};
+                --color-darker-gray: {{@custom.dark_mode_text_color}};
+                --white-color: {{@custom.dark_mode_background_color}};
+                --color-white: {{@custom.dark_mode_background_color}};
+            }
+        }
+    </style>
 
     {{ghost_head}}
 </head>

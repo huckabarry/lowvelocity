@@ -72,6 +72,26 @@
                 ],
                 "default": "Auto"
             },
+            "light_mode_background_color": {
+                "type": "color",
+                "default": "#ffffff",
+                "description": "Page and navigation background in light mode"
+            },
+            "light_mode_text_color": {
+                "type": "color",
+                "default": "#1a1a1a",
+                "description": "Body text, headings, and links in light mode"
+            },
+            "dark_mode_background_color": {
+                "type": "color",
+                "default": "#282c35",
+                "description": "Page and navigation background in dark mode"
+            },
+            "dark_mode_text_color": {
+                "type": "color",
+                "default": "#e2e2e2",
+                "description": "Body text, headings, and links in dark mode"
+            },
             "white_logo_for_dark_mode": {
                 "type": "image"
             },
