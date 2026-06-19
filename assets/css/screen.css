@@ -76,6 +76,23 @@ body {
     transition: background 300ms ease-in-out, color 300ms ease-in-out;
 }
 
+/* Keep Ghost search translucent in Safari, where its srcdoc iframe can otherwise
+   be composited as an opaque canvas. The page-level layer owns the blur. */
+#sodo-search-root .gh-root-frame {
+    background: rgba(255, 255, 255, 0.18);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+html[data-theme="dark"] #sodo-search-root .gh-root-frame {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#sodo-search-root iframe {
+    color-scheme: normal;
+    background: transparent !important;
+}
+
 img,
 svg {
     display: block;
@@ -587,6 +604,10 @@ html[data-theme="light"] .theme-icon-light {
     .cactus-header {
         margin-bottom: 7.5rem;
         padding-left: 4.5rem;
+    }
+
+    .cactus-header-no-logo {
+        padding-left: 0;
     }
 
     .cactus-brand {

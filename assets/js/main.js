@@ -10,6 +10,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         initThemeToggle();
         initMenuToggle();
+        initSearchBackdrop();
         initPhotoFeed();
     });
 
@@ -33,6 +34,47 @@
             var isOpen = header.classList.toggle('menu-open');
             toggle.setAttribute('aria-expanded', String(isOpen));
         });
+    }
+
+    function initSearchBackdrop() {
+        var searchRoot = document.getElementById('sodo-search-root');
+        if (!searchRoot || typeof MutationObserver === 'undefined') return;
+
+        var preparedFrame = null;
+
+        function prepareSearchFrame() {
+            var frame = searchRoot.querySelector('iframe');
+            if (!frame || frame === preparedFrame) return;
+
+            preparedFrame = frame;
+            frame.style.setProperty('background', 'transparent', 'important');
+            frame.style.colorScheme = 'normal';
+
+            function makeFrameCanvasTransparent() {
+                try {
+                    var frameDocument = frame.contentDocument;
+                    if (!frameDocument) return;
+
+                    frameDocument.documentElement.style.setProperty('background', 'transparent', 'important');
+                    if (frameDocument.body) {
+                        frameDocument.body.style.setProperty('background', 'transparent', 'important');
+                    }
+                } catch (error) {
+                    // Ghost uses a same-origin srcdoc frame; leave its defaults alone
+                    // if a browser blocks frame access for any reason.
+                }
+            }
+
+            frame.addEventListener('load', makeFrameCanvasTransparent);
+            makeFrameCanvasTransparent();
+        }
+
+        new MutationObserver(prepareSearchFrame).observe(searchRoot, {
+            childList: true,
+            subtree: true,
+        });
+
+        prepareSearchFrame();
     }
 
     function initPhotoFeed() {

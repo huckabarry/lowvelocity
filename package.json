@@ -78,6 +78,11 @@
                 "default": "#2abc89",
                 "description": "Links, navigation accents, and quotes in dark mode"
             },
+            "use_separate_mode_accent_colors": {
+                "type": "boolean",
+                "default": false,
+                "description": "Override the Brand accent with separate light and dark accents"
+            },
             "show_related_posts": {
                 "type": "boolean",
                 "default": true,
