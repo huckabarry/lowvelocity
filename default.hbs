@@ -16,22 +16,22 @@
     </script>
     <link rel="stylesheet" href="{{asset "built/screen.css"}}">
     <style>
-        :root {
-            --color-accent: {{@site.accent_color}};
-            --color-link: {{@site.accent_color}};
-            --color-quote: {{@site.accent_color}};
-        }
-
         html[data-theme="light"] {
             --color-global-bg: {{@custom.light_mode_background_color}};
             --color-global-text: {{@custom.light_mode_text_color}};
             --color-accent-2: {{@custom.light_mode_text_color}};
+            --color-accent: {{@custom.light_mode_accent_color}};
+            --color-link: {{@custom.light_mode_accent_color}};
+            --color-quote: {{@custom.light_mode_accent_color}};
         }
 
         html[data-theme="dark"] {
             --color-global-bg: {{@custom.dark_mode_background_color}};
             --color-global-text: {{@custom.dark_mode_text_color}};
             --color-accent-2: {{@custom.dark_mode_text_color}};
+            --color-accent: {{@custom.dark_mode_accent_color}};
+            --color-link: {{@custom.dark_mode_accent_color}};
+            --color-quote: {{@custom.dark_mode_accent_color}};
         }
     </style>
     {{ghost_head}}

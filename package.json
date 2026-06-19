@@ -58,6 +58,11 @@
                 "default": "#3d4044",
                 "description": "Body text and headings in light mode"
             },
+            "light_mode_accent_color": {
+                "type": "color",
+                "default": "#d45478",
+                "description": "Links, navigation accents, and quotes in light mode"
+            },
             "dark_mode_background_color": {
                 "type": "color",
                 "default": "#171717",
@@ -67,6 +72,11 @@
                 "type": "color",
                 "default": "#e2e2e2",
                 "description": "Body text and headings in dark mode"
+            },
+            "dark_mode_accent_color": {
+                "type": "color",
+                "default": "#2abc89",
+                "description": "Links, navigation accents, and quotes in dark mode"
             },
             "show_related_posts": {
                 "type": "boolean",
