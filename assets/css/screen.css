@@ -706,6 +706,47 @@ html[data-theme="light"] .theme-icon-light {
     border-top: 1px dashed var(--color-rule);
 }
 
+.ghost-gallery-card {
+    width: 100%;
+    margin: 1.75rem 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.ghost-gallery-card.initialized {
+    visibility: visible;
+    opacity: 1;
+}
+
+.ghost-gallery-card .kg-gallery-container {
+    width: 100%;
+}
+
+.ghost-gallery-card .kg-gallery-sizer,
+.ghost-gallery-card .kg-gallery-image {
+    width: 50%;
+}
+
+.ghost-gallery-card .kg-gallery-image {
+    margin: 0;
+    padding: 0.4rem;
+    box-sizing: border-box;
+}
+
+.ghost-gallery-card .kg-gallery-image img {
+    display: block;
+    width: 100%;
+    height: auto !important;
+}
+
+@media (min-width: 1024px) {
+    .ghost-gallery-card .kg-gallery-sizer,
+    .ghost-gallery-card .kg-gallery-image {
+        width: 33.333%;
+    }
+}
+
 .post-tags {
     display: flex;
     flex-wrap: wrap;
