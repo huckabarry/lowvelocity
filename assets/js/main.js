@@ -25,7 +25,7 @@
     var ghostGalleryResizeBound = false;
 
     function initGhostGalleryMasonry() {
-        if (typeof imagesLoaded === 'undefined' || typeof Masonry === 'undefined') return;
+        if (typeof Masonry === 'undefined') return;
 
         document.querySelectorAll('.cactus-content .kg-gallery-card:not([data-ghost-gallery-ready])').forEach(function (card) {
             if (card.hasAttribute('data-ghost-gallery-ready')) return;
@@ -71,34 +71,38 @@
                 galleryCard.remove();
             });
 
-            imagesLoaded(container, function () {
-                if (!document.documentElement.contains(card)) return;
-
-                var masonry = new Masonry(container, {
-                    itemSelector: '.kg-gallery-image',
-                    columnWidth: '.kg-gallery-sizer',
-                    percentPosition: true,
-                    transitionDuration: 0,
-                });
-                card._ghostGalleryMasonry = masonry;
-
-                function relayout() {
-                    if (!document.documentElement.contains(container)) return;
-                    masonry.reloadItems();
-                    masonry.layout();
-                    card.classList.add('initialized');
-                }
-
-                masonry.on('layoutComplete', function () {
-                    card.classList.add('initialized');
-                });
-
-                relayout();
-                window.requestAnimationFrame(function () {
-                    window.requestAnimationFrame(relayout);
-                });
-                window.setTimeout(relayout, 400);
+            var masonry = new Masonry(container, {
+                itemSelector: '.kg-gallery-image',
+                columnWidth: '.kg-gallery-sizer',
+                percentPosition: true,
+                transitionDuration: 0,
             });
+            card._ghostGalleryMasonry = masonry;
+
+            function relayout() {
+                if (!document.documentElement.contains(container)) return;
+                masonry.layout();
+                card.classList.add('initialized');
+            }
+
+            var relayoutAfterImage = throttle(relayout, 80);
+
+            images.forEach(function (image) {
+                var img = image.querySelector('img');
+                if (!img || img.complete) return;
+                img.addEventListener('load', relayoutAfterImage, {once: true});
+                img.addEventListener('error', relayoutAfterImage, {once: true});
+            });
+
+            masonry.on('layoutComplete', function () {
+                card.classList.add('initialized');
+            });
+
+            relayout();
+            window.requestAnimationFrame(function () {
+                window.requestAnimationFrame(relayout);
+            });
+            window.setTimeout(relayout, 400);
         });
 
         if (!ghostGalleryResizeBound) {
