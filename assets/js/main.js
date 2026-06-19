@@ -18,7 +18,98 @@
     function initPageFeatures(isClientNavigation) {
         initBlueskyNotes();
         initPhotoFeed();
+        initGhostGalleryCards();
         if (isClientNavigation) initGhostCardEnhancements();
+    }
+
+    var ghostGalleryResizeBound = false;
+
+    function initGhostGalleryCards() {
+        applyGhostGalleryCards();
+
+        if (!ghostGalleryResizeBound) {
+            ghostGalleryResizeBound = true;
+            window.addEventListener('resize', throttle(applyGhostGalleryCards, 120));
+        }
+    }
+
+    function applyGhostGalleryCards() {
+        var isDesktop = window.matchMedia && window.matchMedia('(min-width: 1024px)').matches;
+        var columns = isDesktop ? 3 : 2;
+        var gap = isDesktop ? '0.75rem' : '0.5rem';
+
+        document.querySelectorAll('.cactus-content .kg-gallery-card').forEach(function (card) {
+            var container = card.querySelector('.kg-gallery-container');
+            if (!container) return;
+
+            card.style.width = '100%';
+            card.style.margin = '1.75rem 0';
+
+            container.style.display = 'block';
+            container.style.width = '100%';
+            container.style.columnCount = String(columns);
+            container.style.columnGap = gap;
+            container.style.webkitColumnCount = String(columns);
+            container.style.webkitColumnGap = gap;
+
+            container.querySelectorAll('.kg-gallery-row').forEach(function (row) {
+                row.style.display = 'contents';
+            });
+
+            container.querySelectorAll('.kg-gallery-image').forEach(function (image) {
+                image.style.display = 'block';
+                image.style.width = '100%';
+                image.style.margin = '0 0 ' + gap + ' 0';
+                image.style.breakInside = 'avoid';
+                image.style.webkitColumnBreakInside = 'avoid';
+                image.style.pageBreakInside = 'avoid';
+            });
+
+            container.querySelectorAll('.kg-gallery-image img').forEach(function (img) {
+                img.style.display = 'block';
+                img.style.width = '100%';
+                img.style.height = 'auto';
+                img.style.maxWidth = '100%';
+            });
+
+            if (typeof imagesLoaded === 'function') {
+                imagesLoaded(container, function () {
+                    if (!document.documentElement.contains(card)) return;
+                    container.style.columnCount = String(columns);
+                    container.style.webkitColumnCount = String(columns);
+                });
+            }
+        });
+    }
+
+    function throttle(fn, wait) {
+        var last = 0;
+        var timeout = null;
+
+        return function () {
+            var now = Date.now();
+            var remaining = wait - (now - last);
+            var context = this;
+            var args = arguments;
+
+            if (remaining <= 0) {
+                last = now;
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
+                fn.apply(context, args);
+                return;
+            }
+
+            if (!timeout) {
+                timeout = setTimeout(function () {
+                    last = Date.now();
+                    timeout = null;
+                    fn.apply(context, args);
+                }, remaining);
+            }
+        };
     }
 
     function initGhostCardEnhancements() {
