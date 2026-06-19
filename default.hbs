@@ -16,6 +16,12 @@
     </script>
     <link rel="stylesheet" href="{{asset "built/screen.css"}}">
     <style>
+        :root {
+            --color-accent: {{@site.accent_color}};
+            --color-link: {{@site.accent_color}};
+            --color-quote: {{@site.accent_color}};
+        }
+
         html[data-theme="light"] {
             --color-global-bg: {{@custom.light_mode_background_color}};
             --color-global-text: {{@custom.light_mode_text_color}};
