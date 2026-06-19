@@ -9,6 +9,22 @@
     {{/if}}
 </section>
 
+<section class="cactus-section status-section" data-bluesky-feed data-bluesky-handle="{{@custom.bluesky_handle}}" data-bluesky-limit="5">
+    <div class="status-section-head">
+        <h2 class="cactus-title cactus-title-link">
+            <a href="https://bsky.app/profile/{{@custom.bluesky_handle}}" target="_blank" rel="noopener noreferrer">{{t "Recent Updates"}}</a>
+        </h2>
+        <div class="status-controls" data-status-controls hidden>
+            <button type="button" data-status-prev aria-label="{{t "Show previous update"}}">{{t "Back"}}</button>
+            <span class="status-position" data-status-position aria-live="polite"></span>
+            <button type="button" data-status-next aria-label="{{t "Show next update"}}">{{t "Next"}}</button>
+        </div>
+    </div>
+    <div class="status-carousel" data-status-carousel aria-live="polite">
+        <p class="bluesky-note-status">{{t "Loading updates…"}}</p>
+    </div>
+</section>
+
 {{#get "posts" filter="featured:true+tag:-photos" limit="3" include="tags" as |featured_posts|}}
     {{#if featured_posts}}
         <section class="cactus-section">
@@ -30,13 +46,4 @@
         {{/foreach}}
     </ul>
     {{pagination}}
-</section>
-
-<section class="cactus-section bluesky-notes" data-bluesky-feed data-bluesky-handle="{{@custom.bluesky_handle}}" data-bluesky-limit="5">
-    <h2 class="cactus-title cactus-title-link">
-        <a href="https://bsky.app/profile/{{@custom.bluesky_handle}}" target="_blank" rel="noopener noreferrer">{{t "Notes"}}</a>
-    </h2>
-    <ul class="note-list" role="list" aria-live="polite">
-        <li class="note-list-item bluesky-note-status">{{t "Loading notes…"}}</li>
-    </ul>
 </section>

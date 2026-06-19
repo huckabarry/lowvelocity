@@ -389,6 +389,131 @@ html[data-theme="light"] .theme-icon-light {
     margin: 0;
 }
 
+.home-template .cactus-header {
+    margin-bottom: 5.25rem;
+}
+
+.status-section {
+    margin-top: 2.75rem;
+}
+
+.status-section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.status-section-head .cactus-title {
+    margin-bottom: 1.25rem;
+}
+
+.status-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-muted);
+    font-size: 0.75rem;
+}
+
+.status-controls[hidden] {
+    display: none;
+}
+
+.status-controls button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+}
+
+.status-controls button:hover {
+    color: var(--color-global-text);
+}
+
+.status-update {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: 0.85rem;
+}
+
+.status-update[hidden] {
+    display: none;
+}
+
+.status-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    object-fit: cover;
+}
+
+.status-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.45rem;
+    color: var(--color-muted);
+    font-size: 0.78rem;
+}
+
+.status-author {
+    color: var(--color-global-text);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.status-text {
+    margin: 0;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.status-text a {
+    color: var(--color-global-text);
+    text-decoration: none;
+}
+
+.status-media {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+}
+
+.status-media-multiple {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.status-media img {
+    width: 100%;
+    max-height: 19rem;
+    border-radius: 0.35rem;
+    object-fit: cover;
+}
+
+.status-media-multiple img {
+    height: 10rem;
+}
+
+.status-external {
+    display: grid;
+    gap: 0.2rem;
+    margin-top: 0.85rem;
+    padding: 0.75rem;
+    border: 1px dashed var(--color-rule);
+    color: var(--color-global-text);
+    text-decoration: none;
+}
+
+.status-external span {
+    color: var(--color-muted);
+    font-size: 0.8rem;
+}
+
 .cactus-title {
     margin: 0 0 3rem;
     color: var(--color-accent-2);
@@ -830,6 +955,18 @@ html[data-theme="light"] .theme-icon-light {
         height: 4rem;
         align-items: center;
         margin-bottom: 3rem;
+    }
+
+    .home-template .cactus-header {
+        margin-bottom: 2rem;
+    }
+
+    .status-update {
+        grid-template-columns: 1fr;
+    }
+
+    .status-avatar {
+        display: none;
     }
 
     .cactus-brand-wrap {

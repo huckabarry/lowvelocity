@@ -12,12 +12,31 @@
         initMenuToggle();
         initSearchBackdrop();
         initClientNavigation();
-        initPageFeatures();
+        initPageFeatures(false);
     });
 
-    function initPageFeatures() {
+    function initPageFeatures(isClientNavigation) {
         initBlueskyNotes();
         initPhotoFeed();
+        if (isClientNavigation) initGhostCardEnhancements();
+    }
+
+    function initGhostCardEnhancements() {
+        if (typeof lightbox === 'function') {
+            lightbox('.kg-image-card > .kg-image[width][height], .kg-gallery-image > img');
+        }
+
+        if (typeof reframe === 'function') {
+            var sources = [
+                '.cactus-content iframe[src*="youtube.com"]',
+                '.cactus-content iframe[src*="youtube-nocookie.com"]',
+                '.cactus-content iframe[src*="player.vimeo.com"]',
+                '.cactus-content iframe[src*="kickstarter.com"][src*="video.html"]',
+                '.cactus-content object',
+                '.cactus-content embed',
+            ];
+            reframe(document.querySelectorAll(sources.join(',')));
+        }
     }
 
     function initThemeToggle() {
@@ -35,10 +54,10 @@
         var section = document.querySelector('[data-bluesky-feed]');
         if (!section) return;
 
-        var list = section.querySelector('.note-list');
+        var carousel = section.querySelector('[data-status-carousel]');
         var handle = section.getAttribute('data-bluesky-handle');
         var limit = parseInt(section.getAttribute('data-bluesky-limit'), 10) || 5;
-        if (!list || !handle) return;
+        if (!carousel || !handle) return;
 
         var endpoint = new URL('https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed');
         endpoint.searchParams.set('actor', handle);
@@ -57,20 +76,24 @@
 
                 if (!posts.length) throw new Error('Bluesky feed is empty');
 
-                list.replaceChildren();
+                carousel.replaceChildren();
                 posts.forEach(function (item) {
-                    list.appendChild(createBlueskyNote(item.post));
+                    carousel.appendChild(createStatusUpdate(item.post));
                 });
+                initStatusCarousel(section, posts.length);
             })
             .catch(function () {
-                var status = list.querySelector('.bluesky-note-status');
-                if (status) status.textContent = 'Notes are temporarily unavailable.';
+                var status = carousel.querySelector('.bluesky-note-status');
+                if (status) status.textContent = 'Updates are temporarily unavailable.';
             });
     }
 
-    function createBlueskyNote(post) {
-        var item = document.createElement('li');
+    function createStatusUpdate(post) {
         var article = document.createElement('article');
+        var avatar = document.createElement('img');
+        var body = document.createElement('div');
+        var meta = document.createElement('div');
+        var author = document.createElement('a');
         var text = document.createElement('p');
         var link = document.createElement('a');
         var time = document.createElement('time');
@@ -79,8 +102,20 @@
         var postUrl = 'https://bsky.app/profile/' + encodeURIComponent(post.author.handle) + '/post/' + encodeURIComponent(postKey);
         var createdAt = record.createdAt || post.indexedAt;
 
-        item.className = 'note-list-item bluesky-note';
-        text.className = 'bluesky-note-text';
+        article.className = 'status-update';
+        article.hidden = true;
+        avatar.className = 'status-avatar';
+        avatar.src = post.author.avatar || '';
+        avatar.alt = '';
+        avatar.loading = 'lazy';
+        body.className = 'status-update-body';
+        meta.className = 'status-meta';
+        author.className = 'status-author';
+        author.href = 'https://bsky.app/profile/' + encodeURIComponent(post.author.handle);
+        author.target = '_blank';
+        author.rel = 'noopener noreferrer';
+        author.textContent = post.author.displayName || '@' + post.author.handle;
+        text.className = 'status-text';
         link.href = postUrl;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
@@ -91,11 +126,85 @@
             timeStyle: 'short',
         }).format(new Date(createdAt));
 
+        meta.appendChild(author);
+        meta.appendChild(time);
         text.appendChild(link);
-        article.appendChild(text);
-        article.appendChild(time);
-        item.appendChild(article);
-        return item;
+        body.appendChild(meta);
+        body.appendChild(text);
+        appendStatusEmbed(body, post.embed, postUrl);
+        article.appendChild(avatar);
+        article.appendChild(body);
+        return article;
+    }
+
+    function appendStatusEmbed(container, embed, postUrl) {
+        if (!embed) return;
+
+        var media = embed.media || embed;
+        var images = media.images || [];
+        if (images.length) {
+            var gallery = document.createElement('div');
+            gallery.className = 'status-media' + (images.length > 1 ? ' status-media-multiple' : '');
+            images.slice(0, 4).forEach(function (image) {
+                var anchor = document.createElement('a');
+                var img = document.createElement('img');
+                anchor.href = postUrl;
+                anchor.target = '_blank';
+                anchor.rel = 'noopener noreferrer';
+                img.src = image.thumb || image.fullsize;
+                img.alt = image.alt || '';
+                img.loading = 'lazy';
+                anchor.appendChild(img);
+                gallery.appendChild(anchor);
+            });
+            container.appendChild(gallery);
+            return;
+        }
+
+        var external = media.external;
+        if (external) {
+            var card = document.createElement('a');
+            card.className = 'status-external';
+            card.href = external.uri;
+            card.target = '_blank';
+            card.rel = 'noopener noreferrer';
+            if (external.title) {
+                var title = document.createElement('strong');
+                title.textContent = external.title;
+                card.appendChild(title);
+            }
+            if (external.description) {
+                var description = document.createElement('span');
+                description.textContent = external.description;
+                card.appendChild(description);
+            }
+            container.appendChild(card);
+        }
+    }
+
+    function initStatusCarousel(section, count) {
+        var cards = Array.prototype.slice.call(section.querySelectorAll('.status-update'));
+        var controls = section.querySelector('[data-status-controls]');
+        var previous = section.querySelector('[data-status-prev]');
+        var next = section.querySelector('[data-status-next]');
+        var position = section.querySelector('[data-status-position]');
+        var activeIndex = 0;
+
+        function show(index) {
+            activeIndex = (index + cards.length) % cards.length;
+            cards.forEach(function (card, cardIndex) {
+                card.hidden = cardIndex !== activeIndex;
+            });
+            if (position) position.textContent = (activeIndex + 1) + ' / ' + count;
+        }
+
+        if (cards.length > 1 && controls) {
+            controls.hidden = false;
+            previous.addEventListener('click', function () { show(activeIndex - 1); });
+            next.addEventListener('click', function () { show(activeIndex + 1); });
+        }
+
+        show(0);
     }
 
     function initMenuToggle() {
@@ -267,7 +376,7 @@
             return (transition ? transition.updateCallbackDone : Promise.resolve()).then(function () {
                 if (shouldPush) window.history.pushState({}, '', url.href);
                 runScripts(document.querySelector('#main'));
-                initPageFeatures();
+                initPageFeatures(true);
 
                 if (url.hash) {
                     var target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
@@ -326,6 +435,8 @@
     function initPhotoFeed() {
         var grid = document.querySelector('.photo-feed');
         if (!grid || typeof imagesLoaded === 'undefined' || typeof Masonry === 'undefined') return;
+        if (grid.getAttribute('data-masonry-ready') === 'true') return;
+        grid.setAttribute('data-masonry-ready', 'true');
 
         imagesLoaded(grid, function () {
             var masonry = new Masonry(grid, {
@@ -336,11 +447,22 @@
                 visibleStyle: {transform: 'translateY(0)', opacity: 1},
             });
 
+            function relayout() {
+                if (!document.documentElement.contains(grid)) return;
+                masonry.reloadItems();
+                masonry.layout();
+                grid.classList.add('initialized');
+            }
+
             masonry.on('layoutComplete', function () {
                 grid.classList.add('initialized');
             });
 
-            masonry.layout();
+            relayout();
+            window.requestAnimationFrame(function () {
+                window.requestAnimationFrame(relayout);
+            });
+            window.setTimeout(relayout, 400);
             initPhotoInfiniteScroll(grid, masonry);
         });
 
