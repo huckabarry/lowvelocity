@@ -204,9 +204,13 @@ h6,
     font-family: var(--font-heading);
 }
 
-.cactus-header {
-    font-family: var(--font-heading);
+.cactus-brand {
     font-style: normal;
+}
+
+.cactus-nav {
+    font-family: var(--font-body);
+    font-style: var(--body-font-style, normal);
 }
 
 h1,
