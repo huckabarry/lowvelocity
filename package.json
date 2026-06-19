@@ -82,6 +82,15 @@
                 "default": "Ghost typography",
                 "description": "Font used for articles and general site text"
             },
+            "body_font_style": {
+                "type": "select",
+                "options": [
+                    "Normal",
+                    "Italic"
+                ],
+                "default": "Normal",
+                "description": "Style used for articles and general site text"
+            },
             "bluesky_handle": {
                 "type": "text",
                 "default": "bryan.eurosky.social",
