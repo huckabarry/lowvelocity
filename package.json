@@ -70,6 +70,11 @@
                 "default": "Bold",
                 "description": "Weight of the site title and desktop navigation"
             },
+            "bluesky_handle": {
+                "type": "text",
+                "default": "bryan.eurosky.social",
+                "description": "Bluesky account shown in the homepage Notes feed"
+            },
             "light_mode_background_color": {
                 "type": "color",
                 "default": "#ffffff",

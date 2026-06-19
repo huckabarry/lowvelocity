@@ -11,6 +11,7 @@
         initThemeToggle();
         initMenuToggle();
         initSearchBackdrop();
+        initBlueskyNotes();
         initPhotoFeed();
     });
 
@@ -23,6 +24,73 @@
             root.setAttribute('data-theme', nextTheme);
             localStorage.setItem('cactus-theme', nextTheme);
         });
+    }
+
+    function initBlueskyNotes() {
+        var section = document.querySelector('[data-bluesky-feed]');
+        if (!section) return;
+
+        var list = section.querySelector('.note-list');
+        var handle = section.getAttribute('data-bluesky-handle');
+        var limit = parseInt(section.getAttribute('data-bluesky-limit'), 10) || 5;
+        if (!list || !handle) return;
+
+        var endpoint = new URL('https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed');
+        endpoint.searchParams.set('actor', handle);
+        endpoint.searchParams.set('filter', 'posts_no_replies');
+        endpoint.searchParams.set('limit', String(Math.max(limit * 4, 20)));
+
+        fetch(endpoint.toString())
+            .then(function (response) {
+                if (!response.ok) throw new Error('Bluesky feed request failed');
+                return response.json();
+            })
+            .then(function (data) {
+                var posts = (data.feed || []).filter(function (item) {
+                    return !item.reason && item.post && item.post.author && item.post.author.handle === handle;
+                }).slice(0, limit);
+
+                if (!posts.length) throw new Error('Bluesky feed is empty');
+
+                list.replaceChildren();
+                posts.forEach(function (item) {
+                    list.appendChild(createBlueskyNote(item.post));
+                });
+            })
+            .catch(function () {
+                var status = list.querySelector('.bluesky-note-status');
+                if (status) status.textContent = 'Notes are temporarily unavailable.';
+            });
+    }
+
+    function createBlueskyNote(post) {
+        var item = document.createElement('li');
+        var article = document.createElement('article');
+        var text = document.createElement('p');
+        var link = document.createElement('a');
+        var time = document.createElement('time');
+        var record = post.record || {};
+        var postKey = post.uri.split('/').pop();
+        var postUrl = 'https://bsky.app/profile/' + encodeURIComponent(post.author.handle) + '/post/' + encodeURIComponent(postKey);
+        var createdAt = record.createdAt || post.indexedAt;
+
+        item.className = 'note-list-item bluesky-note';
+        text.className = 'bluesky-note-text';
+        link.href = postUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = record.text || 'View this post on Bluesky';
+        time.dateTime = createdAt;
+        time.textContent = new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+        }).format(new Date(createdAt));
+
+        text.appendChild(link);
+        article.appendChild(text);
+        article.appendChild(time);
+        item.appendChild(article);
+        return item;
     }
 
     function initMenuToggle() {

@@ -361,6 +361,21 @@ html[data-theme="light"] .theme-icon-light {
     margin: 0.75rem 0 0;
 }
 
+.bluesky-note-text {
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.bluesky-note-text a {
+    color: var(--color-global-text);
+    text-decoration-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+    text-underline-offset: 0.2em;
+}
+
+.bluesky-note-status {
+    color: var(--color-muted);
+}
+
 .cactus-article-header {
     margin-bottom: 3rem;
 }
@@ -476,6 +491,11 @@ html[data-theme="light"] .theme-icon-light {
 .cactus-comments,
 .related-posts {
     margin-top: 4rem;
+}
+
+.cactus-comments {
+    color: var(--color-global-text);
+    background: var(--color-global-bg);
 }
 
 .related-title {

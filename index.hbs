@@ -32,15 +32,11 @@
     {{pagination}}
 </section>
 
-{{#get "posts" filter="tag:[status,note,notes]" limit="5" include="tags" as |notes|}}
-    {{#if notes}}
-        <section class="cactus-section">
-            <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/tag/notes/">{{t "Notes"}}</a></h2>
-            <ul class="note-list" role="list">
-                {{#foreach notes}}
-                    {{> "note-preview"}}
-                {{/foreach}}
-            </ul>
-        </section>
-    {{/if}}
-{{/get}}
+<section class="cactus-section bluesky-notes" data-bluesky-feed data-bluesky-handle="{{@custom.bluesky_handle}}" data-bluesky-limit="5">
+    <h2 class="cactus-title cactus-title-link">
+        <a href="https://bsky.app/profile/{{@custom.bluesky_handle}}" target="_blank" rel="noopener noreferrer">{{t "Notes"}}</a>
+    </h2>
+    <ul class="note-list" role="list" aria-live="polite">
+        <li class="note-list-item bluesky-note-status">{{t "Loading notes…"}}</li>
+    </ul>
+</section>
