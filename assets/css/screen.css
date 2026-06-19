@@ -26,7 +26,7 @@
     --color-accent-2: #252525;
     --color-quote: #d45478;
     --color-rule: #666;
-    --space-shell: min(calc(100% - 2rem), 550px);
+    --space-shell: min(calc(100% - 2rem), 736px);
     --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
@@ -70,8 +70,8 @@ body {
     background: var(--color-global-bg);
     color: var(--color-global-text);
     font-family: var(--font-mono);
-    font-size: 1.0625rem;
-    line-height: 1.7;
+    font-size: 0.875rem;
+    line-height: 1.4286;
     letter-spacing: 0;
     transition: background 300ms ease-in-out, color 300ms ease-in-out;
 }
@@ -122,7 +122,7 @@ button {
     min-height: 100vh;
     flex-direction: column;
     margin-inline: auto;
-    padding: 4rem 0 1rem;
+    padding: 3.5rem 0 1rem;
 }
 
 .cactus-header {
@@ -131,7 +131,7 @@ button {
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 7rem;
+    margin-bottom: 6.125rem;
 }
 
 .cactus-brand-wrap {
@@ -145,7 +145,7 @@ button {
     align-items: center;
     max-width: 100%;
     color: var(--color-accent-2);
-    font-size: clamp(1.55rem, 5vw, 1.8rem);
+    font-size: 1.25rem;
     font-weight: 700;
     line-height: 1.2;
     text-decoration: none;
@@ -183,7 +183,7 @@ button {
 .cactus-footer-nav a {
     display: block;
     color: var(--color-accent);
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-weight: 700;
     text-decoration: none;
 }
@@ -249,16 +249,16 @@ html[data-theme="light"] .theme-icon-light {
 .cactus-title {
     margin: 0 0 3rem;
     color: var(--color-accent-2);
-    font-size: 1.75rem;
-    font-weight: 700;
-    line-height: 1.2;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3333;
     letter-spacing: 0;
 }
 
 .cactus-title-small,
 .cactus-title-link {
     margin-bottom: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1.25rem;
 }
 
 .cactus-title-link {
@@ -289,7 +289,8 @@ html[data-theme="light"] .theme-icon-light {
 
 .post-list-item time {
     color: var(--color-muted);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 600;
 }
 
 .post-list-item a {
@@ -568,7 +569,7 @@ html[data-theme="light"] .theme-icon-light {
 
 @media (min-width: 640px) {
     .cactus-shell {
-        padding-top: 4.25rem;
+        padding-top: 3.75rem;
     }
 
     .cactus-header {
@@ -578,7 +579,7 @@ html[data-theme="light"] .theme-icon-light {
 
     .cactus-brand {
         position: relative;
-        font-size: 1.7rem;
+        font-size: 1.5rem;
     }
 
     .cactus-logo {
@@ -614,7 +615,7 @@ html[data-theme="light"] .theme-icon-light {
     }
 
     .post-list-item {
-        grid-template-columns: 9rem 1fr;
+        grid-template-columns: 7.5rem 1fr;
         gap: 1rem;
     }
 
@@ -632,13 +633,13 @@ html[data-theme="light"] .theme-icon-light {
 
 @media (max-width: 639px) {
     body {
-        font-size: 1.0625rem;
-        line-height: 1.7;
+        font-size: 0.875rem;
+        line-height: 1.4286;
     }
 
     .cactus-shell {
-        padding-right: 1.25rem;
-        padding-left: 1.25rem;
+        padding-right: 0;
+        padding-left: 0;
     }
 
     .cactus-header {
