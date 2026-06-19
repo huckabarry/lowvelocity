@@ -65,7 +65,9 @@
                     "Regular",
                     "Medium",
                     "Semibold",
-                    "Bold"
+                    "Bold",
+                    "Extra Bold",
+                    "Black"
                 ],
                 "default": "Bold",
                 "description": "Weight of the site title and desktop navigation"

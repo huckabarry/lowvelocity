@@ -18,7 +18,7 @@
     <style>
         :root {
             --space-shell: min(calc(100% - 2rem), {{@custom.content_width}});
-            --header-font-weight: {{#match @custom.header_font_weight "Regular"}}400{{else match @custom.header_font_weight "Medium"}}500{{else match @custom.header_font_weight "Semibold"}}600{{else}}700{{/match}};
+            --header-font-weight: {{#match @custom.header_font_weight "Regular"}}400{{else match @custom.header_font_weight "Medium"}}500{{else match @custom.header_font_weight "Semibold"}}600{{else match @custom.header_font_weight "Extra Bold"}}800{{else match @custom.header_font_weight "Black"}}900{{else}}700{{/match}};
             --color-accent: {{@site.accent_color}};
             --color-link: {{@site.accent_color}};
             --color-quote: {{@site.accent_color}};
@@ -84,11 +84,11 @@
         </main>
 
         <footer class="cactus-footer">
-            <div>
+            <div class="cactus-copyright">
                 &copy; {{@site.title}} {{date format="YYYY"}}.
             </div>
             <nav class="cactus-footer-nav" aria-label="{{t "More on this site"}}">
-                {{navigation}}
+                {{navigation type="secondary"}}
             </nav>
         </footer>
     </div>

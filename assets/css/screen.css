@@ -634,6 +634,11 @@ html[data-theme="light"] .theme-icon-light {
     gap: 0.5rem;
 }
 
+.cactus-copyright {
+    font-size: 0.7rem;
+    font-weight: 400;
+}
+
 .cactus-footer-nav a {
     padding: 0.25rem 0.5rem;
 }
@@ -711,6 +716,28 @@ html[data-theme="light"] .theme-icon-light {
     body {
         font-size: 0.875rem;
         line-height: 1.4286;
+    }
+
+    .cactus-content .kg-gallery-container {
+        display: block;
+        column-count: 2;
+        column-gap: 0.5rem;
+    }
+
+    .cactus-content .kg-gallery-row {
+        display: contents;
+    }
+
+    .cactus-content .kg-gallery-image {
+        display: inline-block;
+        width: 100%;
+        margin: 0 0 0.5rem;
+        break-inside: avoid;
+    }
+
+    .cactus-content .kg-gallery-image img {
+        width: 100%;
+        height: auto;
     }
 
     body.is-menu-open {
