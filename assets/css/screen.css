@@ -26,7 +26,7 @@
     --color-accent-2: #252525;
     --color-quote: #d45478;
     --color-rule: #666;
-    --space-shell: min(calc(100% - 2rem), 650px);
+    --space-shell: min(calc(100% - 2rem), 550px);
     --font-mono: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     --font-body: var(--gh-font-body, var(--font-mono));
     --font-heading: var(--gh-font-heading, var(--font-mono));

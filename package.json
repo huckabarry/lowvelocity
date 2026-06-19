@@ -48,6 +48,17 @@
                 ],
                 "default": "Auto"
             },
+            "content_width": {
+                "type": "select",
+                "options": [
+                    "550px",
+                    "600px",
+                    "650px",
+                    "700px"
+                ],
+                "default": "550px",
+                "description": "Maximum desktop width; mobile remains fluid"
+            },
             "light_mode_background_color": {
                 "type": "color",
                 "default": "#ffffff",
