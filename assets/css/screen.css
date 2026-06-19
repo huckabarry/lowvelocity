@@ -282,6 +282,7 @@ h6 {
     font-weight: var(--header-font-weight, 700);
     line-height: 1.2;
     text-decoration: none;
+    -webkit-text-stroke: var(--header-font-stroke, 0) currentColor;
 }
 
 .cactus-brand:hover {
