@@ -2,6 +2,10 @@
 
 A highly functional [Ghost](https://github.com/TryGhost/Ghost) theme that adapts to the reader's preferences. Let them read, search, subscribe, navigate, and more with ease.
 
+## Deployment
+
+Every push to `main` is validated, built, uploaded to Low Velocity through the Ghost Admin API, and activated automatically by GitHub Actions. The workflow uses the encrypted repository secrets `GHOST_ADMIN_URL` and `GHOST_ADMIN_API_KEY`.
+
 **Demo: https://dawn.ghost.io**
 
 # Instructions

@@ -1,0 +1,84 @@
+name: Deploy Ghost theme
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-ghost-theme
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Validate, build, and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out theme
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate theme
+        run: npm test
+
+      - name: Build theme archive
+        run: npm run zip
+
+      - name: Upload and activate theme
+        env:
+          GHOST_ADMIN_URL: ${{ secrets.GHOST_ADMIN_URL }}
+          GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ghost_url="${GHOST_ADMIN_URL%/}"
+          archive="dist/$(node -p "require('./package.json').name").zip"
+
+          generate_token() {
+            node <<'NODE'
+          const crypto = require('node:crypto');
+          const [id, secret] = process.env.GHOST_ADMIN_API_KEY.split(':');
+          const now = Math.floor(Date.now() / 1000);
+          const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
+          const body = `${encode({alg: 'HS256', typ: 'JWT', kid: id})}.${encode({iat: now, exp: now + 300, aud: '/admin/'})}`;
+          const signature = crypto.createHmac('sha256', Buffer.from(secret, 'hex')).update(body).digest('base64url');
+          process.stdout.write(`${body}.${signature}`);
+          NODE
+          }
+
+          upload_response=$(curl --fail-with-body --silent --show-error \
+            --request POST \
+            --form "file=@${archive};type=application/zip" \
+            --header "Authorization: Ghost $(generate_token)" \
+            --header "Accept-Version: v6.0" \
+            "${ghost_url}/ghost/api/admin/themes/upload")
+
+          theme_name=$(jq --raw-output '.themes[0].name // empty' <<<"${upload_response}")
+          if [[ -z "${theme_name}" ]]; then
+            echo "Ghost uploaded the archive but did not return a theme name."
+            exit 1
+          fi
+
+          encoded_name=$(jq --null-input --raw-output --arg value "${theme_name}" '$value | @uri')
+          curl --fail-with-body --silent --show-error \
+            --request PUT \
+            --header "Authorization: Ghost $(generate_token)" \
+            --header "Accept-Version: v6.0" \
+            "${ghost_url}/ghost/api/admin/themes/${encoded_name}/activate" \
+            >/dev/null
+
+          echo "Deployed and activated ${theme_name}."
