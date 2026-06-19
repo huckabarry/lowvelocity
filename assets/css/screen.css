@@ -737,6 +737,7 @@ html[data-theme="light"] .theme-icon-light {
 
 .post-masonry-gallery .kg-gallery-image {
     padding: 5px;
+    margin: 0;
     box-sizing: border-box;
     flex: none !important;
 }
