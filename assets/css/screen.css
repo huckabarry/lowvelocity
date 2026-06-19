@@ -394,7 +394,7 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .status-section {
-    margin-top: 2.75rem;
+    margin-top: 4rem;
 }
 
 .status-section-head {
@@ -706,6 +706,47 @@ html[data-theme="light"] .theme-icon-light {
     border-top: 1px dashed var(--color-rule);
 }
 
+.post-masonry-gallery {
+    width: calc(100% + 10px);
+    margin-right: -5px;
+    margin-left: -5px;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 180ms ease;
+}
+
+.post-masonry-gallery.initialized {
+    visibility: visible;
+    opacity: 1;
+}
+
+.post-masonry-gallery .post-masonry-sizer,
+.post-masonry-gallery .kg-gallery-image {
+    width: 33.333%;
+}
+
+.post-masonry-gallery.post-masonry-count-1 .post-masonry-sizer,
+.post-masonry-gallery.post-masonry-count-1 .kg-gallery-image {
+    width: 100%;
+}
+
+.post-masonry-gallery.post-masonry-count-2 .post-masonry-sizer,
+.post-masonry-gallery.post-masonry-count-2 .kg-gallery-image {
+    width: 50%;
+}
+
+.post-masonry-gallery .kg-gallery-image {
+    padding: 5px;
+    box-sizing: border-box;
+    flex: none !important;
+}
+
+.post-masonry-gallery .kg-gallery-image img {
+    display: block;
+    width: 100%;
+    height: auto !important;
+}
+
 .post-tags {
     display: flex;
     flex-wrap: wrap;
@@ -967,6 +1008,26 @@ html[data-theme="light"] .theme-icon-light {
 
     .status-avatar {
         display: none;
+    }
+
+    .post-masonry-gallery {
+        width: calc(100% + 8px);
+        margin-right: -4px;
+        margin-left: -4px;
+    }
+
+    .post-masonry-gallery .post-masonry-sizer,
+    .post-masonry-gallery .kg-gallery-image {
+        width: 50%;
+    }
+
+    .post-masonry-gallery.post-masonry-count-1 .post-masonry-sizer,
+    .post-masonry-gallery.post-masonry-count-1 .kg-gallery-image {
+        width: 100%;
+    }
+
+    .post-masonry-gallery .kg-gallery-image {
+        padding: 4px;
     }
 
     .cactus-brand-wrap {
