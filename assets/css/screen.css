@@ -187,7 +187,7 @@ h6,
     max-width: 100%;
     color: var(--color-accent-2);
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: var(--header-font-weight, 700);
     line-height: 1.2;
     text-decoration: none;
 }
@@ -226,7 +226,7 @@ h6,
     display: block;
     color: var(--color-accent);
     font-size: 0.875rem;
-    font-weight: 700;
+    font-weight: var(--header-font-weight, 700);
     text-decoration: none;
 }
 
@@ -684,26 +684,123 @@ html[data-theme="light"] .theme-icon-light {
         line-height: 1.4286;
     }
 
+    body.is-menu-open {
+        overflow: hidden;
+    }
+
     .cactus-shell {
-        padding-right: 0;
-        padding-left: 0;
+        width: 100%;
+        padding: 0 1.25rem 1rem;
     }
 
     .cactus-header {
+        height: 4rem;
         align-items: center;
+        margin-bottom: 3rem;
     }
 
     .cactus-brand-wrap {
+        min-width: 0;
+    }
+
+    .cactus-brand {
+        height: 4rem;
+        font-size: 1.375rem;
+    }
+
+    .cactus-logo {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .cactus-actions {
+        height: 4rem;
+        gap: 0.625rem;
+    }
+
+    .cactus-icon-button {
+        width: 1.875rem;
+        height: 1.875rem;
+    }
+
+    .cactus-menu-toggle {
         position: relative;
+        flex: 0 0 1.875rem;
+    }
+
+    .cactus-menu-toggle::before,
+    .cactus-menu-toggle::after {
+        position: absolute;
+        left: 0.1875rem;
+        width: 1.5rem;
+        height: 1px;
+        content: "";
+        background: currentColor;
+        transition: transform 200ms ease, top 200ms ease, bottom 200ms ease;
+    }
+
+    .cactus-menu-toggle::before {
+        top: 0.6875rem;
+    }
+
+    .cactus-menu-toggle::after {
+        bottom: 0.6875rem;
+    }
+
+    .menu-open.cactus-header {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        width: 100%;
+        height: 100dvh;
+        align-items: flex-start;
+        margin: 0;
+        padding: 0 1.25rem;
+        background: var(--color-global-bg);
+    }
+
+    .menu-open .cactus-brand-wrap,
+    .menu-open .cactus-actions {
+        position: relative;
+        z-index: 2;
+    }
+
+    .menu-open .cactus-menu-toggle::before {
+        top: 0.90625rem;
+        transform: rotate(45deg);
+    }
+
+    .menu-open .cactus-menu-toggle::after {
+        bottom: 0.90625rem;
+        transform: rotate(-45deg);
     }
 
     .cactus-nav {
-        position: absolute;
-        top: 3rem;
-        left: -1.25rem;
-        right: -7.75rem;
-        z-index: 40;
-        padding: 0.75rem 1.25rem;
-        background: var(--color-global-bg);
+        position: fixed;
+        top: 50%;
+        right: 1.25rem;
+        left: 1.25rem;
+        z-index: 1;
+        align-items: center;
+        margin: 0;
+        transform: translateY(-50%);
+    }
+
+    .cactus-nav ul {
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .cactus-nav a {
+        padding: 0;
+        color: var(--color-global-text);
+        font-family: var(--font-heading);
+        font-size: 1.625rem;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+    .cactus-nav .nav-current a {
+        color: var(--color-accent);
     }
 }

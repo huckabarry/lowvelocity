@@ -18,6 +18,7 @@
     <style>
         :root {
             --space-shell: min(calc(100% - 2rem), {{@custom.content_width}});
+            --header-font-weight: {{#match @custom.header_font_weight "Regular"}}400{{else match @custom.header_font_weight "Medium"}}500{{else match @custom.header_font_weight "Semibold"}}600{{else}}700{{/match}};
             --color-accent: {{@site.accent_color}};
             --color-link: {{@site.accent_color}};
             --color-quote: {{@site.accent_color}};
@@ -74,9 +75,7 @@
                     <span class="theme-icon theme-icon-dark">{{> "icons/moon"}}</span>
                     <span class="theme-icon theme-icon-light">{{> "icons/sun"}}</span>
                 </button>
-                <button class="cactus-icon-button cactus-menu-toggle" type="button" aria-label="{{t "Open main menu"}}" aria-expanded="false" aria-controls="navigation-menu" data-menu-toggle>
-                    {{> "icons/menu"}}
-                </button>
+                <button class="cactus-icon-button cactus-menu-toggle" type="button" aria-label="{{t "Toggle menu"}}" aria-expanded="false" aria-controls="navigation-menu" data-menu-toggle></button>
             </div>
         </header>
 

@@ -32,6 +32,7 @@
 
         toggle.addEventListener('click', function () {
             var isOpen = header.classList.toggle('menu-open');
+            document.body.classList.toggle('is-menu-open', isOpen);
             toggle.setAttribute('aria-expanded', String(isOpen));
         });
     }

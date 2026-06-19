@@ -59,6 +59,17 @@
                 "default": "550px",
                 "description": "Maximum desktop width; mobile remains fluid"
             },
+            "header_font_weight": {
+                "type": "select",
+                "options": [
+                    "Regular",
+                    "Medium",
+                    "Semibold",
+                    "Bold"
+                ],
+                "default": "Bold",
+                "description": "Weight of the site title and desktop navigation"
+            },
             "light_mode_background_color": {
                 "type": "color",
                 "default": "#ffffff",
