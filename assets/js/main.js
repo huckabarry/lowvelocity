@@ -156,6 +156,7 @@
 
         var pageCache = new Map();
         var activeController = null;
+        window.history.scrollRestoration = 'manual';
 
         function canNavigate(anchor, event) {
             if (!anchor || anchor.target || anchor.hasAttribute('download') || anchor.hasAttribute('data-no-client-nav')) return false;
@@ -230,6 +231,18 @@
             if (toggle) toggle.setAttribute('aria-expanded', 'false');
         }
 
+        function updateNavigation(url) {
+            var currentPath = url.pathname.replace(/\/$/, '') || '/';
+            document.querySelectorAll('.cactus-nav a, .cactus-footer-nav a').forEach(function (link) {
+                var linkPath = new URL(link.href, window.location.href).pathname.replace(/\/$/, '') || '/';
+                if (linkPath === currentPath) {
+                    link.setAttribute('aria-current', 'page');
+                } else {
+                    link.removeAttribute('aria-current');
+                }
+            });
+        }
+
         function swapPage(html, url, shouldPush) {
             var nextDocument = new DOMParser().parseFromString(html, 'text/html');
             var nextMain = nextDocument.querySelector('#main');
@@ -241,8 +254,10 @@
                 document.body.className = nextDocument.body.className;
                 currentMain.replaceWith(document.importNode(nextMain, true));
                 closeMenu();
+                updateNavigation(url);
             }
 
+            if (!url.hash) window.scrollTo(0, 0);
             var transition = document.startViewTransition ? document.startViewTransition(swap) : null;
             if (!transition) swap();
 
@@ -256,6 +271,9 @@
                     if (target) target.scrollIntoView();
                 } else {
                     window.scrollTo(0, 0);
+                    window.requestAnimationFrame(function () {
+                        window.scrollTo(0, 0);
+                    });
                 }
 
                 document.dispatchEvent(new CustomEvent('cactus:page-load', {detail: {url: url.href}}));
