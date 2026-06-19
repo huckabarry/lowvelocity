@@ -529,10 +529,13 @@ html[data-theme="light"] .theme-icon-light {
 
 .photo-feed {
     position: relative;
-    opacity: 1;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 300ms ease;
 }
 
 .photo-feed.initialized {
+    visibility: visible;
     opacity: 1;
 }
 
@@ -542,16 +545,16 @@ html[data-theme="light"] .theme-icon-light {
 
 .grid-sizer,
 .grid-item {
-    width: calc(50% - 0.5rem);
+    width: 50%;
 }
 
 .grid-item {
-    margin-bottom: 1rem;
+    margin: 0;
 }
 
 .photo-card {
     position: relative;
-    margin: 0;
+    margin: 4px;
     overflow: hidden;
     background: #111;
 }
@@ -708,7 +711,11 @@ html[data-theme="light"] .theme-icon-light {
 
     .grid-sizer,
     .grid-item {
-        width: calc(33.333% - 0.75rem);
+        width: 33.333%;
+    }
+
+    .photo-card {
+        margin: 5px;
     }
 }
 
@@ -716,28 +723,6 @@ html[data-theme="light"] .theme-icon-light {
     body {
         font-size: 0.875rem;
         line-height: 1.4286;
-    }
-
-    .cactus-content .kg-gallery-container {
-        display: block;
-        column-count: 2;
-        column-gap: 0.5rem;
-    }
-
-    .cactus-content .kg-gallery-row {
-        display: contents;
-    }
-
-    .cactus-content .kg-gallery-image {
-        display: inline-block;
-        width: 100%;
-        margin: 0 0 0.5rem;
-        break-inside: avoid;
-    }
-
-    .cactus-content .kg-gallery-image img {
-        width: 100%;
-        height: auto;
     }
 
     body.is-menu-open {

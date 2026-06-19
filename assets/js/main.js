@@ -332,7 +332,6 @@
                 itemSelector: '.grid-item',
                 columnWidth: '.grid-sizer',
                 percentPosition: true,
-                gutter: 10,
                 hiddenStyle: {transform: 'translateY(50px)', opacity: 0},
                 visibleStyle: {transform: 'translateY(0)', opacity: 1},
             });
