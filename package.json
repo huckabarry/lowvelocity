@@ -51,6 +51,8 @@
             "content_width": {
                 "type": "select",
                 "options": [
+                    "400px",
+                    "450px",
                     "550px",
                     "600px",
                     "650px",
@@ -70,7 +72,18 @@
                     "Black"
                 ],
                 "default": "Bold",
-                "description": "Weight of the site title and desktop navigation"
+                "description": "Weight of the site title"
+            },
+            "navigation_font_weight": {
+                "type": "select",
+                "options": [
+                    "Regular",
+                    "Medium",
+                    "Semibold",
+                    "Bold"
+                ],
+                "default": "Medium",
+                "description": "Weight of header and footer navigation links"
             },
             "body_font": {
                 "type": "select",

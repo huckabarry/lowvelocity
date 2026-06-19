@@ -284,6 +284,10 @@ h6 {
     text-decoration: none;
 }
 
+.cactus-brand:hover {
+    color: var(--color-accent-2);
+}
+
 .cactus-logo {
     width: 2rem;
     height: 2rem;
@@ -318,7 +322,7 @@ h6 {
     display: block;
     color: var(--color-accent);
     font-size: 0.875rem;
-    font-weight: var(--header-font-weight, 700);
+    font-weight: var(--navigation-font-weight, 500);
     text-decoration: none;
 }
 
@@ -332,6 +336,10 @@ h6 {
 .cactus-nav .nav-current a {
     text-decoration: underline;
     text-underline-offset: 0.18em;
+}
+
+.cactus-nav a:hover {
+    color: var(--color-accent);
 }
 
 .menu-open .cactus-nav {
@@ -357,7 +365,7 @@ h6 {
 }
 
 .cactus-icon-button:hover {
-    color: var(--color-accent);
+    color: var(--color-global-text);
 }
 
 .theme-icon-light,
