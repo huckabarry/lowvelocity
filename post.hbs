@@ -1,17 +1,47 @@
 {{!< default}}
 
-<main class="site-main">
+{{#post}}
+<article class="{{post_class}} cactus-article">
+    <header class="cactus-article-header">
+        <h1 class="cactus-title cactus-article-title">{{title}}</h1>
 
-    {{#post}}
-        {{> "content" width="wide"}}
-    {{/post}}
+        <div class="cactus-meta">
+            <time datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
+            <span aria-hidden="true">/</span>
+            <span>{{reading_time}}</span>
+            {{#if primary_tag}}
+                <span aria-hidden="true">/</span>
+                {{#primary_tag}}<a href="{{url}}">{{name}}</a>{{/primary_tag}}
+            {{/if}}
+        </div>
 
-    {{#if @custom.show_related_posts}}
-        {{> "related-posts"}}
+        {{#if custom_excerpt}}
+            <p class="cactus-excerpt">{{custom_excerpt}}</p>
+        {{/if}}
+
+        {{> "feature-image"}}
+    </header>
+
+    <div class="cactus-content">
+        {{content}}
+    </div>
+
+    {{#if tags}}
+        <footer class="post-tags">
+            {{#foreach tags}}
+                <a href="{{url}}">#{{name}}</a>
+            {{/foreach}}
+        </footer>
     {{/if}}
+</article>
 
-    {{#post}}
-        {{> "comments"}}
-    {{/post}}
+{{#if comments}}
+    <section class="cactus-comments">
+        {{comments}}
+    </section>
+{{/if}}
 
-</main>
+{{#if @custom.show_related_posts}}
+    {{> "related-posts"}}
+{{/if}}
+{{/post}}

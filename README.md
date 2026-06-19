@@ -1,17 +1,13 @@
-# Dawn
+# Cactus Low Velocity
 
-A highly functional [Ghost](https://github.com/TryGhost/Ghost) theme that adapts to the reader's preferences. Let them read, search, subscribe, navigate, and more with ease.
+A Cactus-inspired [Ghost](https://github.com/TryGhost/Ghost) theme for Low Velocity, with configurable light and dark palettes, section archives, and a masonry photo gallery.
 
-## Deployment
-
-Every push to `main` is validated, built, uploaded to Low Velocity through the Ghost Admin API, and activated automatically by GitHub Actions. The workflow uses the encrypted repository secrets `GHOST_ADMIN_URL` and `GHOST_ADMIN_API_KEY`.
-
-**Demo: https://dawn.ghost.io**
+**Site: https://lowvelocity.org**
 
 # Instructions
 
-1. [Download this theme](https://github.com/TryGhost/Dawn/archive/main.zip)
-2. Log into Ghost, and go to the `Design` settings area to upload the zip file
+1. Build the theme zip locally.
+2. Log into Ghost, and go to the `Design` settings area to upload the zip file.
 
 # Development
 
@@ -27,7 +23,7 @@ yarn dev
 
 Now you can edit `/assets/css/` files, which will be compiled to `/assets/built/` automatically.
 
-The `zip` Gulp task packages the theme files into `dist/dawn.zip`, which you can then upload to your site.
+The `zip` Gulp task packages the theme files into `dist/cactus.zip`, which you can then upload to your site.
 
 ```bash
 yarn zip

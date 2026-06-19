@@ -1,25 +1,41 @@
-<article class="feed {{visibility}} {{post_class}}">
+{{#if feature_image}}
+<div class="grid-item">
+<figure class="{{post_class}}">
 
-    <div class="feed-calendar">
-        <div class="feed-calendar-day">
-            {{date published_at format="DD"}}
+    <a class="post-link" aria-label="Navigate to {{title}} page" href="{{url}}">
+        <img
+            class="post-image"
+            srcset="{{img_url feature_image size="s"}} 300w,
+                    {{img_url feature_image size="m"}} 750w,
+                    {{img_url feature_image size="l"}} 1140w,
+                    {{img_url feature_image size="xl"}} 1920w"
+            sizes="(min-width: 1020px) 300px, (min-width: 641px) calc((100vw - 50px) / 3), calc((100vw - 40px) / 2)"
+            src="{{img_url feature_image size="s"}}"
+            alt="{{title}}"
+        >
+    </a>
+
+    <a class="post-lightbox" aria-label="Expand image" href="{{img_url feature_image}}">
+        {{> "icons/maximize"}}
+    </a>
+
+    <figcaption class="post-caption">
+        <h2 class="post-caption-title">{{title}}</h2>
+        <div class="post-caption-meta">
+            {{#primary_tag}}
+                <span class="post-caption-meta-item post-caption-meta-tag">
+                    <a href="{{url}}">{{name}}</a>
+                </span>
+            {{/primary_tag}}
+            <span class="post-caption-meta-item post-caption-meta-date">
+                <time datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
+            </span>
+            <span class="post-caption-meta-item post-caption-meta-link">
+                <a href="{{url}}">{{t "View project"}}</a>
+            </span>
         </div>
-        <div class="feed-calendar-month">
-            {{date published_at format="MMM"}}
-        </div>
-    </div>
+    </figcaption>
 
-    <h2 class="feed-title">{{title}}</h2>
-
-    <div class="feed-right">
-        {{> "icons/star"}}
-        <div class="feed-length">
-            {{reading_time minute=(t "1 min read") minutes=(t "% min read")}}
-        </div>
-    </div>
-
-    {{> "icons/chevron-right"}}
-
-    <a class="u-permalink" href="{{url}}" aria-label="{{title}}"></a>
-
-</article>
+</figure>
+</div>
+{{/if}}

@@ -1,0 +1,16 @@
+{{!< default}}
+
+<section class="photos-intro">
+    <h1 class="cactus-title">Photography</h1>
+    <p>Images from the gallery.</p>
+</section>
+
+<section class="photo-section">
+    <div class="photo-feed">
+        <div class="grid-item grid-sizer"></div>
+        {{#foreach posts}}
+            {{> "photo-card"}}
+        {{/foreach}}
+    </div>
+    {{pagination}}
+</section>

@@ -87,7 +87,12 @@ function zipper(done) {
         src([
             '**',
             '!node_modules', '!node_modules/**',
+            '!**/node_modules', '!**/node_modules/**',
+            '!cactus-sveltekit-blog', '!cactus-sveltekit-blog/**',
+            '!.wrangler', '!.wrangler/**',
+            '!.corepack', '!.corepack/**',
             '!dist', '!dist/**',
+            '!package-lock.json',
             '!yarn-error.log'
         ]),
         zip(filename),

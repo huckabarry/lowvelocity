@@ -1,0 +1,18 @@
+{{!< default}}
+
+<section class="photos-intro">
+    <h1 class="cactus-title">{{tag.name}}</h1>
+    {{#if tag.description}}
+        <p>{{tag.description}}</p>
+    {{/if}}
+</section>
+
+<section class="photo-section">
+    <div class="photo-feed">
+        <div class="grid-item grid-sizer"></div>
+        {{#foreach posts}}
+            {{> "photo-card"}}
+        {{/foreach}}
+    </div>
+    {{pagination}}
+</section>

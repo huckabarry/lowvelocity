@@ -1,0 +1,11 @@
+<li class="note-list-item">
+    <article>
+        <h3><a href="{{url}}">{{title}}</a></h3>
+        <time datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD/MM/YY, HH:mm"}}</time>
+        {{#if custom_excerpt}}
+            <p>{{custom_excerpt}}</p>
+        {{else}}
+            <p>{{excerpt words="35"}}</p>
+        {{/if}}
+    </article>
+</li>

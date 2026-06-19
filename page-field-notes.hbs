@@ -1,0 +1,23 @@
+{{!< default}}
+
+{{#post}}
+<section class="photos-intro">
+    <h1 class="cactus-title">{{title}}</h1>
+    {{#if custom_excerpt}}
+        <p>{{custom_excerpt}}</p>
+    {{/if}}
+    <div class="cactus-content">
+        {{content}}
+    </div>
+</section>
+{{/post}}
+
+<section class="cactus-section archive-section">
+    <ul class="post-list" role="list">
+        {{#get "posts" filter="tag:field-notes" limit="100" include="tags" as |field_notes|}}
+            {{#foreach field_notes}}
+                {{> "post-preview"}}
+            {{/foreach}}
+        {{/get}}
+    </ul>
+</section>

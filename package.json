@@ -1,68 +1,44 @@
 {
-    "name": "dawn-lowvelocity",
-    "description": "Dawn adapted for Low Velocity section routing and gallery archives",
-    "version": "1.0.1",
+    "name": "cactus-lowvelocity",
+    "description": "A Cactus-inspired Ghost theme for Low Velocity",
+    "version": "1.0.0",
     "private": true,
     "engines": {
         "ghost": ">=5.0.0"
     },
     "license": "MIT",
     "author": {
-        "name": "Ghost Foundation",
-        "email": "hello@ghost.org",
-        "url": "https://ghost.org"
+        "name": "Bryan Robb",
+        "email": "bryan.robb@icloud.com",
+        "url": "https://bryanrobb.com"
     },
     "keywords": [
         "ghost",
         "theme",
         "ghost-theme"
     ],
-    "docs": "https://dawn.ghost.io/about/",
+    "docs": "https://lowvelocity.org/about/",
     "config": {
-        "posts_per_page": 5,
+        "posts_per_page": 10,
         "image_sizes": {
             "xs": {
                 "width": 150
             },
             "s": {
-                "width": 400
+                "width": 300
             },
             "m": {
                 "width": 750
             },
             "l": {
-                "width": 960
-            },
-            "xl": {
                 "width": 1140
             },
-            "xxl": {
+            "xl": {
                 "width": 1920
             }
         },
         "card_assets": true,
         "custom": {
-            "navigation_layout": {
-                "type": "select",
-                "options": ["Logo on the left", "Logo in the middle", "Stacked"],
-                "default": "Logo on the left"
-            },
-            "title_font": {
-                "type": "select",
-                "options": [
-                    "Modern sans-serif",
-                    "Elegant serif"
-                ],
-                "default": "Modern sans-serif"
-            },
-            "body_font": {
-                "type": "select",
-                "options": [
-                    "Modern sans-serif",
-                    "Elegant serif"
-                ],
-                "default": "Modern sans-serif"
-            },
             "color_scheme": {
                 "type": "select",
                 "options": [
@@ -75,44 +51,31 @@
             "light_mode_background_color": {
                 "type": "color",
                 "default": "#ffffff",
-                "description": "Page and navigation background in light mode"
+                "description": "Page background in light mode"
             },
             "light_mode_text_color": {
                 "type": "color",
-                "default": "#1a1a1a",
-                "description": "Body text, headings, and links in light mode"
+                "default": "#3d4044",
+                "description": "Body text and headings in light mode"
             },
             "dark_mode_background_color": {
                 "type": "color",
-                "default": "#282c35",
-                "description": "Page and navigation background in dark mode"
+                "default": "#171717",
+                "description": "Page background in dark mode"
             },
             "dark_mode_text_color": {
                 "type": "color",
                 "default": "#e2e2e2",
-                "description": "Body text, headings, and links in dark mode"
-            },
-            "white_logo_for_dark_mode": {
-                "type": "image"
-            },
-            "show_featured_posts": {
-                "type": "boolean",
-                "default": true,
-                "group": "homepage"
-            },
-            "featured_title": {
-                "type": "text",
-                "default": "Featured articles",
-                "group": "homepage"
-            },
-            "show_author": {
-                "type": "boolean",
-                "default": true,
-                "group": "post"
+                "description": "Body text and headings in dark mode"
             },
             "show_related_posts": {
                 "type": "boolean",
                 "default": true,
+                "group": "post"
+            },
+            "related_posts_title": {
+                "type": "text",
+                "default": "You might also like...",
                 "group": "post"
             }
         }

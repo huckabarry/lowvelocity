@@ -1,13 +1,46 @@
 {{!< default}}
 
-<main class="site-main">
+<section class="home-intro">
+    <h1 class="cactus-title">Hello World!</h1>
+    {{#if @site.description}}
+        <p>{{@site.description}}</p>
+    {{else}}
+        <p>Hi, I am a theme for Ghost, a simple Cactus-inspired home for essays, notes, photos, and quiet little dispatches.</p>
+    {{/if}}
+</section>
 
-    <div class="post-feed gh-feed gh-canvas">
+{{#get "posts" filter="featured:true+tag:-photos" limit="3" include="tags" as |featured_posts|}}
+    {{#if featured_posts}}
+        <section class="cactus-section">
+            <h2 class="cactus-title cactus-title-small">{{t "Pinned Posts"}}</h2>
+            <ul class="post-list" role="list">
+                {{#foreach featured_posts}}
+                    {{> "post-preview"}}
+                {{/foreach}}
+            </ul>
+        </section>
+    {{/if}}
+{{/get}}
+
+<section class="cactus-section">
+    <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/">{{t "Posts"}}</a></h2>
+    <ul class="post-list" role="list">
         {{#foreach posts}}
-            {{> "loop"}}
+            {{> "post-preview"}}
         {{/foreach}}
-    </div>
-
+    </ul>
     {{pagination}}
+</section>
 
-</main>
+{{#get "posts" filter="tag:notes" limit="5" include="tags" as |notes|}}
+    {{#if notes}}
+        <section class="cactus-section">
+            <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/tag/notes/">{{t "Notes"}}</a></h2>
+            <ul class="note-list" role="list">
+                {{#foreach notes}}
+                    {{> "note-preview"}}
+                {{/foreach}}
+            </ul>
+        </section>
+    {{/if}}
+{{/get}}

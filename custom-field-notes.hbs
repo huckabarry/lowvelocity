@@ -1,23 +1,17 @@
 {{!< default}}
 
-{{#contentFor "body_class"}} lowvelocity-section-template lowvelocity-field-notes-template{{/contentFor}}
+<header class="archive-header">
+    <h1 class="cactus-title">Field Notes</h1>
+    <p>Travel, photography, observations from walks, and notes from being out in the world.</p>
+</header>
 
-<main class="site-main lowvelocity-section">
-
-    <section class="lowvelocity-section-head gh-canvas">
-        <p class="lowvelocity-section-kicker">Field Notes</p>
-        <h1 class="lowvelocity-section-title">Field Notes</h1>
-        <p class="lowvelocity-section-description">Travel, photography, observations from walks, and notes from being out in the world.</p>
-    </section>
-
-    <div class="post-feed gh-feed gh-canvas">
+<section class="cactus-section archive-section">
+    <ul class="post-list" role="list">
         {{#foreach posts}}
-            {{> "loop"}}
+            {{> "post-preview"}}
         {{else}}
-            <p class="lowvelocity-empty">No field notes are published yet.</p>
+            <li>No field notes are published yet.</li>
         {{/foreach}}
-    </div>
-
+    </ul>
     {{pagination}}
-
-</main>
+</section>

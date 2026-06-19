@@ -1,9 +1,19 @@
 {{!< default}}
 
-<main class="site-main">
+{{#post}}
+<article class="{{post_class}} cactus-article">
+    {{#match @page.show_title_and_feature_image}}
+        <header class="cactus-article-header">
+            <h1 class="cactus-title cactus-article-title">{{title}}</h1>
+            {{#if custom_excerpt}}
+                <p class="cactus-excerpt">{{custom_excerpt}}</p>
+            {{/if}}
+            {{> "feature-image"}}
+        </header>
+    {{/match}}
 
-    {{#post}}
-        {{> "content" width="wide"}}
-    {{/post}}
-
-</main>
+    <div class="cactus-content">
+        {{content}}
+    </div>
+</article>
+{{/post}}
