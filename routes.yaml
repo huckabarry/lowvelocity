@@ -11,12 +11,6 @@ routes:
     filter: 'tag:field-notes'
     data: tag.field-notes
 
-  /notes/:
-    controller: channel
-    template: custom-notes
-    filter: 'tag:[status,note,notes]'
-    data: tag.status
-
   /gallery/:
     controller: channel
     template: custom-gallery
@@ -24,10 +18,16 @@ routes:
     data: tag.gallery
 
 collections:
+  /notes/:
+    permalink: /notes/{slug}/
+    template: custom-notes
+    filter: 'tag:[status,note,notes,afterword]'
+    data: tag.status
+
   /:
     permalink: /{slug}/
     template: index
-    filter: 'tag:-urbanism+tag:-housing+tag:-transportation+tag:-public-finance+tag:-field-notes+tag:-status+tag:-note+tag:-notes+tag:-gallery+tag:-photography'
+    filter: 'tag:-[status,note,notes,afterword]'
 
 taxonomies:
   tag: /tag/{slug}/
