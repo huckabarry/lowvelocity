@@ -264,7 +264,7 @@ h6 {
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 6.125rem;
+    margin-bottom: 3rem;
 }
 
 .cactus-brand-wrap {
@@ -389,10 +389,6 @@ html[data-theme="light"] .theme-icon-light {
     margin: 0;
 }
 
-.home-template .cactus-header {
-    margin-bottom: 5.25rem;
-}
-
 .status-section {
     margin-top: 4rem;
 }
@@ -515,7 +511,7 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .cactus-title {
-    margin: 0 0 3rem;
+    margin: 0 0 2rem;
     color: var(--color-accent-2);
     font-size: 1.5rem;
     font-weight: 600;
@@ -538,7 +534,7 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .cactus-section {
-    margin-top: 4rem;
+    margin-top: 3rem;
 }
 
 .post-list,
@@ -603,11 +599,11 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .cactus-article-header {
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 .cactus-article-title {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     font-size: clamp(2.25rem, 8vw, 3.4rem);
 }
 
@@ -624,7 +620,7 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .cactus-excerpt {
-    margin: 1.5rem 0 0;
+    margin: 0.75rem 0 0;
     color: var(--color-muted);
 }
 
@@ -920,7 +916,7 @@ html[data-theme="light"] .theme-icon-light {
     }
 
     .cactus-header {
-        margin-bottom: 7.5rem;
+        margin-bottom: 3rem;
         padding-left: 4.5rem;
     }
 
@@ -1005,11 +1001,7 @@ html[data-theme="light"] .theme-icon-light {
     .cactus-header {
         height: 4rem;
         align-items: center;
-        margin-bottom: 3rem;
-    }
-
-    .home-template .cactus-header {
-        margin-bottom: 2rem;
+        margin-bottom: 1.75rem;
     }
 
     .status-update {
