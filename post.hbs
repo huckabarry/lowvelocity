@@ -3,7 +3,10 @@
 {{#post}}
 <article class="{{post_class}} cactus-article">
     <header class="cactus-article-header">
-        <h1 class="cactus-title cactus-article-title">{{title}}</h1>
+        {{#has tag="afterword"}}
+        {{else}}
+            <h1 class="cactus-title cactus-article-title">{{title}}</h1>
+        {{/has}}
 
         <div class="cactus-meta">
             <time datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
