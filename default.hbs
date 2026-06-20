@@ -15,6 +15,9 @@
         })();
     </script>
     <link rel="stylesheet" href="{{asset "built/screen.css"}}">
+    {{#is "home"}}
+        <link rel="site.standard.publication" href="at://did:plc:peshyp24p4yyoaz3zdsppp3e/site.standard.publication/3mgwfts634r2z">
+    {{/is}}
     <style>
         :root {
             --space-shell: min(calc(100% - 2rem), {{@custom.content_width}});
