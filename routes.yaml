@@ -1,4 +1,8 @@
 routes:
+  /.well-known/site.standard.publication:
+    template: standard-site-publication
+    content_type: text/plain
+
   /urbanism/:
     controller: channel
     template: custom-urbanism

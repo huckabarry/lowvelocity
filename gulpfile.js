@@ -86,7 +86,6 @@ function zipper(done) {
     pump([
         src([
             '**',
-            '.well-known/**',
             '!node_modules', '!node_modules/**',
             '!**/node_modules', '!**/node_modules/**',
             '!cactus-sveltekit-blog', '!cactus-sveltekit-blog/**',
