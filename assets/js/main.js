@@ -32,8 +32,14 @@
 
             var galleryCards = [card];
             var nextCard = card.nextElementSibling;
+            var hasCaption = !!card.querySelector(':scope > figcaption');
 
-            while (nextCard && nextCard.matches('.kg-gallery-card:not([data-ghost-gallery-ready])')) {
+            while (
+                !hasCaption &&
+                nextCard &&
+                nextCard.matches('.kg-gallery-card:not([data-ghost-gallery-ready])') &&
+                !nextCard.querySelector(':scope > figcaption')
+            ) {
                 galleryCards.push(nextCard);
                 nextCard = nextCard.nextElementSibling;
             }
@@ -42,11 +48,9 @@
             if (!container) return;
 
             var images = [];
-            var captions = [];
 
             galleryCards.forEach(function (galleryCard) {
                 images = images.concat(Array.prototype.slice.call(galleryCard.querySelectorAll('.kg-gallery-image')));
-                captions = captions.concat(Array.prototype.slice.call(galleryCard.querySelectorAll(':scope > figcaption')));
                 galleryCard.setAttribute('data-ghost-gallery-ready', 'true');
             });
 
@@ -61,10 +65,6 @@
 
             images.forEach(function (image) {
                 container.appendChild(image);
-            });
-
-            captions.forEach(function (caption) {
-                card.appendChild(caption);
             });
 
             galleryCards.slice(1).forEach(function (galleryCard) {
