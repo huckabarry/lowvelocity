@@ -1,5 +1,5 @@
 routes:
-  /.well-known/site.standard.publication:
+  /.well-known/site.standard.publication/:
     template: standard-site-publication
     content_type: text/plain
 
