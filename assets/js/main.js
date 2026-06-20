@@ -32,14 +32,8 @@
 
             var galleryCards = [card];
             var nextCard = card.nextElementSibling;
-            var hasCaption = !!card.querySelector(':scope > figcaption');
 
-            while (
-                !hasCaption &&
-                nextCard &&
-                nextCard.matches('.kg-gallery-card:not([data-ghost-gallery-ready])') &&
-                !nextCard.querySelector(':scope > figcaption')
-            ) {
+            while (nextCard && nextCard.matches('.kg-gallery-card:not([data-ghost-gallery-ready])')) {
                 galleryCards.push(nextCard);
                 nextCard = nextCard.nextElementSibling;
             }
@@ -48,9 +42,20 @@
             if (!container) return;
 
             var images = [];
+            var galleryItems = [];
 
             galleryCards.forEach(function (galleryCard) {
-                images = images.concat(Array.prototype.slice.call(galleryCard.querySelectorAll('.kg-gallery-image')));
+                var galleryImages = Array.prototype.slice.call(galleryCard.querySelectorAll('.kg-gallery-image'));
+                var caption = galleryCard.querySelector(':scope > figcaption');
+
+                images = images.concat(galleryImages);
+                galleryItems = galleryItems.concat(galleryImages);
+
+                if (caption) {
+                    caption.classList.add('ghost-gallery-caption');
+                    galleryItems.push(caption);
+                }
+
                 galleryCard.setAttribute('data-ghost-gallery-ready', 'true');
             });
 
@@ -63,8 +68,8 @@
             sizer.className = 'kg-gallery-sizer';
             container.replaceChildren(sizer);
 
-            images.forEach(function (image) {
-                container.appendChild(image);
+            galleryItems.forEach(function (item) {
+                container.appendChild(item);
             });
 
             galleryCards.slice(1).forEach(function (galleryCard) {
@@ -72,7 +77,7 @@
             });
 
             var masonry = new Masonry(container, {
-                itemSelector: '.kg-gallery-image',
+                itemSelector: '.kg-gallery-image, .ghost-gallery-caption',
                 columnWidth: '.kg-gallery-sizer',
                 percentPosition: true,
                 transitionDuration: 0,
