@@ -16,6 +16,7 @@
     });
 
     function initPageFeatures(isClientNavigation) {
+        syncGhostCommentsTheme();
         initBlueskyNotes();
         initPhotoFeed();
         initGhostGalleryMasonry();
@@ -181,6 +182,15 @@
             var nextTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             root.setAttribute('data-theme', nextTheme);
             localStorage.setItem('cactus-theme', nextTheme);
+            syncGhostCommentsTheme();
+        });
+    }
+
+    function syncGhostCommentsTheme() {
+        var colorScheme = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+
+        document.querySelectorAll('script[data-ghost-comments]').forEach(function (script) {
+            script.setAttribute('data-color-scheme', colorScheme);
         });
     }
 
