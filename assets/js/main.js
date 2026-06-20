@@ -17,6 +17,7 @@
 
     function initPageFeatures(isClientNavigation) {
         syncGhostCommentsTheme();
+        initGhostCommentsFrame();
         initBlueskyNotes();
         initPhotoFeed();
         initGhostGalleryMasonry();
@@ -192,6 +193,51 @@
         document.querySelectorAll('script[data-ghost-comments]').forEach(function (script) {
             script.setAttribute('data-color-scheme', colorScheme);
         });
+    }
+
+    var ghostCommentsObserver = null;
+
+    function initGhostCommentsFrame() {
+        var commentsRoot = document.getElementById('ghost-comments-root');
+        if (ghostCommentsObserver) ghostCommentsObserver.disconnect();
+        if (!commentsRoot || typeof MutationObserver === 'undefined') return;
+
+        var preparedFrame = null;
+
+        function prepareCommentsFrame() {
+            var frame = commentsRoot.querySelector('iframe');
+            if (!frame || frame === preparedFrame) return;
+
+            preparedFrame = frame;
+            frame.style.setProperty('background', 'transparent', 'important');
+            frame.style.colorScheme = 'normal';
+
+            function makeFrameCanvasTransparent() {
+                try {
+                    var frameDocument = frame.contentDocument;
+                    if (!frameDocument) return;
+
+                    frameDocument.documentElement.style.setProperty('background', 'transparent', 'important');
+                    if (frameDocument.body) {
+                        frameDocument.body.style.setProperty('background', 'transparent', 'important');
+                    }
+                } catch (error) {
+                    // Ghost uses a same-origin srcdoc frame; leave its defaults alone
+                    // if a browser blocks frame access for any reason.
+                }
+            }
+
+            frame.addEventListener('load', makeFrameCanvasTransparent);
+            makeFrameCanvasTransparent();
+        }
+
+        ghostCommentsObserver = new MutationObserver(prepareCommentsFrame);
+        ghostCommentsObserver.observe(commentsRoot, {
+            childList: true,
+            subtree: true,
+        });
+
+        prepareCommentsFrame();
     }
 
     function initBlueskyNotes() {
