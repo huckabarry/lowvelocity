@@ -862,8 +862,9 @@ html[data-theme="light"] .theme-icon-light {
     opacity: 1;
 }
 
-.post-caption-title {
+.photo-card .post-caption-title {
     margin: 0;
+    color: #fff !important;
     font-size: 1rem;
     line-height: 1.25;
 }
@@ -876,8 +877,9 @@ html[data-theme="light"] .theme-icon-light {
     font-size: 0.78rem;
 }
 
-.post-caption a {
-    color: #fff;
+.photo-card .post-caption-meta,
+.photo-card .post-caption a {
+    color: #fff !important;
 }
 
 .cactus-footer {
