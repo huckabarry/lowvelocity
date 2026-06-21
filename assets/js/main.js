@@ -285,7 +285,7 @@
         var meta = document.createElement('div');
         var author = document.createElement('a');
         var text = document.createElement('p');
-        var link = document.createElement('a');
+        var permalink = document.createElement('a');
         var time = document.createElement('time');
         var record = post.record || {};
         var postKey = post.uri.split('/').pop();
@@ -306,70 +306,264 @@
         author.rel = 'noopener noreferrer';
         author.textContent = post.author.displayName || '@' + post.author.handle;
         text.className = 'status-text';
-        link.href = postUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        link.textContent = record.text || 'View this post on Bluesky';
+        permalink.className = 'status-time-link';
+        permalink.href = postUrl;
+        permalink.target = '_blank';
+        permalink.rel = 'noopener noreferrer';
         time.dateTime = createdAt;
         time.textContent = new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
             dateStyle: 'medium',
             timeStyle: 'short',
         }).format(new Date(createdAt));
 
+        permalink.appendChild(time);
         meta.appendChild(author);
-        meta.appendChild(time);
-        text.appendChild(link);
+        meta.appendChild(permalink);
+        appendRichText(text, record.text || '', record.facets || []);
+        if (!text.textContent) {
+            var emptyPostLink = document.createElement('a');
+            emptyPostLink.href = postUrl;
+            emptyPostLink.target = '_blank';
+            emptyPostLink.rel = 'noopener noreferrer';
+            emptyPostLink.textContent = 'View this post on Bluesky';
+            text.appendChild(emptyPostLink);
+        }
         body.appendChild(meta);
         body.appendChild(text);
         appendStatusEmbed(body, post.embed, postUrl);
+        appendStatusActions(body, post, postUrl);
         article.appendChild(avatar);
         article.appendChild(body);
         return article;
     }
 
-    function appendStatusEmbed(container, embed, postUrl) {
-        if (!embed) return;
+    function appendRichText(container, value, facets) {
+        var text = String(value || '');
+        if (!text) return;
 
-        var media = embed.media || embed;
-        var images = media.images || [];
-        if (images.length) {
-            var gallery = document.createElement('div');
-            gallery.className = 'status-media' + (images.length > 1 ? ' status-media-multiple' : '');
-            images.slice(0, 4).forEach(function (image) {
-                var anchor = document.createElement('a');
-                var img = document.createElement('img');
-                anchor.href = postUrl;
-                anchor.target = '_blank';
-                anchor.rel = 'noopener noreferrer';
-                img.src = image.thumb || image.fullsize;
-                img.alt = image.alt || '';
-                img.loading = 'lazy';
-                anchor.appendChild(img);
-                gallery.appendChild(anchor);
-            });
-            container.appendChild(gallery);
+        if (!facets.length || typeof TextEncoder === 'undefined' || typeof TextDecoder === 'undefined') {
+            container.textContent = text;
             return;
         }
 
-        var external = media.external;
-        if (external) {
-            var card = document.createElement('a');
-            card.className = 'status-external';
-            card.href = external.uri;
-            card.target = '_blank';
-            card.rel = 'noopener noreferrer';
-            if (external.title) {
-                var title = document.createElement('strong');
-                title.textContent = external.title;
-                card.appendChild(title);
+        var encoder = new TextEncoder();
+        var decoder = new TextDecoder();
+        var bytes = encoder.encode(text);
+        var cursor = 0;
+
+        facets.slice().sort(function (left, right) {
+            return left.index.byteStart - right.index.byteStart;
+        }).forEach(function (facet) {
+            var index = facet.index || {};
+            var start = Number(index.byteStart);
+            var end = Number(index.byteEnd);
+            if (!Number.isFinite(start) || !Number.isFinite(end) || start < cursor || end <= start) return;
+
+            container.appendChild(document.createTextNode(decoder.decode(bytes.slice(cursor, start))));
+
+            var label = decoder.decode(bytes.slice(start, end));
+            var feature = (facet.features || [])[0] || {};
+            var href = '';
+            if (feature.uri) href = feature.uri;
+            else if (feature.did) href = 'https://bsky.app/profile/' + encodeURIComponent(feature.did);
+            else if (feature.tag) href = 'https://bsky.app/hashtag/' + encodeURIComponent(feature.tag);
+
+            if (href) {
+                var link = document.createElement('a');
+                link.href = href;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = label;
+                container.appendChild(link);
+            } else {
+                container.appendChild(document.createTextNode(label));
             }
-            if (external.description) {
-                var description = document.createElement('span');
-                description.textContent = external.description;
-                card.appendChild(description);
-            }
-            container.appendChild(card);
+            cursor = end;
+        });
+
+        container.appendChild(document.createTextNode(decoder.decode(bytes.slice(cursor))));
+    }
+
+    function appendStatusEmbed(container, embed, postUrl) {
+        if (!embed) return;
+
+        var type = embed.$type || '';
+        if (type.indexOf('recordWithMedia') !== -1 || (embed.record && embed.media)) {
+            appendStatusEmbed(container, embed.media, postUrl);
+            appendQuotedPost(container, embed.record && embed.record.record ? embed.record.record : embed.record);
+            return;
         }
+
+        if (type.indexOf('record#view') !== -1 || (embed.record && embed.record.author)) {
+            appendQuotedPost(container, embed.record || embed);
+            return;
+        }
+
+        var images = embed.images || embed.items || [];
+        if (images.length) {
+            appendStatusImages(container, images, postUrl);
+            return;
+        }
+
+        if (embed.playlist || type.indexOf('video#view') !== -1) {
+            appendStatusVideo(container, embed, postUrl);
+            return;
+        }
+
+        var external = embed.external;
+        if (external) {
+            appendStatusExternal(container, external);
+        }
+    }
+
+    function appendStatusImages(container, images, postUrl) {
+        var gallery = document.createElement('div');
+        gallery.className = 'status-media' + (images.length > 1 ? ' status-media-multiple' : '');
+
+        images.forEach(function (image) {
+            var anchor = document.createElement('a');
+            var img = document.createElement('img');
+            anchor.href = image.fullsize || image.thumb || image.thumbnail || postUrl;
+            anchor.target = '_blank';
+            anchor.rel = 'noopener noreferrer';
+            img.src = image.thumb || image.thumbnail || image.fullsize;
+            img.alt = image.alt || '';
+            img.loading = 'lazy';
+            if (image.aspectRatio && image.aspectRatio.width && image.aspectRatio.height) {
+                img.style.aspectRatio = image.aspectRatio.width + ' / ' + image.aspectRatio.height;
+            }
+            anchor.appendChild(img);
+            gallery.appendChild(anchor);
+        });
+        container.appendChild(gallery);
+
+        if (images.length > 1) {
+            var note = document.createElement('p');
+            note.className = 'status-media-note';
+            note.textContent = images.length + ' images — swipe or scroll';
+            container.appendChild(note);
+        }
+    }
+
+    function appendStatusExternal(container, external) {
+        if (!external || !external.uri) return;
+
+        var card = document.createElement('a');
+        card.className = 'status-external';
+        card.href = external.uri;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+
+        if (external.thumb) {
+            var thumbnail = document.createElement('img');
+            thumbnail.className = 'status-external-thumb';
+            thumbnail.src = external.thumb;
+            thumbnail.alt = external.title || '';
+            thumbnail.loading = 'lazy';
+            card.appendChild(thumbnail);
+        }
+
+        var details = document.createElement('span');
+        details.className = 'status-external-details';
+        try {
+            var domain = document.createElement('span');
+            domain.className = 'status-external-domain';
+            domain.textContent = new URL(external.uri).hostname.replace(/^www\./, '');
+            details.appendChild(domain);
+        } catch (error) {
+            // The title still provides a useful card if the URI is unusual.
+        }
+        if (external.title) {
+            var title = document.createElement('strong');
+            title.textContent = external.title;
+            details.appendChild(title);
+        }
+        if (external.description) {
+            var description = document.createElement('span');
+            description.className = 'status-external-description';
+            description.textContent = external.description;
+            details.appendChild(description);
+        }
+        card.appendChild(details);
+        container.appendChild(card);
+    }
+
+    function appendStatusVideo(container, video, postUrl) {
+        var wrapper = document.createElement('div');
+        var player = document.createElement('video');
+        var link = document.createElement('a');
+        wrapper.className = 'status-video';
+        player.controls = true;
+        player.playsInline = true;
+        player.preload = 'metadata';
+        player.src = video.playlist || '';
+        if (video.thumbnail) player.poster = video.thumbnail;
+        if (video.aspectRatio && video.aspectRatio.width && video.aspectRatio.height) {
+            player.style.aspectRatio = video.aspectRatio.width + ' / ' + video.aspectRatio.height;
+        }
+        link.href = postUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.textContent = video.alt || 'Watch video on Bluesky';
+        wrapper.appendChild(player);
+        wrapper.appendChild(link);
+        container.appendChild(wrapper);
+    }
+
+    function appendQuotedPost(container, quoted) {
+        if (!quoted || !quoted.author || !quoted.value) return;
+
+        var quote = document.createElement('div');
+        var meta = document.createElement('a');
+        var avatar = document.createElement('img');
+        var byline = document.createElement('span');
+        var name = document.createElement('strong');
+        var handle = document.createElement('span');
+        var text = document.createElement('p');
+        var recordKey = String(quoted.uri || '').split('/').pop();
+        var quoteUrl = 'https://bsky.app/profile/' + encodeURIComponent(quoted.author.handle) + '/post/' + encodeURIComponent(recordKey);
+
+        quote.className = 'status-quote';
+        meta.className = 'status-quote-meta';
+        meta.href = quoteUrl;
+        meta.target = '_blank';
+        meta.rel = 'noopener noreferrer';
+        avatar.src = quoted.author.avatar || '';
+        avatar.alt = '';
+        avatar.loading = 'lazy';
+        name.textContent = quoted.author.displayName || quoted.author.handle;
+        handle.textContent = '@' + quoted.author.handle;
+        byline.appendChild(name);
+        byline.appendChild(handle);
+        if (quoted.author.avatar) meta.appendChild(avatar);
+        meta.appendChild(byline);
+        text.className = 'status-quote-text';
+        appendRichText(text, quoted.value.text || '', quoted.value.facets || []);
+        quote.appendChild(meta);
+        if (text.textContent) quote.appendChild(text);
+
+        (quoted.embeds || []).forEach(function (quotedEmbed) {
+            appendStatusEmbed(quote, quotedEmbed, quoteUrl);
+        });
+        container.appendChild(quote);
+    }
+
+    function appendStatusActions(container, post, postUrl) {
+        var actions = document.createElement('div');
+        actions.className = 'status-actions';
+        [
+            [post.replyCount || 0, 'replies'],
+            [post.repostCount || 0, 'reposts'],
+            [post.likeCount || 0, 'likes'],
+        ].forEach(function (item) {
+            var link = document.createElement('a');
+            link.href = postUrl;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = item[0] + ' ' + item[1];
+            actions.appendChild(link);
+        });
+        container.appendChild(actions);
     }
 
     function initStatusCarousel(section, count) {
