@@ -1,5 +1,6 @@
 @import "@tryghost/shared-theme-assets/assets/css/v1/screen.css";
 @import "misc/pswp.css";
+@import url("https://fonts.bunny.net/css?family=fira-sans:400,500,600,700,800,900");
 
 @font-face {
     font-family: "Roboto Mono";
@@ -206,6 +207,12 @@ h6,
 
 .cactus-brand {
     font-style: normal;
+}
+
+.cactus-brand span {
+    font-family: "Fira Sans", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
 }
 
 .cactus-nav {
