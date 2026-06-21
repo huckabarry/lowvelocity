@@ -60,12 +60,9 @@
     <a class="skip-link" href="#main">{{t "Skip to content"}}</a>
 
     <div class="cactus-shell">
-        <header class="cactus-header{{#unless @site.icon}} cactus-header-no-logo{{/unless}}" id="main-header">
+        <header class="cactus-header cactus-header-no-logo" id="main-header">
             <div class="cactus-brand-wrap">
                 <a class="cactus-brand" href="{{@site.url}}" aria-label="{{@site.title}}">
-                    {{#if @site.icon}}
-                        <img class="cactus-logo" src="{{@site.icon}}" alt="">
-                    {{/if}}
                     <span>{{@site.title}}</span>
                 </a>
 
