@@ -16,31 +16,19 @@ jobs:
       - name: Test Ghost Admin identities access
         env:
           GHOST_ADMIN_URL: ${{ secrets.GHOST_ADMIN_URL }}
-          GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
+          GHOST_STAFF_ACCESS_TOKEN: ${{ secrets.GHOST_STAFF_ACCESS_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
 
           ghost_url="${GHOST_ADMIN_URL%/}"
 
-          token="$(
-            node <<'NODE'
-          const crypto = require('node:crypto');
-          const [id, secret] = process.env.GHOST_ADMIN_API_KEY.split(':');
-          const now = Math.floor(Date.now() / 1000);
-          const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
-          const body = `${encode({alg: 'HS256', typ: 'JWT', kid: id})}.${encode({iat: now, exp: now + 300, aud: '/admin/'})}`;
-          const signature = crypto.createHmac('sha256', Buffer.from(secret, 'hex')).update(body).digest('base64url');
-          process.stdout.write(`${body}.${signature}`);
-          NODE
-          )"
-
           response_file="$(mktemp)"
           status="$(
             curl --silent --show-error \
               --output "${response_file}" \
               --write-out '%{http_code}' \
-              --header "Authorization: Ghost ${token}" \
+              --header "Authorization: Ghost ${GHOST_STAFF_ACCESS_TOKEN}" \
               --header "Accept-Version: v6.0" \
               --header "Accept: application/json" \
               "${ghost_url}/ghost/api/admin/identities/"
