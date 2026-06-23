@@ -23,13 +23,18 @@
 {{/get}}
 
 <section class="cactus-section">
-    <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/">{{t "Posts"}}</a></h2>
-    <ul class="post-list" role="list">
-        {{#foreach posts}}
-            {{> "post-preview"}}
-        {{/foreach}}
-    </ul>
-    {{pagination}}
+    <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/field-notes/">{{t "Field Notes"}}</a></h2>
+    {{#get "posts" filter="tag:field-notes" limit="10" include="tags" as |field_notes|}}
+        {{#if field_notes}}
+            <ul class="post-list" role="list">
+                {{#foreach field_notes}}
+                    {{> "post-preview"}}
+                {{/foreach}}
+            </ul>
+        {{else}}
+            <p>{{t "No field notes are available yet."}}</p>
+        {{/if}}
+    {{/get}}
 </section>
 
 <section class="cactus-section status-section" data-bluesky-feed data-bluesky-handle="bryan.eurosky.social" data-bluesky-endpoint="https://sync.lowvelocity.org/updates/bluesky?source=bryan" data-bluesky-limit="25">
