@@ -31,7 +31,7 @@ collections:
   /:
     permalink: /{slug}/
     template: index
-    filter: 'tag:-[status,note,notes,afterword]'
+    filter: 'tag:-[status,note,notes,afterword,listening,hash-crucialtracks]'
 
 taxonomies:
   tag: /tag/{slug}/

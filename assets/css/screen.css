@@ -269,7 +269,6 @@ h6,
     align-items: center;
     min-height: 3.75rem;
     padding: 0.45rem;
-    border: 1px solid color-mix(in srgb, var(--color-global-text) 15%, transparent);
     border-radius: 999px;
     overflow: hidden;
     text-decoration: none;

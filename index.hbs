@@ -24,17 +24,12 @@
 
 <section class="cactus-section">
     <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/">{{t "Posts"}}</a></h2>
-    {{#get "posts" filter="tag:-[status,note,notes,afterword,listening,hash-crucialtracks]" limit="10" include="tags" as |home_posts|}}
-        {{#if home_posts}}
-            <ul class="post-list" role="list">
-                {{#foreach home_posts}}
-                    {{> "post-preview"}}
-                {{/foreach}}
-            </ul>
-        {{else}}
-            <p>{{t "No posts are available yet."}}</p>
-        {{/if}}
-    {{/get}}
+    <ul class="post-list" role="list">
+        {{#foreach posts}}
+            {{> "post-preview"}}
+        {{/foreach}}
+    </ul>
+    {{pagination}}
 </section>
 
 {{#get "posts" filter="tag:hash-crucialtracks" limit="1" include="tags" order="published_at desc" as |latest_tracks|}}
@@ -66,7 +61,7 @@
 <section class="cactus-section status-section" data-bluesky-feed data-bluesky-handle="bryan.eurosky.social" data-bluesky-endpoint="https://sync.lowvelocity.org/updates/bluesky?source=bryan" data-bluesky-limit="25">
     <div class="status-section-head">
         <h2 class="cactus-title cactus-title-link">
-            <a href="https://bsky.app/profile/bryan.eurosky.social" target="_blank" rel="noopener noreferrer">{{t "Recent Updates"}}</a>
+            <a href="https://bsky.app/profile/bryan.eurosky.social" target="_blank" rel="noopener noreferrer">{{t "Updates"}}</a>
         </h2>
         <div class="status-controls" data-status-controls hidden>
             <button type="button" data-status-prev aria-label="{{t "Show previous update"}}">{{t "Back"}}</button>
