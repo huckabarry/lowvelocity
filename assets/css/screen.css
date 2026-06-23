@@ -262,6 +262,77 @@ h6,
     line-height: 1.35;
 }
 
+.listening-ticker {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+    min-height: 3.75rem;
+    padding: 0.45rem;
+    border: 1px solid color-mix(in srgb, var(--color-global-text) 15%, transparent);
+    border-radius: 999px;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.listening-ticker-art {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.listening-ticker-body {
+    min-width: 0;
+}
+
+.listening-ticker-label {
+    display: block;
+    margin-bottom: 0.1rem;
+    color: var(--color-muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.listening-ticker-window {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.listening-ticker-track {
+    display: inline-flex;
+    gap: 2rem;
+    min-width: 200%;
+    animation: listening-ticker 22s linear infinite;
+}
+
+.listening-ticker-track span {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.listening-ticker:hover .listening-ticker-track {
+    animation-play-state: paused;
+}
+
+@keyframes listening-ticker {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .listening-ticker-track {
+        animation: none;
+    }
+}
+
 .lv-listening-entry {
     display: grid;
     grid-template-columns: minmax(120px, 190px) 1fr;
