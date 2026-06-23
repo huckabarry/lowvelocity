@@ -215,6 +215,131 @@ h6,
     letter-spacing: -0.02em;
 }
 
+.listening-archive {
+    max-width: min(calc(100vw - 2rem), 980px);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.listening-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    gap: 1.25rem;
+}
+
+.listening-card-link {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+}
+
+.listening-card-art {
+    width: 100%;
+    aspect-ratio: 1;
+    margin-bottom: 0.7rem;
+    border-radius: 0.35rem;
+    object-fit: cover;
+    background: color-mix(in srgb, var(--color-global-text) 8%, transparent);
+}
+
+.listening-card-date {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--color-muted);
+    font-size: 0.72rem;
+}
+
+.listening-card h2 {
+    margin: 0 0 0.35rem;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.listening-card p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.78rem;
+    line-height: 1.35;
+}
+
+.lv-listening-entry {
+    display: grid;
+    grid-template-columns: minmax(120px, 190px) 1fr;
+    gap: 1.25rem;
+    align-items: start;
+    margin: 1.5rem 0;
+}
+
+.lv-listening-entry__art {
+    margin: 0;
+}
+
+.lv-listening-entry__art img {
+    width: 100%;
+    border-radius: 0.35rem;
+}
+
+.lv-listening-entry__eyebrow {
+    margin: 0 0 0.25rem;
+    color: var(--color-muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.lv-listening-entry h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.15;
+}
+
+.lv-listening-entry__artist {
+    margin: 0.25rem 0 1rem;
+    color: var(--color-muted);
+}
+
+.lv-listening-entry__note {
+    margin: 1rem 0;
+}
+
+.lv-listening-entry__preview audio {
+    width: 100%;
+    max-width: 22rem;
+}
+
+.lv-listening-entry__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.lv-listening-entry__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--color-global-text) 22%, transparent);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.78rem;
+}
+
+@media (max-width: 640px) {
+    .listening-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .lv-listening-entry {
+        grid-template-columns: 1fr;
+    }
+
+    .lv-listening-entry__art {
+        max-width: 16rem;
+    }
+}
+
 .cactus-nav {
     font-family: var(--font-body);
     font-style: var(--body-font-style, normal);

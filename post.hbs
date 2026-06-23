@@ -22,7 +22,10 @@
             <p class="cactus-excerpt">{{custom_excerpt}}</p>
         {{/if}}
 
-        {{> "feature-image"}}
+        {{#has tag="#crucialtracks"}}
+        {{else}}
+            {{> "feature-image"}}
+        {{/has}}
     </header>
 
     <div class="cactus-content">
