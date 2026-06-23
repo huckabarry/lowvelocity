@@ -53,8 +53,7 @@
                     player.src = audioUrl.toString();
                     player.setAttribute("aria-label", "Preview audio");
 
-                    link.insertAdjacentElement("beforebegin", player);
-                    link.hidden = true;
+                    link.replaceWith(player);
                 });
             })();
         </script>

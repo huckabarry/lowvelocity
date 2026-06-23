@@ -364,8 +364,9 @@ h6,
 .lv-listening-audio {
     display: block;
     width: 100%;
-    max-width: 22rem;
-    margin: 1rem 0;
+    max-width: none;
+    flex: 1 1 100%;
+    margin: 0.25rem 0 0.5rem;
 }
 
 @media (max-width: 640px) {
