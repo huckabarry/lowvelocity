@@ -23,16 +23,16 @@
 {{/get}}
 
 <section class="cactus-section">
-    <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/field-notes/">{{t "Field Notes"}}</a></h2>
-    {{#get "posts" filter="tag:field-notes" limit="10" include="tags" as |field_notes|}}
-        {{#if field_notes}}
+    <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/">{{t "Posts"}}</a></h2>
+    {{#get "posts" filter="tag:-[status,note,notes,afterword,listening,hash-crucialtracks]" limit="10" include="tags" as |home_posts|}}
+        {{#if home_posts}}
             <ul class="post-list" role="list">
-                {{#foreach field_notes}}
+                {{#foreach home_posts}}
                     {{> "post-preview"}}
                 {{/foreach}}
             </ul>
         {{else}}
-            <p>{{t "No field notes are available yet."}}</p>
+            <p>{{t "No posts are available yet."}}</p>
         {{/if}}
     {{/get}}
 </section>
