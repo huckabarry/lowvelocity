@@ -107,7 +107,7 @@
             },
             "bluesky_handle": {
                 "type": "text",
-                "default": "bryan.eurosky.social",
+                "default": "lowvelocity.org",
                 "description": "Bluesky account shown in the homepage Notes feed"
             },
             "light_mode_background_color": {

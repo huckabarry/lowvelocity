@@ -246,29 +246,23 @@
 
         var carousel = section.querySelector('[data-status-carousel]');
         var handle = section.getAttribute('data-bluesky-handle');
+        var endpoint = section.getAttribute('data-bluesky-endpoint') || 'https://sync.lowvelocity.org/updates/bluesky';
         var limit = parseInt(section.getAttribute('data-bluesky-limit'), 10) || 5;
-        if (!carousel || !handle) return;
+        if (!carousel) return;
 
-        var endpoint = new URL('https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed');
-        endpoint.searchParams.set('actor', handle);
-        endpoint.searchParams.set('filter', 'posts_no_replies');
-        endpoint.searchParams.set('limit', String(Math.max(limit * 4, 20)));
-
-        fetch(endpoint.toString())
+        fetch(endpoint)
             .then(function (response) {
-                if (!response.ok) throw new Error('Bluesky feed request failed');
+                if (!response.ok) throw new Error('Cached Bluesky feed request failed');
                 return response.json();
             })
             .then(function (data) {
-                var posts = (data.feed || []).filter(function (item) {
-                    return !item.reason && item.post && item.post.author && item.post.author.handle === handle;
-                }).slice(0, limit);
+                var posts = (data.items || []).slice(0, limit);
 
                 if (!posts.length) throw new Error('Bluesky feed is empty');
 
                 carousel.replaceChildren();
-                posts.forEach(function (item) {
-                    carousel.appendChild(createStatusUpdate(item.post));
+                posts.forEach(function (post) {
+                    carousel.appendChild(createStatusUpdate(post));
                 });
                 initStatusCarousel(section, posts.length);
             })
@@ -287,39 +281,41 @@
         var text = document.createElement('p');
         var permalink = document.createElement('a');
         var time = document.createElement('time');
-        var record = post.record || {};
-        var postKey = post.uri.split('/').pop();
-        var postUrl = 'https://bsky.app/profile/' + encodeURIComponent(post.author.handle) + '/post/' + encodeURIComponent(postKey);
-        var createdAt = record.createdAt || post.indexedAt;
+        var authorData = post.author || {};
+        var postKey = String(post.uri || '').split('/').pop();
+        var postUrl = post.url || 'https://bsky.app/profile/' + encodeURIComponent(authorData.handle || '') + '/post/' + encodeURIComponent(postKey);
+        var createdAt = post.createdAt;
 
         article.className = 'status-update';
         article.hidden = true;
         avatar.className = 'status-avatar';
-        avatar.src = post.author.avatar || '';
+        avatar.src = authorData.avatar || '';
         avatar.alt = '';
         avatar.loading = 'lazy';
         body.className = 'status-update-body';
         meta.className = 'status-meta';
         author.className = 'status-author';
-        author.href = 'https://bsky.app/profile/' + encodeURIComponent(post.author.handle);
+        author.href = 'https://bsky.app/profile/' + encodeURIComponent(authorData.handle || '');
         author.target = '_blank';
         author.rel = 'noopener noreferrer';
-        author.textContent = post.author.displayName || '@' + post.author.handle;
+        author.textContent = authorData.displayName || '@' + authorData.handle;
         text.className = 'status-text';
         permalink.className = 'status-time-link';
         permalink.href = postUrl;
         permalink.target = '_blank';
         permalink.rel = 'noopener noreferrer';
         time.dateTime = createdAt;
-        time.textContent = new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
-            dateStyle: 'medium',
-            timeStyle: 'short',
-        }).format(new Date(createdAt));
+        if (createdAt) {
+            time.textContent = new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+            }).format(new Date(createdAt));
+        }
 
         permalink.appendChild(time);
         meta.appendChild(author);
         meta.appendChild(permalink);
-        appendRichText(text, record.text || '', record.facets || []);
+        appendLinkedPlainText(text, post.text || '');
         if (!text.textContent) {
             var emptyPostLink = document.createElement('a');
             emptyPostLink.href = postUrl;
@@ -330,11 +326,58 @@
         }
         body.appendChild(meta);
         body.appendChild(text);
-        appendStatusEmbed(body, post.embed, postUrl);
+        appendStatusEmbeds(body, post.embeds || [], postUrl);
         appendStatusActions(body, post, postUrl);
         article.appendChild(avatar);
         article.appendChild(body);
         return article;
+    }
+
+    function appendLinkedPlainText(container, value) {
+        var text = String(value || '');
+        if (!text) return;
+
+        var pattern = /(https?:\/\/[^\s<]+|(?:^|[\s(])#([\p{L}\p{N}_-]+))/gu;
+        var cursor = 0;
+        var match;
+
+        while ((match = pattern.exec(text))) {
+            var matched = match[0];
+            var start = match.index;
+            var end = start + matched.length;
+            var leading = '';
+
+            if (matched.charAt(0) !== 'h' && matched.charAt(0) !== '#') {
+                leading = matched.charAt(0);
+                start += 1;
+                matched = matched.slice(1);
+            }
+
+            container.appendChild(document.createTextNode(text.slice(cursor, start)));
+            if (leading) container.appendChild(document.createTextNode(leading));
+
+            var link = document.createElement('a');
+            if (matched.charAt(0) === '#') {
+                link.href = 'https://bsky.app/hashtag/' + encodeURIComponent(matched.slice(1));
+            } else {
+                link.href = matched.replace(/[),.;:!?]+$/, '');
+                var trailing = matched.slice(link.href.length);
+                link.textContent = link.href;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                container.appendChild(link);
+                if (trailing) container.appendChild(document.createTextNode(trailing));
+                cursor = end;
+                continue;
+            }
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = matched;
+            container.appendChild(link);
+            cursor = end;
+        }
+
+        container.appendChild(document.createTextNode(text.slice(cursor)));
     }
 
     function appendRichText(container, value, facets) {
@@ -416,6 +459,25 @@
         }
     }
 
+    function appendStatusEmbeds(container, embeds, postUrl) {
+        var images = embeds.filter(function (embed) {
+            return embed && embed.type === 'image';
+        });
+        if (images.length) appendStatusImages(container, images, postUrl);
+
+        embeds.forEach(function (embed) {
+            if (!embed || !embed.type) return;
+            if (embed.type === 'image') return;
+            if (embed.type === 'external') {
+                appendStatusExternal(container, embed);
+                return;
+            }
+            if (embed.type === 'quote') {
+                appendNormalizedQuotedPost(container, embed);
+            }
+        });
+    }
+
     function appendStatusImages(container, images, postUrl) {
         var gallery = document.createElement('div');
         gallery.className = 'status-media' + (images.length > 1 ? ' status-media-multiple' : '');
@@ -423,13 +485,15 @@
         images.forEach(function (image) {
             var anchor = document.createElement('a');
             var img = document.createElement('img');
-            anchor.href = image.fullsize || image.thumb || image.thumbnail || postUrl;
+            anchor.href = image.url || image.fullsize || image.thumb || image.thumbnail || postUrl;
             anchor.target = '_blank';
             anchor.rel = 'noopener noreferrer';
-            img.src = image.thumb || image.thumbnail || image.fullsize;
+            img.src = image.thumb || image.thumbnail || image.url || image.fullsize;
             img.alt = image.alt || '';
             img.loading = 'lazy';
-            if (image.aspectRatio && image.aspectRatio.width && image.aspectRatio.height) {
+            if (image.width && image.height) {
+                img.style.aspectRatio = image.width + ' / ' + image.height;
+            } else if (image.aspectRatio && image.aspectRatio.width && image.aspectRatio.height) {
                 img.style.aspectRatio = image.aspectRatio.width + ' / ' + image.aspectRatio.height;
             }
             anchor.appendChild(img);
@@ -548,13 +612,50 @@
         container.appendChild(quote);
     }
 
+    function appendNormalizedQuotedPost(container, quoted) {
+        if (!quoted || !quoted.author) return;
+
+        var quote = document.createElement('div');
+        var meta = document.createElement('a');
+        var avatar = document.createElement('img');
+        var byline = document.createElement('span');
+        var name = document.createElement('strong');
+        var handle = document.createElement('span');
+        var text = document.createElement('p');
+        var recordKey = String(quoted.uri || '').split('/').pop();
+        var quoteUrl = 'https://bsky.app/profile/' + encodeURIComponent(quoted.author.handle || quoted.author.did || '') + '/post/' + encodeURIComponent(recordKey);
+
+        quote.className = 'status-quote';
+        meta.className = 'status-quote-meta';
+        meta.href = quoteUrl;
+        meta.target = '_blank';
+        meta.rel = 'noopener noreferrer';
+        avatar.src = quoted.author.avatar || '';
+        avatar.alt = '';
+        avatar.loading = 'lazy';
+        name.textContent = quoted.author.displayName || quoted.author.handle || 'Quoted post';
+        handle.textContent = quoted.author.handle ? '@' + quoted.author.handle : '';
+        byline.appendChild(name);
+        if (handle.textContent) byline.appendChild(handle);
+        if (quoted.author.avatar) meta.appendChild(avatar);
+        meta.appendChild(byline);
+        text.className = 'status-quote-text';
+        appendLinkedPlainText(text, quoted.text || '');
+        quote.appendChild(meta);
+        if (text.textContent) quote.appendChild(text);
+        appendStatusEmbeds(quote, quoted.embeds || [], quoteUrl);
+        container.appendChild(quote);
+    }
+
     function appendStatusActions(container, post, postUrl) {
         var actions = document.createElement('div');
+        var counts = post.counts || {};
         actions.className = 'status-actions';
         [
-            [post.replyCount || 0, 'replies'],
-            [post.repostCount || 0, 'reposts'],
-            [post.likeCount || 0, 'likes'],
+            [counts.replies || post.replyCount || 0, 'replies'],
+            [counts.reposts || post.repostCount || 0, 'reposts'],
+            [counts.likes || post.likeCount || 0, 'likes'],
+            [counts.quotes || post.quoteCount || 0, 'quotes'],
         ].forEach(function (item) {
             var link = document.createElement('a');
             link.href = postUrl;
