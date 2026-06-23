@@ -82,12 +82,18 @@ jobs:
             "${ghost_url}/ghost/api/admin/themes/${encoded_name}/activate" \
             >/dev/null
 
-          curl --fail-with-body --silent --show-error \
+          routes_status=$(curl --silent --show-error \
+            --output /tmp/routes-response.txt \
+            --write-out '%{http_code}' \
             --request POST \
             --form "routes=@routes.yaml;type=application/x-yaml" \
             --header "Authorization: Ghost $(generate_token)" \
             --header "Accept-Version: v6.0" \
-            "${ghost_url}/ghost/api/admin/settings/routes/yaml" \
-            >/dev/null
+            "${ghost_url}/ghost/api/admin/settings/routes/yaml")
 
-          echo "Deployed and activated ${theme_name}, then uploaded routes.yaml."
+          if [[ "${routes_status}" -ge 200 && "${routes_status}" -lt 300 ]]; then
+            echo "Deployed and activated ${theme_name}, then uploaded routes.yaml."
+          else
+            echo "::warning::Deployed and activated ${theme_name}, but Ghost rejected routes.yaml upload with HTTP ${routes_status}. Upload routes.yaml manually in Ghost Admin if route settings change."
+            cat /tmp/routes-response.txt || true
+          fi
