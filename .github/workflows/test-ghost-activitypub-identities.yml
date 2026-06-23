@@ -22,13 +22,32 @@ jobs:
           set -euo pipefail
 
           ghost_url="${GHOST_ADMIN_URL%/}"
+          token="$(
+            node <<'NODE'
+          const crypto = require('node:crypto');
+          const value = process.env.GHOST_STAFF_ACCESS_TOKEN;
+          if (!value) {
+            throw new Error('Missing GHOST_STAFF_ACCESS_TOKEN');
+          }
+          if (!value.includes(':')) {
+            process.stdout.write(value);
+            process.exit(0);
+          }
+          const [id, secret] = value.split(':');
+          const now = Math.floor(Date.now() / 1000);
+          const encode = (payload) => Buffer.from(JSON.stringify(payload)).toString('base64url');
+          const body = `${encode({alg: 'HS256', typ: 'JWT', kid: id})}.${encode({iat: now, exp: now + 300, aud: '/admin/'})}`;
+          const signature = crypto.createHmac('sha256', Buffer.from(secret, 'hex')).update(body).digest('base64url');
+          process.stdout.write(`${body}.${signature}`);
+          NODE
+          )"
 
           response_file="$(mktemp)"
           status="$(
             curl --silent --show-error \
               --output "${response_file}" \
               --write-out '%{http_code}' \
-              --header "Authorization: Ghost ${GHOST_STAFF_ACCESS_TOKEN}" \
+              --header "Authorization: Ghost ${token}" \
               --header "Accept-Version: v6.0" \
               --header "Accept: application/json" \
               "${ghost_url}/ghost/api/admin/identities/"
