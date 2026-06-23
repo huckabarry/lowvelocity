@@ -32,6 +32,34 @@
         {{content}}
     </div>
 
+    {{#has tag="#crucialtracks"}}
+        <script>
+            (() => {
+                const article = document.currentScript.closest(".tag-hash-crucialtracks");
+                const content = article?.querySelector(".cactus-content");
+                if (!content) return;
+
+                content.querySelectorAll('a[href*="audio-ssl.itunes.apple.com"]').forEach((link) => {
+                    if (link.dataset.audioEnhanced === "true") return;
+                    link.dataset.audioEnhanced = "true";
+
+                    const audioUrl = new URL(link.href);
+                    audioUrl.searchParams.delete("ref");
+
+                    const player = document.createElement("audio");
+                    player.className = "lv-listening-audio";
+                    player.controls = true;
+                    player.preload = "none";
+                    player.src = audioUrl.toString();
+                    player.setAttribute("aria-label", "Preview audio");
+
+                    link.insertAdjacentElement("beforebegin", player);
+                    link.hidden = true;
+                });
+            })();
+        </script>
+    {{/has}}
+
     {{#if tags}}
         <footer class="post-tags">
             {{#foreach tags}}

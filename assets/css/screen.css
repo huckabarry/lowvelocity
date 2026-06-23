@@ -325,6 +325,49 @@ h6,
     font-size: 0.78rem;
 }
 
+.tag-hash-crucialtracks .cactus-content .kg-image-card {
+    max-width: 18rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.tag-hash-crucialtracks .cactus-content .kg-image {
+    border-radius: 0.35rem;
+}
+
+.tag-hash-crucialtracks .cactus-content h2 + p {
+    margin-top: -0.5rem;
+    color: var(--color-muted);
+}
+
+.tag-hash-crucialtracks .cactus-content p:has(a[href*="music.apple.com"]),
+.tag-hash-crucialtracks .cactus-content p:has(a[href*="song.link"]),
+.tag-hash-crucialtracks .cactus-content p:has(a[href*="crucialtracks.org"]) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tag-hash-crucialtracks .cactus-content p:has(a[href*="music.apple.com"]) a,
+.tag-hash-crucialtracks .cactus-content p:has(a[href*="song.link"]) a,
+.tag-hash-crucialtracks .cactus-content p:has(a[href*="crucialtracks.org"]) a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid color-mix(in srgb, var(--color-global-text) 22%, transparent);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.78rem;
+}
+
+.lv-listening-audio {
+    display: block;
+    width: 100%;
+    max-width: 22rem;
+    margin: 1rem 0;
+}
+
 @media (max-width: 640px) {
     .listening-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
