@@ -1,0 +1,66 @@
+name: Test Ghost ActivityPub identities
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test identities endpoint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Test Ghost Admin identities access
+        env:
+          GHOST_ADMIN_URL: ${{ secrets.GHOST_ADMIN_URL }}
+          GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ghost_url="${GHOST_ADMIN_URL%/}"
+
+          token="$(
+            node <<'NODE'
+          const crypto = require('node:crypto');
+          const [id, secret] = process.env.GHOST_ADMIN_API_KEY.split(':');
+          const now = Math.floor(Date.now() / 1000);
+          const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
+          const body = `${encode({alg: 'HS256', typ: 'JWT', kid: id})}.${encode({iat: now, exp: now + 300, aud: '/admin/'})}`;
+          const signature = crypto.createHmac('sha256', Buffer.from(secret, 'hex')).update(body).digest('base64url');
+          process.stdout.write(`${body}.${signature}`);
+          NODE
+          )"
+
+          response_file="$(mktemp)"
+          status="$(
+            curl --silent --show-error \
+              --output "${response_file}" \
+              --write-out '%{http_code}' \
+              --header "Authorization: Ghost ${token}" \
+              --header "Accept-Version: v6.0" \
+              --header "Accept: application/json" \
+              "${ghost_url}/ghost/api/admin/identities/"
+          )"
+
+          echo "identities_status=${status}"
+
+          node - "${response_file}" <<'NODE'
+          const fs = require('node:fs');
+          const file = process.argv[2];
+          let json;
+          try {
+            json = JSON.parse(fs.readFileSync(file, 'utf8'));
+          } catch (error) {
+            console.log('identity_token_present=false');
+            process.exit(0);
+          }
+          const token = json?.identities?.[0]?.token;
+          console.log(`identity_token_present=${Boolean(token)}`);
+          if (json?.errors?.[0]?.message) {
+            console.log(`error_message=${json.errors[0].message}`);
+          }
+          NODE
