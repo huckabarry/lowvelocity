@@ -105,11 +105,6 @@
                 "default": "Normal",
                 "description": "Style used for articles and general site text"
             },
-            "bluesky_handle": {
-                "type": "text",
-                "default": "lowvelocity.org",
-                "description": "Bluesky account shown in the homepage Notes feed"
-            },
             "light_mode_background_color": {
                 "type": "color",
                 "default": "#ffffff",
