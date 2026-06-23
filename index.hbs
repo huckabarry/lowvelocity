@@ -26,13 +26,7 @@
     <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/">{{t "Posts"}}</a></h2>
     <ul class="post-list" role="list">
         {{#foreach posts}}
-            {{#has tag="#crucialtracks"}}
-            {{else}}
-                {{#has tag="listening"}}
-                {{else}}
-                    {{> "post-preview"}}
-                {{/has}}
-            {{/has}}
+            {{> "post-preview"}}
         {{/foreach}}
     </ul>
     {{pagination}}
