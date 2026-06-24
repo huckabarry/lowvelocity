@@ -1177,13 +1177,6 @@ html[data-theme="light"] .theme-icon-light {
 
 .photo-feed {
     position: relative;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 300ms ease;
-}
-
-.photo-feed.initialized {
-    visibility: visible;
     opacity: 1;
 }
 

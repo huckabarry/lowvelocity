@@ -924,34 +924,33 @@
         if (grid.getAttribute('data-masonry-ready') === 'true') return;
         grid.setAttribute('data-masonry-ready', 'true');
 
-        imagesLoaded(grid, function () {
-            var masonry = new Masonry(grid, {
-                itemSelector: '.grid-item',
-                columnWidth: '.grid-sizer',
-                percentPosition: true,
-                hiddenStyle: {transform: 'translateY(50px)', opacity: 0},
-                visibleStyle: {transform: 'translateY(0)', opacity: 1},
-            });
-
-            function relayout() {
-                if (!document.documentElement.contains(grid)) return;
-                masonry.reloadItems();
-                masonry.layout();
-                grid.classList.add('initialized');
-            }
-
-            masonry.on('layoutComplete', function () {
-                grid.classList.add('initialized');
-            });
-
-            relayout();
-            window.requestAnimationFrame(function () {
-                window.requestAnimationFrame(relayout);
-            });
-            window.setTimeout(relayout, 400);
-            initPhotoInfiniteScroll(grid, masonry);
+        var masonry = new Masonry(grid, {
+            itemSelector: '.grid-item',
+            columnWidth: '.grid-sizer',
+            percentPosition: true,
+            hiddenStyle: {transform: 'translateY(18px)', opacity: 0},
+            visibleStyle: {transform: 'translateY(0)', opacity: 1},
         });
 
+        function relayout() {
+            if (!document.documentElement.contains(grid)) return;
+            masonry.reloadItems();
+            masonry.layout();
+            grid.classList.add('initialized');
+        }
+
+        masonry.on('layoutComplete', function () {
+            grid.classList.add('initialized');
+        });
+
+        relayout();
+        window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(relayout);
+        });
+        window.setTimeout(relayout, 400);
+
+        imagesLoaded(grid).on('progress', relayout).on('always', relayout);
+        initPhotoInfiniteScroll(grid, masonry);
         initPhotoSwipe('.photo-feed', '.photo-card', '.post-lightbox', '.post-caption', false);
     }
 
