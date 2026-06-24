@@ -1151,8 +1151,19 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .cactus-comments {
+    overflow: hidden;
     color: var(--color-global-text);
-    background: var(--color-global-bg);
+    background: transparent;
+}
+
+.cactus-comments :is(.gh-comments, .gh-comments-container, .gh-root-frame) {
+    color: var(--color-global-text) !important;
+    background: transparent !important;
+}
+
+.cactus-comments iframe {
+    color-scheme: normal;
+    background: transparent !important;
 }
 
 .related-title {

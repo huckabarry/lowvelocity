@@ -70,7 +70,13 @@
 
 {{#if comments}}
     <section class="cactus-comments">
-        {{comments mode="auto"}}
+        {{#match @custom.color_scheme "Dark"}}
+            {{comments mode="dark"}}
+        {{else match @custom.color_scheme "Light"}}
+            {{comments mode="light"}}
+        {{else}}
+            {{comments mode="auto"}}
+        {{/match}}
     </section>
 {{/if}}
 

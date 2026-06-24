@@ -198,37 +198,42 @@
     var ghostCommentsObserver = null;
 
     function initGhostCommentsFrame() {
-        var commentsRoot = document.getElementById('ghost-comments-root');
+        var commentsRoot = document.getElementById('ghost-comments-root') || document.querySelector('.cactus-comments');
         if (ghostCommentsObserver) ghostCommentsObserver.disconnect();
         if (!commentsRoot || typeof MutationObserver === 'undefined') return;
 
-        var preparedFrame = null;
+        var preparedFrames = [];
 
         function prepareCommentsFrame() {
-            var frame = commentsRoot.querySelector('iframe');
-            if (!frame || frame === preparedFrame) return;
+            commentsRoot.querySelectorAll('iframe').forEach(function (frame) {
+                if (preparedFrames.indexOf(frame) !== -1) return;
 
-            preparedFrame = frame;
-            frame.style.setProperty('background', 'transparent', 'important');
-            frame.style.colorScheme = 'normal';
+                preparedFrames.push(frame);
+                frame.style.setProperty('background', 'transparent', 'important');
+                frame.style.colorScheme = 'normal';
 
-            function makeFrameCanvasTransparent() {
-                try {
-                    var frameDocument = frame.contentDocument;
-                    if (!frameDocument) return;
+                function makeFrameCanvasTransparent() {
+                    try {
+                        var frameDocument = frame.contentDocument;
+                        if (!frameDocument) return;
 
-                    frameDocument.documentElement.style.setProperty('background', 'transparent', 'important');
-                    if (frameDocument.body) {
-                        frameDocument.body.style.setProperty('background', 'transparent', 'important');
+                        frameDocument.documentElement.style.setProperty('background', 'transparent', 'important');
+                        frameDocument.documentElement.style.setProperty('color-scheme', 'normal', 'important');
+                        if (frameDocument.body) {
+                            frameDocument.body.style.setProperty('background', 'transparent', 'important');
+                            frameDocument.body.style.setProperty('color-scheme', 'normal', 'important');
+                        }
+                    } catch (error) {
+                        // Ghost comments can be rendered inside a protected iframe.
+                        // Keep outer-frame styles even when inner access is blocked.
                     }
-                } catch (error) {
-                    // Ghost uses a same-origin srcdoc frame; leave its defaults alone
-                    // if a browser blocks frame access for any reason.
                 }
-            }
 
-            frame.addEventListener('load', makeFrameCanvasTransparent);
-            makeFrameCanvasTransparent();
+                frame.addEventListener('load', makeFrameCanvasTransparent);
+                makeFrameCanvasTransparent();
+                window.setTimeout(makeFrameCanvasTransparent, 250);
+                window.setTimeout(makeFrameCanvasTransparent, 1000);
+            });
         }
 
         ghostCommentsObserver = new MutationObserver(prepareCommentsFrame);
