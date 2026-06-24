@@ -77,6 +77,14 @@
         {{else}}
             {{comments mode="auto"}}
         {{/match}}
+        <script>
+            (() => {
+                const script = document.currentScript.previousElementSibling;
+                if (!script || !script.matches("script[data-ghost-comments]")) return;
+                const theme = document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
+                script.setAttribute("data-color-scheme", theme);
+            })();
+        </script>
     </section>
 {{/if}}
 
