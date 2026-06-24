@@ -804,6 +804,7 @@
             var url = new URL(anchor.href, window.location.href);
             if (url.origin !== window.location.origin || !/^https?:$/.test(url.protocol)) return false;
             if (url.pathname.indexOf('/ghost/') === 0 || /\.(?:xml|json|rss|atom|zip)$/i.test(url.pathname)) return false;
+            if (url.hash && url.hash.indexOf('#/portal') === 0) return false;
             if (url.pathname === window.location.pathname && url.search === window.location.search && url.hash) return false;
 
             return true;
