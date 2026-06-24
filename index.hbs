@@ -24,22 +24,14 @@
 
 <section class="cactus-section">
     <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/">{{t "Posts"}}</a></h2>
-    {{#get "posts" filter="tag:-[status,note,notes,afterword,listening,hash-crucialtracks]" include="tags" limit=@config.posts_per_page page=pagination.page as |home_posts home_pagination|}}
+    {{#get "posts" filter="tag:-[status,note,notes,afterword,listening,hash-crucialtracks]" include="tags" limit=@config.posts_per_page as |home_posts home_pagination|}}
         <ul class="post-list" role="list">
             {{#foreach home_posts}}
                 {{> "post-preview"}}
             {{/foreach}}
         </ul>
-        {{#if home_pagination.pages}}
-            <nav class="pagination home-pagination" role="navigation" aria-label="{{t "Posts pagination"}}">
-                {{#if home_pagination.prev}}
-                    <a class="newer-posts" href="{{#if (match home_pagination.prev 1)}}{{@site.url}}/{{else}}{{@site.url}}/page/{{home_pagination.prev}}/{{/if}}">{{t "Newer Posts"}}</a>
-                {{/if}}
-                <span class="page-number">{{t "Page {page} of {totalPages}" page=home_pagination.page totalPages=home_pagination.pages}}</span>
-                {{#if home_pagination.next}}
-                    <a class="older-posts" href="{{@site.url}}/page/{{home_pagination.next}}/">{{t "Older Posts"}}</a>
-                {{/if}}
-            </nav>
+        {{#if home_pagination.next}}
+            <p class="cactus-more-link"><a href="{{@site.url}}/page/{{home_pagination.next}}/">{{t "View more"}}</a></p>
         {{/if}}
     {{/get}}
 </section>

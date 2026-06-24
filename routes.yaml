@@ -21,6 +21,11 @@ routes:
     filter: 'tag:[gallery,photography]'
     data: tag.gallery
 
+  /posts/:
+    controller: channel
+    template: custom-posts
+    filter: 'tag:-[status,note,notes,afterword,listening,hash-crucialtracks]'
+
 collections:
   /notes/:
     permalink: /notes/{slug}/

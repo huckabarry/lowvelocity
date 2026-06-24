@@ -1,0 +1,17 @@
+{{!< default}}
+
+<header class="archive-header">
+    <h1 class="cactus-title">Posts</h1>
+    <p>Essays, field notes, observations, and other dispatches.</p>
+</header>
+
+<section class="cactus-section archive-section">
+    <ul class="post-list" role="list">
+        {{#foreach posts}}
+            {{> "post-preview"}}
+        {{else}}
+            <li>No posts are published yet.</li>
+        {{/foreach}}
+    </ul>
+    {{pagination}}
+</section>

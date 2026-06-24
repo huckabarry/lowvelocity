@@ -963,6 +963,18 @@ html[data-theme="light"] .theme-icon-light {
     color: var(--color-global-text);
 }
 
+.cactus-more-link {
+    margin: 1.5rem 0 0;
+}
+
+.cactus-more-link a {
+    color: var(--color-accent);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
 .note-list {
     gap: 1.5rem;
 }
