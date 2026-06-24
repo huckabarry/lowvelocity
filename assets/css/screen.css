@@ -788,6 +788,24 @@ html[data-theme="light"] .theme-icon-light {
     object-fit: cover;
 }
 
+.status-external-animated {
+    border-style: solid;
+}
+
+.status-external-gif {
+    display: block;
+    width: 100%;
+    max-height: 28rem;
+    border-radius: 0.4rem;
+    object-fit: contain;
+    background: #111;
+}
+
+.status-external-gif-caption {
+    color: var(--color-muted);
+    font-size: 0.8rem;
+}
+
 .status-external-details {
     display: grid;
     gap: 0.2rem;

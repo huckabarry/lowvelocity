@@ -517,6 +517,11 @@
     function appendStatusExternal(container, external) {
         if (!external || !external.uri) return;
 
+        if (isAnimatedGifExternal(external)) {
+            appendStatusAnimatedExternal(container, external);
+            return;
+        }
+
         var card = document.createElement('a');
         card.className = 'status-external';
         card.href = external.uri;
@@ -554,6 +559,41 @@
             details.appendChild(description);
         }
         card.appendChild(details);
+        container.appendChild(card);
+    }
+
+    function isAnimatedGifExternal(external) {
+        if (!external || !external.uri) return false;
+
+        try {
+            return new URL(external.uri).pathname.toLowerCase().endsWith('.gif');
+        } catch (error) {
+            return /\.gif(?:[?#]|$)/i.test(external.uri);
+        }
+    }
+
+    function appendStatusAnimatedExternal(container, external) {
+        var card = document.createElement('a');
+        var image = document.createElement('img');
+        var caption = document.createElement('span');
+
+        card.className = 'status-external status-external-animated';
+        card.href = external.uri;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+
+        image.className = 'status-external-gif';
+        image.src = external.uri;
+        image.alt = external.description || external.title || '';
+        image.loading = 'lazy';
+        card.appendChild(image);
+
+        if (external.title) {
+            caption.className = 'status-external-gif-caption';
+            caption.textContent = external.title;
+            card.appendChild(caption);
+        }
+
         container.appendChild(card);
     }
 
