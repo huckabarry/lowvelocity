@@ -965,6 +965,7 @@ html[data-theme="light"] .theme-icon-light {
 
 .cactus-more-link {
     margin: 1.5rem 0 0;
+    text-align: right;
 }
 
 .cactus-more-link a {

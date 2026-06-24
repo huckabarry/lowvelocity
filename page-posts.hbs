@@ -1,0 +1,24 @@
+{{!< default}}
+
+{{#post}}
+<header class="archive-header">
+    <h1 class="cactus-title">{{title}}</h1>
+    {{#if custom_excerpt}}
+        <p>{{custom_excerpt}}</p>
+    {{else}}
+        <p>Essays, field notes, observations, and other dispatches.</p>
+    {{/if}}
+</header>
+
+<section class="cactus-section archive-section">
+    {{#get "posts" filter="tag:-[status,note,notes,afterword,listening,hash-crucialtracks]" include="tags" limit="100" order="published_at desc" as |archive_posts|}}
+        <ul class="post-list" role="list">
+            {{#foreach archive_posts}}
+                {{> "post-preview"}}
+            {{else}}
+                <li>No posts are published yet.</li>
+            {{/foreach}}
+        </ul>
+    {{/get}}
+</section>
+{{/post}}

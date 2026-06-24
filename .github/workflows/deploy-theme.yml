@@ -82,6 +82,60 @@ jobs:
             "${ghost_url}/ghost/api/admin/themes/${encoded_name}/activate" \
             >/dev/null
 
+          node <<'NODE'
+          const crypto = require('node:crypto');
+
+          const ghostUrl = process.env.GHOST_ADMIN_URL.replace(/\/$/, '');
+          const [id, secret] = process.env.GHOST_ADMIN_API_KEY.split(':');
+
+          function token() {
+            const now = Math.floor(Date.now() / 1000);
+            const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
+            const body = `${encode({alg: 'HS256', typ: 'JWT', kid: id})}.${encode({iat: now, exp: now + 300, aud: '/admin/'})}`;
+            const signature = crypto.createHmac('sha256', Buffer.from(secret, 'hex')).update(body).digest('base64url');
+            return `${body}.${signature}`;
+          }
+
+          async function ghost(path, options = {}) {
+            const response = await fetch(`${ghostUrl}${path}`, {
+              ...options,
+              headers: {
+                Authorization: `Ghost ${token()}`,
+                'Accept-Version': 'v6.0',
+                'Content-Type': 'application/json',
+                ...(options.headers || {})
+              }
+            });
+            if (response.status === 404) return null;
+            if (!response.ok) throw new Error(`${options.method || 'GET'} ${path} returned ${response.status}: ${await response.text()}`);
+            return response.json();
+          }
+
+          (async () => {
+            const existing = await ghost('/ghost/api/admin/pages/slug/posts/?formats=html');
+            if (existing?.pages?.length) {
+              console.log('Posts archive page already exists.');
+            } else {
+              await ghost('/ghost/api/admin/pages/?source=html', {
+                method: 'POST',
+                body: JSON.stringify({
+                  pages: [{
+                    title: 'Posts',
+                    slug: 'posts',
+                    html: '<p>Essays, field notes, observations, and other dispatches.</p>',
+                    custom_excerpt: 'Essays, field notes, observations, and other dispatches.',
+                    status: 'published'
+                  }]
+                })
+              });
+              console.log('Created posts archive page.');
+            }
+          })().catch((error) => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
           routes_status=$(curl --silent --show-error \
             --output /tmp/routes-response.txt \
             --write-out '%{http_code}' \
