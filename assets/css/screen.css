@@ -503,6 +503,12 @@ h6,
     margin: 1.25rem 0 0;
 }
 
+.lv-listening-post a[href*="audio-ssl.itunes.apple.com"],
+.lv-listening-post a[href*=".m4a"],
+.lv-listening-post a[href*=".mp3"] {
+    display: none;
+}
+
 .lv-listening-entry__links a {
     display: inline-flex;
     align-items: center;
