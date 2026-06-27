@@ -411,6 +411,7 @@
         card.className = 'now-status-entry';
         body.className = 'mixed-feed__summary now-status-entry__body';
         body.innerHTML = source.innerHTML.trim();
+        enhanceNowStatusBody(body);
 
         if (!body.textContent.trim() && !body.querySelector('img, video, iframe')) {
             var fallback = document.createElement('p');
@@ -419,7 +420,7 @@
         }
 
         actions.className = 'mixed-feed__actions now-status-entry__actions';
-        link.className = 'tag-pill mixed-feed__action';
+        link.className = 'now-status-read mixed-feed__action';
         link.href = url;
         link.textContent = 'Read';
         actions.appendChild(link);
@@ -434,6 +435,124 @@
             dateLabel: template.getAttribute('data-date-label') || formatNowFeedDate(date),
             node: card,
         };
+    }
+
+    function enhanceNowStatusBody(body) {
+        if (!body) return;
+
+        enhanceNowStatusLinkPreviews(body);
+        enhanceNowStatusImageCarousel(body);
+    }
+
+    function enhanceNowStatusLinkPreviews(body) {
+        Array.prototype.slice.call(body.querySelectorAll('p')).forEach(function (paragraph) {
+            var anchor = paragraph.firstElementChild;
+            var strong = anchor && anchor.querySelector('strong');
+            var textNodes = Array.prototype.slice.call(paragraph.childNodes).filter(function (node) {
+                return node.nodeType === 3 && node.textContent.trim();
+            });
+
+            if (!anchor || anchor.tagName !== 'A' || paragraph.children.length !== 1 || textNodes.length || !strong) return;
+            if (anchor.closest('.kg-card, .status-external, .now-status-carousel')) return;
+
+            var preview = document.createElement('a');
+            var details = document.createElement('span');
+            var title = document.createElement('strong');
+            var description = document.createElement('span');
+            var domain = document.createElement('span');
+            var descriptionClone = anchor.cloneNode(true);
+
+            descriptionClone.querySelectorAll('strong').forEach(function (node) {
+                node.remove();
+            });
+
+            preview.className = 'status-external now-status-link-preview';
+            preview.href = anchor.href;
+            preview.rel = anchor.rel || 'noopener';
+            if (anchor.target) preview.target = anchor.target;
+
+            details.className = 'status-external-details';
+            title.textContent = strong.textContent.trim();
+
+            try {
+                domain.className = 'status-external-domain';
+                domain.textContent = new URL(anchor.href, window.location.href).hostname.replace(/^www\./, '');
+                details.appendChild(domain);
+            } catch (error) {}
+
+            details.appendChild(title);
+
+            if (descriptionClone.textContent.trim()) {
+                description.className = 'status-external-description';
+                description.textContent = descriptionClone.textContent.trim();
+                details.appendChild(description);
+            }
+
+            preview.appendChild(details);
+            paragraph.replaceWith(preview);
+        });
+    }
+
+    function enhanceNowStatusImageCarousel(body) {
+        var figures = Array.prototype.slice.call(body.querySelectorAll('figure.kg-image-card')).filter(function (figure) {
+            return figure.querySelector('img') && !figure.closest('.kg-bookmark-card, .kg-embed-card, .kg-video-card, .kg-product-card, .kg-button-card, .now-status-carousel');
+        });
+
+        if (figures.length <= 4) return;
+
+        var carousel = document.createElement('div');
+        var viewport = document.createElement('div');
+        var controls = document.createElement('div');
+        var previous = document.createElement('button');
+        var next = document.createElement('button');
+        var count = document.createElement('span');
+
+        carousel.className = 'now-status-carousel';
+        viewport.className = 'now-status-carousel__viewport';
+        viewport.setAttribute('aria-label', figures.length + ' photos');
+        viewport.tabIndex = 0;
+
+        figures[0].before(carousel);
+        carousel.appendChild(viewport);
+
+        figures.forEach(function (figure, index) {
+            var slide = document.createElement('div');
+            slide.className = 'now-status-carousel__slide';
+            slide.setAttribute('aria-label', 'Photo ' + (index + 1) + ' of ' + figures.length);
+            slide.appendChild(figure);
+            viewport.appendChild(slide);
+        });
+
+        controls.className = 'now-status-carousel__controls';
+        previous.className = 'now-status-carousel__button';
+        previous.type = 'button';
+        previous.setAttribute('aria-label', 'Previous photo');
+        previous.textContent = '‹';
+        next.className = 'now-status-carousel__button';
+        next.type = 'button';
+        next.setAttribute('aria-label', 'Next photo');
+        next.textContent = '›';
+        count.className = 'now-status-carousel__count';
+        count.textContent = figures.length + ' photos';
+
+        controls.appendChild(previous);
+        controls.appendChild(count);
+        controls.appendChild(next);
+        carousel.appendChild(controls);
+
+        function scrollBySlide(direction) {
+            viewport.scrollBy({
+                left: direction * Math.max(1, viewport.clientWidth * 0.88),
+                behavior: 'smooth',
+            });
+        }
+
+        previous.addEventListener('click', function () {
+            scrollBySlide(-1);
+        });
+        next.addEventListener('click', function () {
+            scrollBySlide(1);
+        });
     }
 
     function createNowListeningItem(template) {
