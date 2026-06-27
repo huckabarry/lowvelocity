@@ -1,71 +1,18 @@
 {{!< default}}
 
-{{#get "posts" filter="featured:true+tag:-photos" limit="3" include="tags" as |featured_posts|}}
-    {{#if featured_posts}}
-        <section class="cactus-section">
-            <h2 class="cactus-title cactus-title-small">{{t "Pinned Posts"}}</h2>
-            <ul class="post-list" role="list">
-                {{#foreach featured_posts}}
-                    {{> "post-preview"}}
-                {{/foreach}}
-            </ul>
-        </section>
-    {{/if}}
-{{/get}}
+<header class="archive-header">
+    <h1 class="cactus-title">Field Notes</h1>
+    <p>Travel, photography, urbanism, and notes from being out in the world.</p>
+</header>
 
-<section class="cactus-section">
-    <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/">{{t "Posts"}}</a></h2>
-    {{#get "posts" filter="tag:-[status,note,notes,afterword,listening,hash-crucialtracks]" include="tags" limit=@config.posts_per_page as |home_posts home_pagination|}}
-        <ul class="post-list" role="list">
-            {{#foreach home_posts}}
+<section class="cactus-section archive-section">
+    <ul class="post-list" role="list">
+        {{#get "posts" filter="tag:[field-notes,urbanism,housing,transportation,public-finance]" limit="100" include="tags" order="published_at desc" as |field_notes|}}
+            {{#foreach field_notes}}
                 {{> "post-preview"}}
+            {{else}}
+                <li>No field notes are published yet.</li>
             {{/foreach}}
-        </ul>
-    {{/get}}
-</section>
-
-{{#get "posts" filter="tag:hash-crucialtracks" limit="1" include="tags" order="published_at desc" as |latest_tracks|}}
-    {{#if latest_tracks}}
-        <section class="cactus-section listening-ticker-section">
-            <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/listening/">{{t "Listening"}}</a></h2>
-            {{#foreach latest_tracks}}
-                <div class="listening-ticker" data-listening-preview>
-                    {{#if feature_image}}
-                        <button class="listening-ticker-play" type="button" aria-label="{{t "Play preview"}}: {{title}}" data-listening-preview-toggle>
-                            <img class="listening-ticker-art" src="{{img_url feature_image size="s"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" loading="lazy">
-                            <span class="listening-ticker-icon" aria-hidden="true"></span>
-                        </button>
-                    {{/if}}
-                    <a class="listening-ticker-link" href="{{url}}" aria-label="{{t "Latest listening post"}}: {{title}}">
-                        <span class="listening-ticker-label">{{t "Last played"}}</span>
-                        <span class="listening-ticker-window" aria-hidden="true">
-                            <span class="listening-ticker-track">
-                                <span>{{title}}</span>
-                                <span>{{title}}</span>
-                                <span>{{title}}</span>
-                            </span>
-                        </span>
-                        <span class="is-visually-hidden">{{title}}</span>
-                    </a>
-                    <div class="listening-ticker-source" hidden data-listening-preview-source>{{content}}</div>
-                </div>
-            {{/foreach}}
-        </section>
-    {{/if}}
-{{/get}}
-
-<section class="cactus-section status-section" data-bluesky-feed data-bluesky-handle="bryan.eurosky.social" data-bluesky-endpoint="https://sync.lowvelocity.org/updates/bluesky?source=bryan" data-bluesky-limit="25">
-    <div class="status-section-head">
-        <h2 class="cactus-title cactus-title-link">
-            <a href="https://bsky.app/profile/bryan.eurosky.social" target="_blank" rel="noopener noreferrer">{{t "Updates"}}</a>
-        </h2>
-        <div class="status-controls" data-status-controls hidden>
-            <button type="button" data-status-prev aria-label="{{t "Show previous update"}}">{{t "Back"}}</button>
-            <span class="status-position" data-status-position aria-live="polite"></span>
-            <button type="button" data-status-next aria-label="{{t "Show next update"}}">{{t "Next"}}</button>
-        </div>
-    </div>
-    <div class="status-carousel" data-status-carousel aria-live="polite">
-        <p class="bluesky-note-status">{{t "Loading updates…"}}</p>
-    </div>
+        {{/get}}
+    </ul>
 </section>
