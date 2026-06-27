@@ -16,3 +16,17 @@
         {{/get}}
     </ul>
 </section>
+
+<section class="home-profile-card" aria-label="About the author">
+    <a class="home-profile-card__identity" href="https://bsky.app/profile/bryan.eurosky.social" target="_blank" rel="me noopener noreferrer">
+        {{#if @site.icon}}
+            <img class="home-profile-card__avatar" src="{{@site.icon}}" alt="" loading="lazy">
+        {{else}}
+            <span class="home-profile-card__avatar home-profile-card__avatar--fallback" aria-hidden="true">BR</span>
+        {{/if}}
+        <span class="home-profile-card__text">
+            <strong>Bryan Robb</strong>
+            <span>@bryan.eurosky.social</span>
+        </span>
+    </a>
+</section>
