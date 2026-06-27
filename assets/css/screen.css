@@ -1918,6 +1918,10 @@ html[data-theme="light"] .theme-icon-light {
     margin-top: 0.75rem;
 }
 
+.now-status-entry__actions {
+    justify-content: flex-end;
+}
+
 .tag-pill {
     display: inline-flex;
     align-items: center;
