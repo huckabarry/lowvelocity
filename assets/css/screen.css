@@ -816,24 +816,6 @@ html[data-theme="light"] .theme-icon-light {
     width: 100%;
 }
 
-.home-hero {
-    margin: 0 0 3rem;
-}
-
-.home-hero-copy h1 {
-    margin: 0;
-    color: var(--color-accent-2);
-    font-size: 1.15rem;
-    line-height: 1.2;
-}
-
-.home-hero-copy p {
-    margin: 0.25rem 0 0;
-    color: var(--color-muted);
-    font-size: 0.9rem;
-    line-height: 1.35;
-}
-
 .home-intro p,
 .archive-header p,
 .photos-intro p {
