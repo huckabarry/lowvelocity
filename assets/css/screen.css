@@ -519,8 +519,10 @@ h6,
     order: 2;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 0.35rem 0.8rem;
     margin: 0.2rem 0 0.75rem;
+    text-align: center;
 }
 
 .lv-listening-post__body > p:has(a[href*="music.apple.com"]),
@@ -548,14 +550,19 @@ h6,
 }
 
 .lv-listening-entry__links a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2rem;
-    padding: 0.25rem 0.6rem;
-    border: 1px solid color-mix(in srgb, var(--color-global-text) 22%, transparent);
-    border-radius: 999px;
-    text-decoration: none;
-    font-size: 0.78rem;
+    display: inline;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    color: var(--color-muted);
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--color-rule);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28em;
+    font-size: 0.72rem;
+    line-height: 1.4;
 }
 
 .tag-hash-crucialtracks .cactus-content .kg-image-card {
@@ -578,20 +585,27 @@ h6,
 .tag-hash-crucialtracks .cactus-content p:has(a[href*="crucialtracks.org"]) {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 0.35rem 0.8rem;
+    text-align: center;
 }
 
 .tag-hash-crucialtracks .cactus-content p:has(a[href*="music.apple.com"]) a,
 .tag-hash-crucialtracks .cactus-content p:has(a[href*="song.link"]) a,
 .tag-hash-crucialtracks .cactus-content p:has(a[href*="crucialtracks.org"]) a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2rem;
-    padding: 0.25rem 0.6rem;
-    border: 1px solid color-mix(in srgb, var(--color-global-text) 22%, transparent);
-    border-radius: 999px;
-    text-decoration: none;
-    font-size: 0.78rem;
+    display: inline;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    color: var(--color-muted);
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: var(--color-rule);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28em;
+    font-size: 0.72rem;
+    line-height: 1.4;
 }
 
 .lv-listening-audio {
