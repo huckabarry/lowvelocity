@@ -985,11 +985,13 @@ html[data-theme="light"] .theme-icon-light {
     text-decoration: none;
 }
 
+.cactus-content .kg-bookmark-card,
 .kg-bookmark-card.lv-atproto-card,
 .now-status-entry__body .kg-bookmark-card {
     margin-top: 0.85rem;
 }
 
+.cactus-content .kg-bookmark-card .kg-bookmark-container,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-container,
 .now-status-entry__body .kg-bookmark-card .kg-bookmark-container {
     display: grid;
@@ -1003,6 +1005,7 @@ html[data-theme="light"] .theme-icon-light {
     text-decoration: none;
 }
 
+.cactus-content .kg-bookmark-card .kg-bookmark-container:hover,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-container:hover,
 .now-status-entry__body .kg-bookmark-card .kg-bookmark-container:hover {
     border-color: var(--color-accent);
@@ -1010,6 +1013,7 @@ html[data-theme="light"] .theme-icon-light {
     opacity: 1;
 }
 
+.cactus-content .kg-bookmark-card .kg-bookmark-content,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-content,
 .now-status-entry__body .kg-bookmark-card .kg-bookmark-content {
     display: grid;
@@ -1017,6 +1021,7 @@ html[data-theme="light"] .theme-icon-light {
     min-width: 0;
 }
 
+.cactus-content .kg-bookmark-card .kg-bookmark-title,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-title,
 .now-status-entry__body .kg-bookmark-card .kg-bookmark-title {
     color: var(--color-accent-2);
@@ -1024,6 +1029,8 @@ html[data-theme="light"] .theme-icon-light {
     line-height: 1.35;
 }
 
+.cactus-content .kg-bookmark-card .kg-bookmark-description,
+.cactus-content .kg-bookmark-card .kg-bookmark-metadata,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-description,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-metadata,
 .now-status-entry__body .kg-bookmark-card .kg-bookmark-description,
@@ -1033,6 +1040,7 @@ html[data-theme="light"] .theme-icon-light {
     line-height: 1.45;
 }
 
+.cactus-content .kg-bookmark-card .kg-bookmark-description,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-description,
 .now-status-entry__body .kg-bookmark-card .kg-bookmark-description {
     display: -webkit-box;
@@ -1041,11 +1049,13 @@ html[data-theme="light"] .theme-icon-light {
     -webkit-line-clamp: 3;
 }
 
+.cactus-content .kg-bookmark-card .kg-bookmark-thumbnail,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-thumbnail,
 .now-status-entry__body .kg-bookmark-card .kg-bookmark-thumbnail {
     min-width: 0;
 }
 
+.cactus-content .kg-bookmark-card .kg-bookmark-thumbnail img,
 .kg-bookmark-card.lv-atproto-card .kg-bookmark-thumbnail img,
 .now-status-entry__body .kg-bookmark-card .kg-bookmark-thumbnail img {
     width: 100%;
@@ -1116,6 +1126,7 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 @media (max-width: 520px) {
+    .cactus-content .kg-bookmark-card .kg-bookmark-container,
     .kg-bookmark-card.lv-atproto-card .kg-bookmark-container,
     .now-status-entry__body .kg-bookmark-card .kg-bookmark-container {
         grid-template-columns: 1fr;
