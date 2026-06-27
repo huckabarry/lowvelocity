@@ -410,6 +410,7 @@ h6,
 }
 
 .lv-listening-post {
+    --lv-listening-text-inset: clamp(0.85rem, 4vw, 1.35rem);
     display: flex;
     flex-direction: column;
 }
@@ -535,12 +536,19 @@ h6,
 .lv-listening-post__body > h2 {
     order: 3;
     margin: 0;
+    padding-inline: var(--lv-listening-text-inset);
 }
 
 .lv-listening-post__body > h2 + p {
     order: 4;
     margin: 0.2rem 0 0.65rem;
+    padding-inline: var(--lv-listening-text-inset);
     color: var(--color-muted);
+}
+
+.lv-listening-post__body > h2 + p + p,
+.lv-listening-post .lv-listening-entry__note {
+    padding-inline: var(--lv-listening-text-inset);
 }
 
 .lv-listening-post a[href*="audio-ssl.itunes.apple.com"],
@@ -1266,16 +1274,23 @@ html[data-theme="light"] .theme-icon-light {
 
 .cactus-content.lv-listening-post h2 {
     margin: 0;
+    padding-inline: var(--lv-listening-text-inset);
     color: var(--color-global-text);
 }
 
 .cactus-content.lv-listening-post h2 + p {
     margin: 0.2rem 0 0.65rem;
+    padding-inline: var(--lv-listening-text-inset);
     color: var(--color-muted);
 }
 
 .cactus-content.lv-listening-post p {
     margin: 0.7rem 0 0;
+}
+
+.cactus-content.lv-listening-post h2 + p + p,
+.cactus-content.lv-listening-post .lv-listening-entry__note {
+    padding-inline: var(--lv-listening-text-inset);
 }
 
 .cactus-content.lv-listening-post p:has(a[href*="music.apple.com"]),
