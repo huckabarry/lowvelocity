@@ -12,7 +12,7 @@ routes:
   /field-notes/:
     controller: channel
     template: custom-field-notes
-    filter: 'tag:field-notes'
+    filter: 'tag:[field-notes,urbanism,housing,transportation,public-finance]'
     data: tag.field-notes
 
   /gallery/:

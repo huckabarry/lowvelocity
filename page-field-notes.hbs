@@ -14,7 +14,7 @@
 
 <section class="cactus-section archive-section">
     <ul class="post-list" role="list">
-        {{#get "posts" filter="tag:field-notes" limit="100" include="tags" as |field_notes|}}
+        {{#get "posts" filter="tag:[field-notes,urbanism,housing,transportation,public-finance]" limit="100" include="tags" as |field_notes|}}
             {{#foreach field_notes}}
                 {{> "post-preview"}}
             {{/foreach}}
