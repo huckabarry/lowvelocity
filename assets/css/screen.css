@@ -821,6 +821,16 @@ html[data-theme="light"] .theme-icon-light {
 .photos-intro p {
     max-width: 100%;
     margin: 0;
+    color: var(--color-muted);
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.45;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: color-mix(in srgb, var(--color-rule) 70%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28em;
 }
 
 .status-section {
