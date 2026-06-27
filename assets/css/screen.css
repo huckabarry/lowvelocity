@@ -500,7 +500,8 @@ h6,
     line-height: 1.15;
 }
 
-.lv-listening-entry__year {
+.lv-listening-entry__year,
+.lv-listening-post h2 small {
     color: var(--color-muted);
     font-size: 0.82em;
     font-weight: 500;
