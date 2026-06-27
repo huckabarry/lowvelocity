@@ -24,7 +24,12 @@ routes:
   /posts/:
     controller: channel
     template: custom-posts
-    filter: 'tag:-[status,note,notes,afterword,listening,hash-crucialtracks]'
+    filter: 'tag:-[status,note,notes,afterword,listening,hash-crucialtracks,check-ins]'
+
+  /check-ins/:
+    controller: channel
+    template: custom-check-ins
+    filter: 'tag:check-ins'
 
 collections:
   /notes/:
@@ -36,7 +41,7 @@ collections:
   /:
     permalink: /{slug}/
     template: index
-    filter: 'tag:-[status,note,notes,afterword,listening,hash-crucialtracks]'
+    filter: 'tag:-[status,note,notes,afterword,listening,hash-crucialtracks,check-ins]'
 
 taxonomies:
   tag: /tag/{slug}/

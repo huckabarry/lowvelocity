@@ -24,6 +24,7 @@
         initNowMixedFeed();
         initAtprotoEngagement();
         initPhotoFeed();
+        initCheckinsAtlas();
         initGhostGalleryMasonry();
         if (isClientNavigation) initGhostCardEnhancements();
     }
@@ -2232,5 +2233,175 @@
             if (index < 0) index = 0;
             openPhotoSwipe(index, clickedGallery[0]);
         });
+    }
+
+    function initCheckinsAtlas() {
+        document.querySelectorAll('[data-checkins-atlas]:not([data-checkins-ready])').forEach(function (atlas) {
+            atlas.setAttribute('data-checkins-ready', 'true');
+
+            var templates = Array.prototype.slice.call(atlas.querySelectorAll('template[data-checkin-entry]'));
+            var items = templates.map(readCheckinTemplate).filter(function (item) {
+                return item && Number.isFinite(item.latitude) && Number.isFinite(item.longitude);
+            });
+            var list = atlas.querySelector('[data-checkins-list]');
+            var mapElement = atlas.querySelector('[data-checkins-map]');
+
+            renderCheckinsList(list, items);
+            renderCheckinsMap(mapElement, items);
+        });
+    }
+
+    function readCheckinTemplate(template) {
+        var wrapper = document.createElement('div');
+        wrapper.appendChild(template.content.cloneNode(true));
+
+        var article = wrapper.querySelector('.lv-checkin');
+        if (!article) return null;
+
+        var latitude = parseFloat(article.getAttribute('data-lat') || '');
+        var longitude = parseFloat(article.getAttribute('data-lng') || '');
+        var placeHeading = article.querySelector('.lv-checkin-place h2');
+        var placeText = article.querySelector('.lv-checkin-place p');
+        var note = Array.prototype.slice.call(article.children).find(function (element) {
+            return element.tagName === 'P';
+        });
+        var image = article.querySelector('.lv-checkin-image img');
+        var title = placeHeading && placeHeading.textContent.trim()
+            ? placeHeading.textContent.trim()
+            : (template.getAttribute('data-title') || '').replace(/^Checked in at\s+/i, '');
+
+        return {
+            title: title || 'Check-in',
+            url: template.getAttribute('data-url') || '#',
+            date: article.getAttribute('data-visited-at') || template.getAttribute('data-date') || '',
+            dateLabel: template.getAttribute('data-date-label') || '',
+            place: article.getAttribute('data-place') || (placeText ? placeText.textContent.trim() : ''),
+            category: article.getAttribute('data-category') || '',
+            note: note ? note.textContent.trim() : '',
+            image: image ? image.src : '',
+            imageAlt: image ? image.alt : '',
+            latitude: latitude,
+            longitude: longitude
+        };
+    }
+
+    function renderCheckinsList(list, items) {
+        if (!list) return;
+
+        list.replaceChildren();
+
+        if (!items.length) {
+            var empty = document.createElement('p');
+            empty.className = 'checkins-empty';
+            empty.textContent = 'No public check-ins are available yet.';
+            list.appendChild(empty);
+            return;
+        }
+
+        items.forEach(function (item) {
+            var card = document.createElement('article');
+            var body = document.createElement('div');
+            var title = document.createElement('h2');
+            var link = document.createElement('a');
+            var meta = document.createElement('p');
+
+            card.className = 'checkin-card';
+            body.className = 'checkin-card__body';
+            link.href = item.url;
+            link.textContent = item.title;
+            title.appendChild(link);
+            meta.className = 'checkin-card__meta';
+            meta.textContent = [formatCheckinDate(item.date, item.dateLabel), item.place, item.category].filter(Boolean).join(' · ');
+
+            if (item.image) {
+                var imageLink = document.createElement('a');
+                var image = document.createElement('img');
+                imageLink.className = 'checkin-card__image';
+                imageLink.href = item.url;
+                image.src = item.image;
+                image.alt = item.imageAlt || '';
+                image.loading = 'lazy';
+                imageLink.appendChild(image);
+                card.appendChild(imageLink);
+            }
+
+            body.appendChild(title);
+            if (meta.textContent) body.appendChild(meta);
+
+            if (item.note) {
+                var note = document.createElement('p');
+                note.className = 'checkin-card__note';
+                note.textContent = item.note;
+                body.appendChild(note);
+            }
+
+            card.appendChild(body);
+            list.appendChild(card);
+        });
+    }
+
+    function renderCheckinsMap(mapElement, items) {
+        if (!mapElement) return;
+
+        if (!items.length || typeof L === 'undefined') {
+            mapElement.hidden = true;
+            return;
+        }
+
+        var map = L.map(mapElement, {
+            scrollWheelZoom: false,
+            zoomControl: true
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var bounds = [];
+
+        items.forEach(function (item) {
+            var marker = L.marker([item.latitude, item.longitude]).addTo(map);
+            var popup = '<strong>' + escapeMarkup(item.title) + '</strong>';
+            if (item.place) popup += '<br>' + escapeMarkup(item.place);
+            if (item.date || item.dateLabel) popup += '<br><small>' + escapeMarkup(formatCheckinDate(item.date, item.dateLabel)) + '</small>';
+            popup += '<br><a href="' + escapeAttribute(item.url) + '">Read</a>';
+            marker.bindPopup(popup);
+            bounds.push([item.latitude, item.longitude]);
+        });
+
+        if (bounds.length === 1) {
+            map.setView(bounds[0], 13);
+        } else {
+            map.fitBounds(bounds, {padding: [28, 28]});
+        }
+
+        window.setTimeout(function () {
+            map.invalidateSize();
+        }, 250);
+    }
+
+    function formatCheckinDate(value, fallback) {
+        if (!value) return fallback || '';
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return fallback || '';
+        return new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        }).format(date);
+    }
+
+    function escapeMarkup(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function escapeAttribute(value) {
+        return escapeMarkup(value).replace(/`/g, '&#96;');
     }
 })();

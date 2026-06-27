@@ -2561,3 +2561,114 @@ html[data-theme="light"] .theme-icon-light {
         color: var(--color-accent);
     }
 }
+
+.checkins-header {
+    margin-bottom: 2rem;
+}
+
+.checkins-atlas {
+    width: min(100%, 68rem);
+    margin: 0 auto;
+}
+
+.checkins-map {
+    width: 100%;
+    height: min(68vh, 34rem);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    border: 1px dotted color-mix(in srgb, var(--color-global-text) 34%, transparent);
+    border-radius: 1.25rem;
+    background: color-mix(in srgb, var(--color-global-text) 5%, transparent);
+}
+
+.checkins-map .leaflet-container,
+.checkins-map.leaflet-container {
+    background: color-mix(in srgb, var(--color-global-text) 5%, transparent);
+}
+
+.checkins-map .leaflet-popup-content-wrapper,
+.checkins-map .leaflet-popup-tip {
+    color: var(--color-global-text);
+    background: var(--color-global-bg);
+}
+
+.checkins-map .leaflet-popup-content a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 0.18em;
+}
+
+.checkins-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.checkin-card {
+    display: grid;
+    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    padding: 1rem 0;
+    border-bottom: 1px dotted color-mix(in srgb, var(--color-global-text) 28%, transparent);
+}
+
+.checkin-card__image {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--color-global-text) 6%, transparent);
+}
+
+.checkin-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.checkin-card__body {
+    min-width: 0;
+}
+
+.checkin-card h2 {
+    margin: 0 0 0.15rem;
+    font-family: var(--font-heading);
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+}
+
+.checkin-card h2 a {
+    color: var(--color-global-text);
+}
+
+.checkin-card__meta,
+.checkin-card__note,
+.checkins-empty {
+    margin: 0;
+    color: var(--color-secondary-text);
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.checkin-card__note {
+    margin-top: 0.55rem;
+    color: var(--color-global-text);
+}
+
+@media (max-width: 640px) {
+    .checkins-atlas {
+        width: min(100%, var(--space-shell));
+    }
+
+    .checkins-map {
+        height: 26rem;
+        border-radius: 1rem;
+    }
+
+    .checkin-card {
+        grid-template-columns: minmax(0, 5.5rem) minmax(0, 1fr);
+        gap: 0.8rem;
+    }
+}
