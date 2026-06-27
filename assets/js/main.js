@@ -43,7 +43,7 @@
     }
 
     function findListeningPreviewUrl(container) {
-        var source = container.querySelector('[data-listening-preview-source]');
+        var source = container.querySelector('[data-listening-preview-source]') || container;
         if (!source) return '';
 
         var link = source.querySelector('a[href*="audio-ssl.itunes.apple.com"], a[href*=".m4a"], a[href*=".mp3"]');
@@ -70,6 +70,12 @@
                 button.disabled = true;
                 button.setAttribute('aria-label', 'Preview unavailable');
                 return;
+            }
+
+            if (container.classList.contains('lv-listening-post')) {
+                container.querySelectorAll('a[href*="audio-ssl.itunes.apple.com"], a[href*=".m4a"], a[href*=".mp3"]').forEach(function (link) {
+                    link.remove();
+                });
             }
 
             var audio = new Audio(previewUrl);
