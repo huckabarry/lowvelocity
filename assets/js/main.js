@@ -18,10 +18,99 @@
     function initPageFeatures(isClientNavigation) {
         syncGhostCommentsTheme();
         initGhostCommentsFrame();
+        initListeningPreviewPlayers();
         initBlueskyNotes();
         initPhotoFeed();
         initGhostGalleryMasonry();
         if (isClientNavigation) initGhostCardEnhancements();
+    }
+
+    var activeListeningPreview = null;
+    var activeListeningButton = null;
+
+    function pauseActiveListeningPreview() {
+        if (activeListeningPreview) {
+            activeListeningPreview.pause();
+            activeListeningPreview.currentTime = 0;
+        }
+
+        if (activeListeningButton) {
+            activeListeningButton.removeAttribute('data-listening-playing');
+        }
+
+        activeListeningPreview = null;
+        activeListeningButton = null;
+    }
+
+    function findListeningPreviewUrl(container) {
+        var source = container.querySelector('[data-listening-preview-source]');
+        if (!source) return '';
+
+        var link = source.querySelector('a[href*="audio-ssl.itunes.apple.com"], a[href*=".m4a"], a[href*=".mp3"]');
+        if (!link) return '';
+
+        try {
+            var url = new URL(link.href, window.location.href);
+            url.searchParams.delete('ref');
+            return url.toString();
+        } catch (error) {
+            return link.href;
+        }
+    }
+
+    function initListeningPreviewPlayers() {
+        document.querySelectorAll('[data-listening-preview]:not([data-listening-preview-ready])').forEach(function (container) {
+            container.setAttribute('data-listening-preview-ready', 'true');
+
+            var button = container.querySelector('[data-listening-preview-toggle]');
+            if (!button) return;
+
+            var previewUrl = findListeningPreviewUrl(container);
+            if (!previewUrl) {
+                button.disabled = true;
+                button.setAttribute('aria-label', 'Preview unavailable');
+                return;
+            }
+
+            var audio = new Audio(previewUrl);
+            audio.preload = 'none';
+
+            function setPausedState() {
+                if (activeListeningPreview === audio) {
+                    activeListeningPreview = null;
+                    activeListeningButton = null;
+                }
+
+                button.removeAttribute('data-listening-playing');
+                button.setAttribute('aria-label', button.getAttribute('data-play-label') || 'Play preview');
+            }
+
+            button.setAttribute('data-play-label', button.getAttribute('aria-label') || 'Play preview');
+
+            audio.addEventListener('pause', setPausedState);
+            audio.addEventListener('ended', setPausedState);
+
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (activeListeningPreview === audio && !audio.paused) {
+                    pauseActiveListeningPreview();
+                    return;
+                }
+
+                pauseActiveListeningPreview();
+
+                audio.play().then(function () {
+                    activeListeningPreview = audio;
+                    activeListeningButton = button;
+                    button.setAttribute('data-listening-playing', 'true');
+                    button.setAttribute('aria-label', 'Pause preview');
+                }).catch(function () {
+                    setPausedState();
+                });
+            });
+        });
     }
 
     var ghostGalleryResizeBound = false;
@@ -895,6 +984,7 @@
             function swap() {
                 updateHead(nextDocument);
                 document.body.className = nextDocument.body.className;
+                pauseActiveListeningPreview();
                 currentMain.replaceWith(document.importNode(nextMain, true));
                 closeMenu();
                 updateNavigation(url);
