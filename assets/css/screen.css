@@ -410,12 +410,23 @@ h6,
 }
 
 .lv-listening-post {
-    display: block;
+    display: flex;
+    flex-direction: column;
+}
+
+.lv-listening-post__body {
+    display: contents;
+}
+
+.lv-listening-post__body > * {
+    order: 5;
 }
 
 .lv-listening-post__art {
-    width: min(100%, 18rem);
-    margin: 0 0 1rem;
+    width: 100%;
+    max-width: none;
+    margin: 1.25rem 0 1rem;
+    order: 2;
 }
 
 .lv-listening-entry__art {
@@ -477,17 +488,20 @@ h6,
 }
 
 .lv-listening-entry h2 {
+    order: 3;
     margin: 0;
     font-size: 1.25rem;
     line-height: 1.15;
 }
 
 .lv-listening-entry__artist {
+    order: 4;
     margin: 0.25rem 0 1rem;
     color: var(--color-muted);
 }
 
 .lv-listening-entry__note {
+    order: 5;
     margin: 1rem 0;
 }
 
@@ -497,10 +511,28 @@ h6,
 }
 
 .lv-listening-entry__links {
+    order: 1;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin: 1.25rem 0 0;
+    margin: 0;
+}
+
+.lv-listening-post__body > p:has(a[href*="music.apple.com"]),
+.lv-listening-post__body > p:has(a[href*="song.link"]),
+.lv-listening-post__body > p:has(a[href*="crucialtracks.org"]) {
+    order: 1;
+    margin: 0;
+}
+
+.lv-listening-post__body > h2 {
+    order: 3;
+}
+
+.lv-listening-post__body > h2 + p {
+    order: 4;
+    margin-top: 0.25rem;
+    color: var(--color-muted);
 }
 
 .lv-listening-post a[href*="audio-ssl.itunes.apple.com"],
@@ -570,7 +602,7 @@ h6,
         gap: 1rem;
     }
 
-    .lv-listening-entry__art {
+    .lv-listening-entry__art:not(.lv-listening-post__art) {
         max-width: 16rem;
     }
 }
