@@ -652,9 +652,13 @@
             if (!width || !height) return;
 
             var ratio = width / height;
+            var desktopHeight = 23;
+            var widthRem = Math.max(10, Math.min(42, desktopHeight * ratio));
+
             slide.classList.toggle('is-portrait', ratio < 1);
             slide.classList.toggle('is-landscape', ratio >= 1);
             slide.style.setProperty('--now-status-image-ratio', ratio.toFixed(4));
+            slide.style.setProperty('--now-status-slide-width', widthRem.toFixed(2) + 'rem');
         }
 
         apply();

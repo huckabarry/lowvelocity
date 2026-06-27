@@ -2024,17 +2024,17 @@ html[data-theme="light"] .theme-icon-light {
 
 .now-status-carousel__slide {
     flex: 0 0 auto;
-    width: min(88vw, 26rem);
+    width: min(88vw, var(--now-status-slide-width, 26rem));
     min-width: 0;
     scroll-snap-align: start;
 }
 
 .now-status-carousel__slide.is-landscape {
-    width: min(88vw, 42rem);
+    width: min(88vw, var(--now-status-slide-width, 42rem));
 }
 
 .now-status-carousel__slide.is-portrait {
-    width: min(68vw, 18rem);
+    width: min(68vw, var(--now-status-slide-width, 18rem));
 }
 
 .now-status-carousel__slide .kg-card {
@@ -2131,15 +2131,15 @@ html[data-theme="light"] .theme-icon-light {
     }
 
     .now-status-carousel__slide {
-        width: min(92vw, 24rem);
+        width: min(92vw, var(--now-status-slide-width, 24rem));
     }
 
     .now-status-carousel__slide.is-landscape {
-        width: min(92vw, 34rem);
+        width: min(92vw, var(--now-status-slide-width, 34rem));
     }
 
     .now-status-carousel__slide.is-portrait {
-        width: min(72vw, 15rem);
+        width: min(72vw, var(--now-status-slide-width, 15rem));
     }
 
     .now-feed-status--loader {
