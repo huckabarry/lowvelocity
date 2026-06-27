@@ -136,6 +136,7 @@ jobs:
           });
           NODE
 
+          set +e
           routes_status=$(curl --silent --show-error \
             --output /tmp/routes-response.txt \
             --write-out '%{http_code}' \
@@ -144,10 +145,12 @@ jobs:
             --header "Authorization: Ghost $(generate_token)" \
             --header "Accept-Version: v6.0" \
             "${ghost_url}/ghost/api/admin/settings/routes/yaml")
+          routes_curl_status=$?
+          set -e
 
-          if [[ "${routes_status}" -ge 200 && "${routes_status}" -lt 300 ]]; then
+          if [[ "${routes_curl_status}" -eq 0 && "${routes_status}" -ge 200 && "${routes_status}" -lt 300 ]]; then
             echo "Deployed and activated ${theme_name}, then uploaded routes.yaml."
           else
-            echo "::warning::Deployed and activated ${theme_name}, but Ghost rejected routes.yaml upload with HTTP ${routes_status}. Upload routes.yaml manually in Ghost Admin if route settings change."
+            echo "::warning::Deployed and activated ${theme_name}, but routes.yaml upload did not complete cleanly (curl ${routes_curl_status}, HTTP ${routes_status:-000}). Upload routes.yaml manually in Ghost Admin if route settings change."
             cat /tmp/routes-response.txt || true
           fi
