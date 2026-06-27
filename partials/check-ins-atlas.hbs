@@ -1,0 +1,38 @@
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIINfQwVF7wJVZCLnXLAOFDnxywE1zYW3xw="
+    crossorigin="">
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin="">
+</script>
+
+<header class="archive-header checkins-header">
+    <h1 class="cactus-title">Check-ins</h1>
+    <p>Places recently visited, mapped from native Low Velocity check-in posts.</p>
+</header>
+
+<section class="checkins-atlas" data-checkins-atlas>
+    <div class="checkins-map" data-checkins-map aria-label="Map of check-ins"></div>
+
+    <div class="checkins-list" data-checkins-list aria-live="polite">
+        <p class="checkins-empty">Loading check-ins…</p>
+    </div>
+
+    {{#get "posts" filter="tag:check-ins" limit="100" include="tags" order="published_at desc" formats="html" as |checkins|}}
+        {{#foreach checkins}}
+            <template
+                data-checkin-entry
+                data-title="{{title}}"
+                data-url="{{url}}"
+                data-date="{{date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}"
+                data-date-label="{{date published_at format="MMM D, YYYY"}}">
+                {{content}}
+            </template>
+        {{else}}
+            <template data-checkin-empty></template>
+        {{/foreach}}
+    {{/get}}
+</section>

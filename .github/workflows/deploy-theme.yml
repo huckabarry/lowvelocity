@@ -112,24 +112,35 @@ jobs:
           }
 
           (async () => {
-            const existing = await ghost('/ghost/api/admin/pages/slug/posts/?formats=html');
-            if (existing?.pages?.length) {
-              console.log('Posts archive page already exists.');
-            } else {
+            async function ensurePage(page) {
+              const existing = await ghost(`/ghost/api/admin/pages/slug/${page.slug}/?formats=html`);
+              if (existing?.pages?.length) {
+                console.log(`${page.title} page already exists.`);
+                return;
+              }
+
               await ghost('/ghost/api/admin/pages/?source=html', {
                 method: 'POST',
-                body: JSON.stringify({
-                  pages: [{
-                    title: 'Posts',
-                    slug: 'posts',
-                    html: '<p>Essays, field notes, observations, and other dispatches.</p>',
-                    custom_excerpt: 'Essays, field notes, observations, and other dispatches.',
-                    status: 'published'
-                  }]
-                })
+                body: JSON.stringify({pages: [page]})
               });
-              console.log('Created posts archive page.');
+              console.log(`Created ${page.title} page.`);
             }
+
+            await ensurePage({
+              title: 'Posts',
+              slug: 'posts',
+              html: '<p>Essays, field notes, observations, and other dispatches.</p>',
+              custom_excerpt: 'Essays, field notes, observations, and other dispatches.',
+              status: 'published'
+            });
+
+            await ensurePage({
+              title: 'Check-ins',
+              slug: 'check-ins',
+              html: '<p>Places recently visited, mapped from native Low Velocity check-in posts.</p>',
+              custom_excerpt: 'Places recently visited, mapped from native Low Velocity check-in posts.',
+              status: 'published'
+            });
           })().catch((error) => {
             console.error(error);
             process.exit(1);
