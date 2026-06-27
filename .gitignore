@@ -2,3 +2,6 @@ node_modules/
 dist/
 .DS_Store
 
+# Adjacent/local project checkouts that should not be part of the Ghost theme.
+afterword-sveltekit-pds/
+lowvelocity-sync/
