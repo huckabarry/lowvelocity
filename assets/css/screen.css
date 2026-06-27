@@ -2005,15 +2005,15 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .now-status-carousel {
+    --now-status-carousel-image-height: clamp(13rem, 42vw, 23rem);
     display: grid;
     gap: 0.45rem;
     margin-top: 0.9rem;
 }
 
 .now-status-carousel__viewport {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(12rem, 88%);
+    display: flex;
+    align-items: flex-start;
     gap: 0.65rem;
     overflow-x: auto;
     overscroll-behavior-x: contain;
@@ -2023,8 +2023,18 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .now-status-carousel__slide {
+    flex: 0 0 auto;
+    width: min(88vw, 26rem);
     min-width: 0;
     scroll-snap-align: start;
+}
+
+.now-status-carousel__slide.is-landscape {
+    width: min(88vw, 42rem);
+}
+
+.now-status-carousel__slide.is-portrait {
+    width: min(68vw, 18rem);
 }
 
 .now-status-carousel__slide .kg-card {
@@ -2034,7 +2044,7 @@ html[data-theme="light"] .theme-icon-light {
 .now-status-carousel__slide img {
     display: block;
     width: 100%;
-    max-height: 23rem;
+    height: var(--now-status-carousel-image-height);
     object-fit: contain;
     background: color-mix(in srgb, var(--color-global-text) 5%, transparent);
 }
@@ -2116,8 +2126,20 @@ html[data-theme="light"] .theme-icon-light {
         width: 3.6rem;
     }
 
-    .now-status-carousel__viewport {
-        grid-auto-columns: minmax(10rem, 92%);
+    .now-status-carousel {
+        --now-status-carousel-image-height: clamp(11rem, 60vw, 18rem);
+    }
+
+    .now-status-carousel__slide {
+        width: min(92vw, 24rem);
+    }
+
+    .now-status-carousel__slide.is-landscape {
+        width: min(92vw, 34rem);
+    }
+
+    .now-status-carousel__slide.is-portrait {
+        width: min(72vw, 15rem);
     }
 
     .now-feed-status--loader {

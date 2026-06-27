@@ -606,6 +606,7 @@
             slide.className = 'now-status-carousel__slide';
             slide.setAttribute('aria-label', 'Photo ' + (index + 1) + ' of ' + figures.length);
             slide.appendChild(figure);
+            setNowCarouselSlideOrientation(slide);
             viewport.appendChild(slide);
         });
 
@@ -639,6 +640,28 @@
         next.addEventListener('click', function () {
             scrollBySlide(1);
         });
+    }
+
+    function setNowCarouselSlideOrientation(slide) {
+        var image = slide && slide.querySelector('img');
+        if (!image) return;
+
+        function apply() {
+            var width = image.naturalWidth || parseInt(image.getAttribute('width'), 10) || 0;
+            var height = image.naturalHeight || parseInt(image.getAttribute('height'), 10) || 0;
+            if (!width || !height) return;
+
+            var ratio = width / height;
+            slide.classList.toggle('is-portrait', ratio < 1);
+            slide.classList.toggle('is-landscape', ratio >= 1);
+            slide.style.setProperty('--now-status-image-ratio', ratio.toFixed(4));
+        }
+
+        apply();
+
+        if (!image.complete) {
+            image.addEventListener('load', apply, {once: true});
+        }
     }
 
     function initAtprotoEngagement() {
