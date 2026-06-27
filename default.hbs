@@ -65,6 +65,9 @@
                 <a class="cactus-brand" href="{{@site.url}}" aria-label="{{@site.title}}">
                     <span class="cactus-brand-title">{{@site.title}} <span aria-hidden="true">//</span></span>
                 </a>
+                {{#is "home"}}
+                    <p class="cactus-brand-tagline">A journal of life, landscapes, and cities.</p>
+                {{/is}}
 
                 <nav class="cactus-nav" id="navigation-menu" aria-label="{{t "Main menu"}}">
                     {{navigation}}

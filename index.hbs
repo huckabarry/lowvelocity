@@ -1,14 +1,5 @@
 {{!< default}}
 
-<section class="home-intro">
-    <h1 class="is-visually-hidden">{{@site.title}}</h1>
-    {{#if @site.description}}
-        <p>{{@site.description}}</p>
-    {{else}}
-        <p>Hi, I am a theme for Ghost, a simple Cactus-inspired home for essays, notes, photos, and quiet little dispatches.</p>
-    {{/if}}
-</section>
-
 {{#get "posts" filter="featured:true+tag:-photos" limit="3" include="tags" as |featured_posts|}}
     {{#if featured_posts}}
         <section class="cactus-section">
