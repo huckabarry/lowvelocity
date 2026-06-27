@@ -1155,6 +1155,44 @@ html[data-theme="light"] .theme-icon-light {
     background: color-mix(in srgb, var(--color-global-text) 3%, transparent);
 }
 
+.lv-atproto-quote,
+.now-status-entry__body .lv-atproto-quote {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0.85rem 0 0;
+    padding: 0.8rem;
+    border: 1px solid color-mix(in srgb, var(--color-rule) 65%, transparent);
+    border-left: 1px solid color-mix(in srgb, var(--color-rule) 65%, transparent);
+    border-radius: 0.55rem;
+    background: color-mix(in srgb, var(--color-global-text) 3%, transparent);
+    color: var(--color-global-text);
+}
+
+.lv-atproto-quote > p {
+    margin: 0;
+}
+
+.lv-atproto-quote > p:first-child {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    color: var(--color-muted);
+    font-size: 0.78rem;
+}
+
+.lv-atproto-quote > p:first-child strong,
+.lv-atproto-quote > p:first-child a {
+    color: var(--color-global-text);
+    text-decoration: none;
+}
+
+.lv-atproto-quote .kg-card,
+.lv-atproto-quote .status-external,
+.lv-atproto-quote .status-video {
+    margin-top: 0;
+}
+
 .status-quote-meta {
     display: flex;
     align-items: center;

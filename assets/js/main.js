@@ -502,7 +502,7 @@
 
     function enhanceNowStatusImageCarousel(body) {
         var figures = Array.prototype.slice.call(body.querySelectorAll('figure.kg-image-card')).filter(function (figure) {
-            return figure.querySelector('img') && !figure.closest('.kg-bookmark-card, .kg-embed-card, .kg-video-card, .kg-product-card, .kg-button-card, .now-status-carousel');
+            return figure.querySelector('img') && !figure.closest('.lv-atproto-quote, blockquote, .kg-bookmark-card, .kg-embed-card, .kg-video-card, .kg-product-card, .kg-button-card, .now-status-carousel');
         });
 
         if (figures.length <= 4) return;
