@@ -15,9 +15,16 @@
 <section class="photo-section">
     <div class="photo-feed">
         <div class="grid-item grid-sizer"></div>
-        {{#get "posts" filter="tag:[photos,gallery,photography]" limit="100" include="tags" as |gallery_posts|}}
+        {{#get "posts" filter="tag:[gallery,hash-gallery,photography,hash-photography]" limit="100" include="tags" order="published_at desc" formats="html" as |gallery_posts|}}
             {{#foreach gallery_posts}}
-                {{> "photo-card"}}
+                {{#has tag="gallery"}}
+                    {{> "photo-card"}}
+                {{else}}
+                    {{#has tag="#gallery"}}
+                        {{> "photo-card"}}
+                    {{/has}}
+                {{/has}}
+                {{> "photo-body-source"}}
             {{/foreach}}
         {{/get}}
     </div>

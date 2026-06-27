@@ -18,7 +18,7 @@ routes:
   /gallery/:
     controller: channel
     template: custom-gallery
-    filter: 'tag:[gallery,photography]'
+    filter: 'tag:[gallery,hash-gallery,photography,hash-photography]'
     data: tag.gallery
 
   /posts/:

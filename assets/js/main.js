@@ -1065,6 +1065,7 @@
         if (!grid || typeof imagesLoaded === 'undefined' || typeof Masonry === 'undefined') return;
         if (grid.getAttribute('data-masonry-ready') === 'true') return;
         grid.setAttribute('data-masonry-ready', 'true');
+        hydratePhotoBodyCards(grid);
 
         var masonry = new Masonry(grid, {
             itemSelector: '.grid-item',
@@ -1094,6 +1095,141 @@
         imagesLoaded(grid).on('progress', relayout).on('always', relayout);
         initPhotoInfiniteScroll(grid, masonry);
         initPhotoSwipe('.photo-feed', '.photo-card', '.post-lightbox', '.post-caption', false);
+    }
+
+    function normalizePhotoUrl(value) {
+        if (!value) return '';
+
+        try {
+            var url = new URL(value, window.location.href);
+            url.pathname = url.pathname.replace(/\/content\/images\/size\/w\d+\//, '/content/images/');
+            url.search = '';
+            url.hash = '';
+            return url.toString();
+        } catch (error) {
+            return String(value || '').replace(/\/content\/images\/size\/w\d+\//, '/content/images/');
+        }
+    }
+
+    function largestSrcFromSet(srcset) {
+        if (!srcset) return '';
+
+        var candidates = srcset.split(',').map(function (candidate) {
+            var parts = candidate.trim().split(/\s+/);
+            var width = parts[1] && parts[1].endsWith('w') ? parseInt(parts[1], 10) : 0;
+            return {url: parts[0], width: width || 0};
+        }).filter(function (candidate) {
+            return candidate.url;
+        }).sort(function (a, b) {
+            return b.width - a.width;
+        });
+
+        return candidates[0] ? candidates[0].url : '';
+    }
+
+    function hydratePhotoBodyCards(grid) {
+        var sources = Array.prototype.slice.call(grid.querySelectorAll('template[data-photo-body-source]'));
+        if (!sources.length) return;
+
+        var seen = new Set();
+        Array.prototype.slice.call(grid.querySelectorAll('.post-lightbox[href], .photo-card img[src]')).forEach(function (item) {
+            seen.add(normalizePhotoUrl(item.getAttribute('href') || item.getAttribute('src')));
+        });
+
+        sources.forEach(function (source) {
+            var postTitle = source.getAttribute('data-post-title') || '';
+            var postUrl = source.getAttribute('data-post-url') || '#';
+            var postDate = source.getAttribute('data-post-date') || '';
+            var postDatetime = source.getAttribute('data-post-datetime') || '';
+            var images = Array.prototype.slice.call(source.content.querySelectorAll('img')).slice(0, 10);
+
+            images.forEach(function (originalImage) {
+                var sourceSrc = originalImage.getAttribute('src') || originalImage.getAttribute('data-src') || '';
+                var sourceSrcset = originalImage.getAttribute('srcset') || '';
+                var lightboxUrl = largestSrcFromSet(sourceSrcset) || sourceSrc;
+                var normalized = normalizePhotoUrl(lightboxUrl || sourceSrc);
+
+                if (!normalized || seen.has(normalized)) return;
+                seen.add(normalized);
+
+                var displaySrc = sourceSrc || lightboxUrl;
+                var alt = originalImage.getAttribute('alt') || postTitle;
+                var width = parseInt(originalImage.getAttribute('width'), 10) || 0;
+                var height = parseInt(originalImage.getAttribute('height'), 10) || 0;
+
+                var gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+
+                var figure = document.createElement('figure');
+                figure.className = 'photo-card photo-card-body-image';
+
+                var postLink = document.createElement('a');
+                postLink.className = 'post-link';
+                postLink.href = postUrl;
+                postLink.setAttribute('aria-label', 'Read ' + postTitle);
+
+                var img = document.createElement('img');
+                img.className = 'post-image';
+                img.src = displaySrc;
+                if (sourceSrcset) img.setAttribute('srcset', sourceSrcset);
+                if (originalImage.getAttribute('sizes')) img.setAttribute('sizes', originalImage.getAttribute('sizes'));
+                img.alt = alt;
+                img.loading = 'lazy';
+                if (width && height) {
+                    img.width = width;
+                    img.height = height;
+                }
+                postLink.appendChild(img);
+
+                var lightbox = document.createElement('a');
+                lightbox.className = 'post-lightbox';
+                lightbox.href = lightboxUrl || displaySrc;
+                lightbox.setAttribute('aria-label', 'Expand image');
+                lightbox.setAttribute('data-no-client-nav', '');
+                if (width && height) {
+                    lightbox.setAttribute('data-pswp-width', String(width));
+                    lightbox.setAttribute('data-pswp-height', String(height));
+                }
+                lightbox.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>';
+
+                var caption = document.createElement('figcaption');
+                caption.className = 'post-caption';
+
+                var title = document.createElement('h2');
+                title.className = 'post-caption-title';
+                title.textContent = postTitle;
+
+                var meta = document.createElement('div');
+                meta.className = 'post-caption-meta';
+
+                var dateItem = document.createElement('span');
+                dateItem.className = 'post-caption-meta-item';
+                var time = document.createElement('time');
+                if (postDatetime) time.dateTime = postDatetime;
+                time.textContent = postDate;
+                dateItem.appendChild(time);
+
+                var readItem = document.createElement('span');
+                readItem.className = 'post-caption-meta-item';
+                var read = document.createElement('a');
+                read.href = postUrl;
+                read.textContent = 'Read';
+                readItem.appendChild(read);
+
+                meta.appendChild(dateItem);
+                meta.appendChild(readItem);
+                caption.appendChild(title);
+                caption.appendChild(meta);
+
+                figure.appendChild(postLink);
+                figure.appendChild(lightbox);
+                figure.appendChild(caption);
+                gridItem.appendChild(figure);
+                grid.appendChild(gridItem);
+            });
+
+            source.remove();
+        });
     }
 
     function initPhotoInfiniteScroll(grid, masonry) {
@@ -1165,10 +1301,12 @@
             $(el).find(element).each(function (i, v) {
                 var gridEl = $(v);
                 var linkEl = gridEl.find(trigger);
+                var width = parseInt(linkEl.attr('data-pswp-width'), 10) || 0;
+                var height = parseInt(linkEl.attr('data-pswp-height'), 10) || 0;
                 var item = {
                     src: isGallery ? gridEl.find('img').attr('src') : linkEl.attr('href'),
-                    w: 0,
-                    h: 0,
+                    w: width,
+                    h: height,
                 };
 
                 if (caption && gridEl.find(caption).length) {
@@ -1210,8 +1348,10 @@
 
         $(container).on('click', trigger, function (event) {
             event.preventDefault();
-            var index = $(event.target).closest(container).find(element).index($(event.target).closest(element));
+            var clickedItem = $(event.target).closest(element);
+            var index = $(event.target).closest(container).find(element).index(clickedItem);
             var clickedGallery = $(event.target).closest(container);
+            if (index < 0) index = 0;
             openPhotoSwipe(index, clickedGallery[0]);
         });
     }

@@ -1,0 +1,21 @@
+{{#has tag="photography"}}
+    <template
+        data-photo-body-source
+        data-post-title="{{title}}"
+        data-post-url="{{url}}"
+        data-post-date="{{date published_at format="DD MMM YYYY"}}"
+        data-post-datetime="{{date format="YYYY-MM-DD"}}">
+        {{content}}
+    </template>
+{{else}}
+    {{#has tag="#photography"}}
+        <template
+            data-photo-body-source
+            data-post-title="{{title}}"
+            data-post-url="{{url}}"
+            data-post-date="{{date published_at format="DD MMM YYYY"}}"
+            data-post-datetime="{{date format="YYYY-MM-DD"}}">
+            {{content}}
+        </template>
+    {{/has}}
+{{/has}}

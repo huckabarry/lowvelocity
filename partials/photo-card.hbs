@@ -13,7 +13,7 @@
                 alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}">
         </a>
 
-        <a class="post-lightbox" aria-label="{{t "Expand image"}}" href="{{img_url feature_image}}">
+        <a class="post-lightbox" aria-label="{{t "Expand image"}}" href="{{img_url feature_image}}" data-no-client-nav>
             {{> "icons/maximize"}}
         </a>
 
@@ -24,7 +24,7 @@
                     <time datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
                 </span>
                 <span class="post-caption-meta-item">
-                    <a href="{{url}}">{{t "View photo"}}</a>
+                    <a href="{{url}}">{{t "Read"}}</a>
                 </span>
             </div>
         </figcaption>
