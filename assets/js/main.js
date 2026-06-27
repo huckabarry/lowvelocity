@@ -21,6 +21,7 @@
         initListeningPreviewPlayers();
         initBlueskyNotes();
         initNowMixedFeed();
+        initAtprotoEngagement();
         initPhotoFeed();
         initGhostGalleryMasonry();
         if (isClientNavigation) initGhostCardEnhancements();
@@ -553,6 +554,162 @@
         next.addEventListener('click', function () {
             scrollBySlide(1);
         });
+    }
+
+    function initAtprotoEngagement() {
+        document.querySelectorAll('[data-atproto-engagement]:not([data-atproto-ready])').forEach(function (section) {
+            section.setAttribute('data-atproto-ready', 'true');
+
+            var endpoint = section.getAttribute('data-atproto-endpoint') || 'https://sync.lowvelocity.org/updates/bluesky/thread';
+            var rkey = atprotoRkeyFromSection(section);
+            var status = section.querySelector('.atproto-engagement__status');
+            if (!rkey) {
+                if (status) status.textContent = 'Bluesky discussion is unavailable for this post.';
+                return;
+            }
+
+            var url = new URL(endpoint, window.location.href);
+            url.searchParams.set('rkey', rkey);
+
+            fetch(url.toString(), {headers: {Accept: 'application/json'}})
+                .then(function (response) {
+                    if (!response.ok) throw new Error('Bluesky thread request failed');
+                    return response.json();
+                })
+                .then(function (data) {
+                    renderAtprotoEngagement(section, data);
+                })
+                .catch(function () {
+                    if (status) status.textContent = 'Bluesky discussion is temporarily unavailable.';
+                });
+        });
+    }
+
+    function atprotoRkeyFromSection(section) {
+        var value = section.getAttribute('data-atproto-rkey') || '';
+        var match = value.match(/(?:^|\/)bsky-([a-z0-9-]+)\/?$/i) || value.match(/^([a-z0-9-]+)$/i);
+        return match ? match[1] : '';
+    }
+
+    function renderAtprotoEngagement(section, data) {
+        var post = data && data.post;
+        var counts = data && data.counts ? data.counts : {};
+        var replies = Array.isArray(data && data.replies) ? data.replies : [];
+        var quotes = Array.isArray(data && data.quotes) ? data.quotes : [];
+        var fragment = document.createDocumentFragment();
+        var title = document.createElement('h2');
+        var countsList = document.createElement('div');
+        var postUrl = post && post.url;
+
+        section.replaceChildren();
+        title.className = 'atproto-engagement__title';
+        title.textContent = 'Bluesky discussion';
+        fragment.appendChild(title);
+
+        countsList.className = 'atproto-engagement__counts';
+        [
+            ['likes', 'Likes'],
+            ['reposts', 'Reposts'],
+            ['quotes', 'Quotes'],
+            ['replies', 'Replies'],
+        ].forEach(function (item) {
+            var metric = document.createElement(postUrl ? 'a' : 'span');
+            var number = document.createElement('strong');
+            var label = document.createElement('span');
+            metric.className = 'atproto-engagement__metric';
+            if (postUrl) {
+                metric.href = postUrl;
+                metric.target = '_blank';
+                metric.rel = 'noopener noreferrer';
+            }
+            number.textContent = formatCompactNumber(Number(counts[item[0]]) || 0);
+            label.textContent = item[1];
+            metric.appendChild(number);
+            metric.appendChild(label);
+            countsList.appendChild(metric);
+        });
+        fragment.appendChild(countsList);
+
+        if (replies.length) {
+            fragment.appendChild(createAtprotoPostList('Recent replies', replies));
+        }
+
+        if (quotes.length) {
+            fragment.appendChild(createAtprotoPostList('Recent quotes', quotes));
+        }
+
+        if (!replies.length && !quotes.length) {
+            var empty = document.createElement('p');
+            empty.className = 'atproto-engagement__empty';
+            empty.textContent = 'No replies or quote posts yet.';
+            fragment.appendChild(empty);
+        }
+
+        section.appendChild(fragment);
+    }
+
+    function createAtprotoPostList(titleText, posts) {
+        var wrap = document.createElement('div');
+        var heading = document.createElement('h3');
+        var list = document.createElement('div');
+
+        wrap.className = 'atproto-engagement__group';
+        heading.className = 'atproto-engagement__subtitle';
+        heading.textContent = titleText;
+        list.className = 'atproto-engagement__posts';
+        posts.forEach(function (post) {
+            list.appendChild(createAtprotoPostPreview(post));
+        });
+
+        wrap.appendChild(heading);
+        wrap.appendChild(list);
+        return wrap;
+    }
+
+    function createAtprotoPostPreview(post) {
+        var article = document.createElement('article');
+        var avatar = document.createElement('img');
+        var body = document.createElement('div');
+        var meta = document.createElement('div');
+        var author = document.createElement('a');
+        var time = document.createElement('a');
+        var text = document.createElement('p');
+        var authorData = post.author || {};
+
+        article.className = 'atproto-post-preview';
+        avatar.className = 'atproto-post-preview__avatar';
+        avatar.src = authorData.avatar || '';
+        avatar.alt = '';
+        avatar.loading = 'lazy';
+        body.className = 'atproto-post-preview__body';
+        meta.className = 'atproto-post-preview__meta';
+        author.className = 'atproto-post-preview__author';
+        author.href = 'https://bsky.app/profile/' + encodeURIComponent(authorData.handle || authorData.did || '');
+        author.target = '_blank';
+        author.rel = 'noopener noreferrer';
+        author.textContent = authorData.displayName || authorData.handle || 'Bluesky user';
+        time.className = 'atproto-post-preview__time';
+        time.href = post.url || author.href;
+        time.target = '_blank';
+        time.rel = 'noopener noreferrer';
+        time.textContent = formatNowFeedDate(post.createdAt);
+        text.className = 'atproto-post-preview__text';
+        appendLinkedPlainText(text, post.text || '');
+
+        if (avatar.src) article.appendChild(avatar);
+        meta.appendChild(author);
+        if (time.textContent) meta.appendChild(time);
+        body.appendChild(meta);
+        if (text.textContent.trim()) body.appendChild(text);
+        article.appendChild(body);
+        return article;
+    }
+
+    function formatCompactNumber(value) {
+        return new Intl.NumberFormat(document.documentElement.lang || 'en', {
+            notation: 'compact',
+            maximumFractionDigits: 1,
+        }).format(value);
     }
 
     function createNowListeningItem(template) {

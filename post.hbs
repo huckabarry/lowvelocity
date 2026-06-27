@@ -63,6 +63,17 @@
         </div>
     {{/has}}
 
+    {{#has tag="#bluesky"}}
+        <section
+            class="atproto-engagement"
+            data-atproto-engagement
+            data-atproto-endpoint="https://sync.lowvelocity.org/updates/bluesky/thread"
+            data-atproto-rkey="{{slug}}"
+            aria-label="{{t "Bluesky discussion"}}">
+            <p class="atproto-engagement__status">{{t "Loading Bluesky discussion…"}}</p>
+        </section>
+    {{/has}}
+
     {{#if tags}}
         <footer class="post-tags">
             {{#foreach tags}}
