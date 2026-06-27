@@ -431,7 +431,7 @@ h6,
 .lv-listening-post__art {
     width: 100%;
     max-width: none;
-    margin: 0.55rem 0 0.45rem;
+    margin: 0.55rem 0 0.75rem;
     order: 1;
 }
 
@@ -441,8 +441,14 @@ h6,
 
 .lv-listening-entry__art img,
 .lv-listening-post__play {
+    display: block;
     width: 100%;
     border-radius: 0.35rem;
+}
+
+.lv-listening-post__art img {
+    aspect-ratio: 1;
+    object-fit: cover;
 }
 
 .lv-listening-post__play {
@@ -1282,7 +1288,14 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .cactus-content.lv-listening-post .lv-listening-post__art {
-    margin: 0.55rem 0 0.45rem;
+    width: 100%;
+    max-width: none;
+    margin: 0.55rem 0 0.75rem;
+}
+
+.cactus-content.lv-listening-post .lv-listening-post__play,
+.cactus-content.lv-listening-post .lv-listening-post__art img {
+    width: 100%;
 }
 
 .cactus-content.lv-listening-post h2 {

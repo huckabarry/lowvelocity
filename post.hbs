@@ -3,7 +3,9 @@
 {{#post}}
 <article class="{{post_class}} cactus-article">
     <header class="cactus-article-header">
-        {{#has tag="afterword,#bluesky"}}
+        {{#has tag="#crucialtracks"}}
+            <h1 class="is-visually-hidden">{{title}}</h1>
+        {{else has tag="afterword,#bluesky"}}
         {{else}}
             <h1 class="cactus-title cactus-article-title">{{title}}</h1>
         {{/has}}
