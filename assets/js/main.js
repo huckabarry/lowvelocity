@@ -388,11 +388,16 @@
             .map(createNowStatusItem)
             .filter(Boolean);
 
-        renderNowMixedFeed(container, listeningItems.concat(statusItems));
+        section._nowFeedItems = listeningItems.concat(statusItems);
+        section._nowFeedIds = createNowFeedIdSet(section._nowFeedItems);
+
+        renderNowMixedFeed(container, section._nowFeedItems);
 
         section.querySelectorAll('template[data-now-listening-entry], template[data-now-status-entry]').forEach(function (template) {
             template.remove();
         });
+
+        initNowInfiniteFeed(section, container);
     }
 
     function createNowStatusItem(template) {
@@ -434,6 +439,7 @@
             kicker: 'Status',
             date: date,
             dateLabel: template.getAttribute('data-date-label') || formatNowFeedDate(date),
+            id: url,
             node: card,
         };
     }
@@ -809,8 +815,190 @@
             kicker: 'Listening',
             date: date,
             dateLabel: template.getAttribute('data-date-label') || formatNowFeedDate(date),
+            id: url,
             node: card,
         };
+    }
+
+    function initNowInfiniteFeed(section, container) {
+        var apiConfig = getGhostContentApiConfig();
+        var status = document.createElement('p');
+        var sentinel = document.createElement('div');
+        var sources;
+        var observer;
+
+        if (!apiConfig.key || !apiConfig.endpoint) return;
+
+        sources = [
+            {
+                filter: section.getAttribute('data-now-status-filter') || 'tag:hash-bluesky',
+                limit: parseInt(section.getAttribute('data-now-status-limit'), 10) || 100,
+                page: 2,
+                hasMore: true,
+                createItem: createNowStatusItemFromPost,
+            },
+            {
+                filter: section.getAttribute('data-now-listening-filter') || 'tag:hash-crucialtracks',
+                limit: parseInt(section.getAttribute('data-now-listening-limit'), 10) || 25,
+                page: 2,
+                hasMore: true,
+                createItem: createNowListeningItemFromPost,
+            },
+        ];
+
+        status.className = 'now-feed-status now-feed-status--loader';
+        status.hidden = true;
+        status.setAttribute('aria-live', 'polite');
+        sentinel.className = 'now-feed-sentinel';
+        sentinel.setAttribute('aria-hidden', 'true');
+        section.appendChild(status);
+        section.appendChild(sentinel);
+
+        function loadMoreNowItems() {
+            var activeSources = sources.filter(function (source) {
+                return source.hasMore;
+            });
+
+            if (section._nowFeedLoading || !activeSources.length) return;
+
+            section._nowFeedLoading = true;
+            status.hidden = false;
+            status.textContent = 'Loading older updates…';
+
+            Promise.all(activeSources.map(function (source) {
+                return fetchNowFeedPage(apiConfig, source).then(function (result) {
+                    var pagination = result.meta && result.meta.pagination ? result.meta.pagination : {};
+                    var items = (result.posts || []).map(source.createItem).filter(Boolean);
+
+                    source.hasMore = Boolean(pagination.next);
+                    source.page = pagination.next || source.page + 1;
+
+                    return items;
+                }).catch(function () {
+                    source.hasMore = false;
+                    return [];
+                });
+            })).then(function (groups) {
+                var newItems = [];
+
+                groups.forEach(function (items) {
+                    items.forEach(function (item) {
+                        var id = item.id || item.date + item.kicker;
+                        if (section._nowFeedIds.has(id)) return;
+                        section._nowFeedIds.add(id);
+                        newItems.push(item);
+                    });
+                });
+
+                if (newItems.length) {
+                    section._nowFeedItems = section._nowFeedItems.concat(newItems);
+                    renderNowMixedFeed(container, section._nowFeedItems);
+                }
+
+                section._nowFeedLoading = false;
+
+                if (sources.some(function (source) { return source.hasMore; })) {
+                    status.hidden = true;
+                    status.textContent = '';
+                } else {
+                    status.hidden = false;
+                    status.textContent = 'You’ve reached the beginning of this local now archive.';
+                    if (observer) observer.disconnect();
+                    sentinel.remove();
+                }
+            });
+        }
+
+        if ('IntersectionObserver' in window) {
+            observer = new IntersectionObserver(function (entries) {
+                if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                    loadMoreNowItems();
+                }
+            }, {rootMargin: '900px 0px'});
+            observer.observe(sentinel);
+        } else {
+            var button = document.createElement('button');
+            button.className = 'now-feed-load-more';
+            button.type = 'button';
+            button.textContent = 'Load older updates';
+            button.addEventListener('click', loadMoreNowItems);
+            sentinel.replaceWith(button);
+        }
+    }
+
+    function fetchNowFeedPage(apiConfig, source) {
+        var url = new URL(apiConfig.endpoint, window.location.href);
+        url.searchParams.set('key', apiConfig.key);
+        url.searchParams.set('filter', source.filter);
+        url.searchParams.set('limit', source.limit);
+        url.searchParams.set('page', source.page);
+        url.searchParams.set('include', 'tags');
+        url.searchParams.set('formats', 'html');
+        url.searchParams.set('order', 'published_at desc');
+
+        return fetch(url.toString(), {headers: {Accept: 'application/json'}}).then(function (response) {
+            if (!response.ok) throw new Error('Now feed page request failed');
+            return response.json();
+        });
+    }
+
+    function getGhostContentApiConfig() {
+        var script = document.querySelector('script[data-key][data-api], script[data-key][data-sodo-search], script[data-key][data-ghost]');
+        var key = script ? script.getAttribute('data-key') : '';
+        var apiBase = script ? script.getAttribute('data-api') : '';
+        var base;
+        var endpoint;
+
+        try {
+            base = apiBase ? new URL(apiBase, window.location.origin).toString() : new URL('/ghost/api/content/', window.location.origin).toString();
+            endpoint = new URL('posts/', base).toString();
+        } catch (error) {
+            endpoint = '';
+        }
+
+        return {
+            key: key,
+            endpoint: endpoint,
+        };
+    }
+
+    function createNowStatusItemFromPost(post) {
+        var template = createNowTemplateFromPost(post);
+        return createNowStatusItem(template);
+    }
+
+    function createNowListeningItemFromPost(post) {
+        var template = createNowTemplateFromPost(post);
+        if (post && post.feature_image) template.setAttribute('data-image', post.feature_image);
+        if (post && post.feature_image_alt) template.setAttribute('data-image-alt', post.feature_image_alt);
+        if (post && post.custom_excerpt) template.setAttribute('data-summary', post.custom_excerpt);
+        return createNowListeningItem(template);
+    }
+
+    function createNowTemplateFromPost(post) {
+        var template = document.createElement('template');
+        var title = post && post.title ? post.title : '';
+        var date = post && post.published_at ? post.published_at : '';
+        var url = post && post.url ? post.url : post && post.slug ? '/' + post.slug + '/' : '#';
+
+        template.setAttribute('data-date', date);
+        template.setAttribute('data-date-label', formatNowFeedDate(date));
+        template.setAttribute('data-title', title);
+        template.setAttribute('data-url', url);
+        template.innerHTML = post && post.html ? post.html : '';
+
+        return template;
+    }
+
+    function createNowFeedIdSet(items) {
+        var ids = new Set();
+
+        items.forEach(function (item) {
+            if (!item) return;
+            ids.add(item.id || item.date + item.kicker);
+        });
+
+        return ids;
     }
 
     function renderNowMixedFeed(container, items) {
