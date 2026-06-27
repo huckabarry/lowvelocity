@@ -7,11 +7,12 @@
 
 <section class="cactus-section archive-section">
     <ul class="post-list" role="list">
-        {{#foreach posts}}
-            {{> "post-preview"}}
-        {{else}}
-            <li>No field notes are published yet.</li>
-        {{/foreach}}
+        {{#get "posts" filter="tag:[field-notes,urbanism,housing,transportation,public-finance]" limit="100" include="tags" order="published_at desc" as |field_notes|}}
+            {{#foreach field_notes}}
+                {{> "post-preview"}}
+            {{else}}
+                <li>No field notes are published yet.</li>
+            {{/foreach}}
+        {{/get}}
     </ul>
-    {{pagination}}
 </section>
