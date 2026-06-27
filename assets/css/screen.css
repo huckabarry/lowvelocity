@@ -500,6 +500,12 @@ h6,
     line-height: 1.15;
 }
 
+.lv-listening-entry__year {
+    color: var(--color-muted);
+    font-size: 0.82em;
+    font-weight: 500;
+}
+
 .lv-listening-entry__artist {
     order: 4;
     margin: 0.2rem 0 0.65rem;
