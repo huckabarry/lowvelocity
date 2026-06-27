@@ -817,21 +817,7 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .home-hero {
-    display: flex;
-    align-items: center;
-    gap: 1.1rem;
     margin: 0 0 3rem;
-}
-
-.home-hero-image {
-    width: 5.5rem;
-    height: 5.5rem;
-    flex: 0 0 auto;
-    border: 1px dashed var(--color-rule);
-    border-radius: 50%;
-    object-fit: cover;
-    background: #fff;
-    filter: contrast(1.25);
 }
 
 .home-hero-copy h1 {
