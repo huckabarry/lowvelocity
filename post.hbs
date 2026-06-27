@@ -17,7 +17,11 @@
             {{/has}}
             {{#if primary_tag}}
                 <span aria-hidden="true">/</span>
-                {{#primary_tag}}<a href="{{url}}">{{name}}</a>{{/primary_tag}}
+                {{#has tag="#crucialtracks"}}
+                    {{#primary_tag}}<a href="{{@site.url}}/listening/">{{name}}</a>{{/primary_tag}}
+                {{else}}
+                    {{#primary_tag}}<a href="{{url}}">{{name}}</a>{{/primary_tag}}
+                {{/has}}
             {{/if}}
         </div>
 
