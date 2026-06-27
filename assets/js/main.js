@@ -20,6 +20,7 @@
         initGhostCommentsFrame();
         initListeningPreviewPlayers();
         initBlueskyNotes();
+        initNowMixedFeed();
         initPhotoFeed();
         initGhostGalleryMasonry();
         if (isClientNavigation) initGhostCardEnhancements();
@@ -372,7 +373,227 @@
             });
     }
 
-    function createStatusUpdate(post) {
+    function initNowMixedFeed() {
+        var section = document.querySelector('[data-now-feed]');
+        if (!section) return;
+
+        var container = section.querySelector('[data-now-feed-items]');
+        var endpoint = section.getAttribute('data-bluesky-endpoint') || 'https://sync.lowvelocity.org/updates/bluesky';
+        var limit = parseInt(section.getAttribute('data-bluesky-limit'), 10) || 25;
+        if (!container) return;
+
+        var listeningItems = Array.prototype.slice.call(section.querySelectorAll('template[data-now-listening-entry]'))
+            .map(createNowListeningItem)
+            .filter(Boolean);
+
+        fetch(endpoint)
+            .then(function (response) {
+                if (!response.ok) throw new Error('Cached Bluesky feed request failed');
+                return response.json();
+            })
+            .then(function (data) {
+                var blueskyItems = (data.items || []).slice(0, limit).map(createNowBlueskyItem).filter(Boolean);
+                renderNowMixedFeed(container, listeningItems.concat(blueskyItems));
+            })
+            .catch(function () {
+                renderNowMixedFeed(container, listeningItems);
+            })
+            .finally(function () {
+                section.querySelectorAll('template[data-now-listening-entry]').forEach(function (template) {
+                    template.remove();
+                });
+            });
+    }
+
+    function createNowBlueskyItem(post) {
+        if (!post || !post.createdAt) return null;
+
+        return {
+            type: 'status',
+            kicker: 'Bluesky',
+            date: post.createdAt,
+            dateLabel: formatNowFeedDate(post.createdAt),
+            node: createStatusUpdate(post, {visible: true}),
+        };
+    }
+
+    function createNowListeningItem(template) {
+        if (!template) return null;
+
+        var source = document.createElement('div');
+        var date = template.getAttribute('data-date') || '';
+        var title = template.getAttribute('data-title') || 'Listening';
+        var url = template.getAttribute('data-url') || '#';
+        var image = template.getAttribute('data-image') || '';
+        var imageAlt = template.getAttribute('data-image-alt') || title;
+        var summary = template.getAttribute('data-summary') || '';
+        source.appendChild(template.content.cloneNode(true));
+
+        var artist = textFrom(source.querySelector('.lv-listening-entry__artist'));
+        var note = source.querySelector('.lv-listening-entry__note');
+        var previewUrl = findListeningPreviewUrl(source);
+        var links = Array.prototype.slice.call(source.querySelectorAll('.lv-listening-entry__links a')).filter(function (link) {
+            return !/audio-ssl\.itunes\.apple\.com|\.m4a(?:[?#]|$)|\.mp3(?:[?#]|$)/i.test(link.href);
+        });
+        var card = document.createElement('div');
+        var coverLink = document.createElement('a');
+        var cover = document.createElement('img');
+        var body = document.createElement('div');
+        var heading = document.createElement('h2');
+        var headingLink = document.createElement('a');
+
+        card.className = 'media-entry media-entry--track now-media-entry';
+
+        if (image) {
+            coverLink.className = 'media-entry__cover';
+            coverLink.href = url;
+            cover.src = image;
+            cover.alt = imageAlt;
+            cover.loading = 'lazy';
+            coverLink.appendChild(cover);
+            card.appendChild(coverLink);
+        }
+
+        body.className = 'media-entry__body';
+        heading.className = 'mixed-feed__title';
+        headingLink.href = url;
+        headingLink.textContent = title;
+        heading.appendChild(headingLink);
+        body.appendChild(heading);
+
+        if (artist) {
+            var credit = document.createElement('p');
+            credit.className = 'media-entry__credit';
+            credit.textContent = artist;
+            body.appendChild(credit);
+        }
+
+        if (note && note.innerHTML.trim()) {
+            var noteWrapper = document.createElement('div');
+            noteWrapper.className = 'mixed-feed__summary media-entry__note';
+            noteWrapper.innerHTML = note.innerHTML;
+            body.appendChild(noteWrapper);
+        } else if (summary) {
+            var summaryNode = document.createElement('p');
+            summaryNode.className = 'mixed-feed__summary';
+            summaryNode.textContent = summary;
+            body.appendChild(summaryNode);
+        }
+
+        if (links.length) {
+            var actions = document.createElement('div');
+            actions.className = 'mixed-feed__actions';
+            links.forEach(function (link) {
+                var action = document.createElement('a');
+                action.className = 'tag-pill mixed-feed__action';
+                action.href = link.href;
+                action.target = '_blank';
+                action.rel = 'noopener noreferrer';
+                action.textContent = link.textContent;
+                actions.appendChild(action);
+            });
+            body.appendChild(actions);
+        }
+
+        if (previewUrl) {
+            var audioWrap = document.createElement('div');
+            var audio = document.createElement('audio');
+            audioWrap.className = 'mixed-feed__audio';
+            audio.controls = true;
+            audio.preload = 'none';
+            audio.src = previewUrl;
+            audio.setAttribute('aria-label', 'Preview ' + title);
+            audioWrap.appendChild(audio);
+            body.appendChild(audioWrap);
+        }
+
+        card.appendChild(body);
+
+        return {
+            type: 'media',
+            kicker: 'Listening',
+            date: date,
+            dateLabel: template.getAttribute('data-date-label') || formatNowFeedDate(date),
+            node: card,
+        };
+    }
+
+    function renderNowMixedFeed(container, items) {
+        var sorted = items.filter(function (item) {
+            return item && item.node;
+        }).sort(function (left, right) {
+            return new Date(right.date) - new Date(left.date);
+        });
+
+        container.replaceChildren();
+
+        if (!sorted.length) {
+            var empty = document.createElement('p');
+            empty.className = 'now-feed-status';
+            empty.textContent = 'The now feed is temporarily unavailable.';
+            container.appendChild(empty);
+            return;
+        }
+
+        sorted.forEach(function (item) {
+            container.appendChild(createNowFeedEntry(item));
+        });
+    }
+
+    function createNowFeedEntry(item) {
+        var article = document.createElement('article');
+        var metaColumn = document.createElement('div');
+        var time = document.createElement('time');
+        var rail = document.createElement('div');
+        var dot = document.createElement('span');
+        var content = document.createElement('div');
+        var itemWrap = document.createElement('div');
+        var kicker = document.createElement('p');
+
+        article.className = 'mixed-feed__entry mixed-feed__entry--' + item.type;
+        metaColumn.className = 'mixed-feed__meta-column';
+        time.className = 'mixed-feed__date';
+        time.dateTime = item.date || '';
+        time.textContent = item.dateLabel || formatNowFeedDate(item.date);
+        rail.className = 'mixed-feed__rail';
+        rail.setAttribute('aria-hidden', 'true');
+        dot.className = 'mixed-feed__dot';
+        content.className = 'mixed-feed__content';
+        itemWrap.className = 'mixed-feed__item mixed-feed__item--' + item.type;
+        kicker.className = 'mixed-feed__kicker';
+        kicker.textContent = item.kicker || item.type;
+
+        rail.appendChild(dot);
+        metaColumn.appendChild(time);
+        itemWrap.appendChild(kicker);
+        itemWrap.appendChild(item.node);
+        content.appendChild(itemWrap);
+        article.appendChild(metaColumn);
+        article.appendChild(rail);
+        article.appendChild(content);
+
+        return article;
+    }
+
+    function formatNowFeedDate(value) {
+        if (!value) return '';
+
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '';
+
+        return new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(date);
+    }
+
+    function textFrom(node) {
+        return node ? node.textContent.trim() : '';
+    }
+
+    function createStatusUpdate(post, options) {
+        options = options || {};
         var article = document.createElement('article');
         var avatar = document.createElement('img');
         var body = document.createElement('div');
@@ -387,7 +608,7 @@
         var createdAt = post.createdAt;
 
         article.className = 'status-update';
-        article.hidden = true;
+        article.hidden = !options.visible;
         avatar.className = 'status-avatar';
         avatar.src = authorData.avatar || '';
         avatar.alt = '';
