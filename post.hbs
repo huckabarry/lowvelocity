@@ -18,9 +18,12 @@
             {{/if}}
         </div>
 
-        {{#if custom_excerpt}}
-            <p class="cactus-excerpt">{{custom_excerpt}}</p>
-        {{/if}}
+        {{#has tag="#crucialtracks"}}
+        {{else}}
+            {{#if custom_excerpt}}
+                <p class="cactus-excerpt">{{custom_excerpt}}</p>
+            {{/if}}
+        {{/has}}
 
         {{#has tag="#crucialtracks"}}
         {{else}}

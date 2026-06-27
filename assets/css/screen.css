@@ -416,17 +416,47 @@ h6,
 .lv-listening-post {
     display: grid;
     grid-template-columns: minmax(120px, 190px) 1fr;
-    gap: 1.25rem;
+    gap: 1.25rem 1.5rem;
     align-items: start;
 }
 
+.lv-listening-post__art {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+}
+
+.lv-listening-post__body {
+    display: contents;
+}
+
 .lv-listening-post__body .lv-listening-entry {
-    display: block;
+    display: contents;
     margin: 0;
 }
 
 .lv-listening-post__body .lv-listening-entry__body {
-    min-width: 0;
+    display: contents;
+}
+
+.lv-listening-post__body > h2,
+.lv-listening-post__body .lv-listening-entry__body > h2 {
+    grid-column: 2;
+    align-self: end;
+    margin: 0;
+}
+
+.lv-listening-post__body > p,
+.lv-listening-post__body .lv-listening-entry__body > p,
+.lv-listening-post__body > div,
+.lv-listening-post__body .lv-listening-entry__body > div {
+    grid-column: 1 / -1;
+}
+
+.lv-listening-post__body > h2 + p,
+.lv-listening-post__body .lv-listening-entry__body > h2 + p {
+    grid-column: 2;
+    margin: 0.25rem 0 0;
+    color: var(--color-muted);
 }
 
 .lv-listening-entry__art {
@@ -467,10 +497,11 @@ h6,
 }
 
 .lv-listening-entry__links {
+    grid-column: 1 / -1;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: 1rem;
+    margin: 1.25rem 0 0;
 }
 
 .lv-listening-entry__links a {
@@ -494,7 +525,7 @@ h6,
     border-radius: 0.35rem;
 }
 
-.tag-hash-crucialtracks .cactus-content h2 + p {
+.tag-hash-crucialtracks .cactus-content:not(.lv-listening-post) h2 + p {
     margin-top: -0.5rem;
     color: var(--color-muted);
 }
@@ -525,7 +556,7 @@ h6,
     width: 100%;
     max-width: none;
     flex: 1 1 100%;
-    margin: 0.25rem 0 0.5rem;
+    margin: 0 0 0.5rem;
 }
 
 @media (max-width: 640px) {
@@ -540,6 +571,15 @@ h6,
 
     .lv-listening-post {
         grid-template-columns: 1fr;
+    }
+
+    .lv-listening-post__art,
+    .lv-listening-post__body > h2,
+    .lv-listening-post__body .lv-listening-entry__body > h2,
+    .lv-listening-post__body > h2 + p,
+    .lv-listening-post__body .lv-listening-entry__body > h2 + p {
+        grid-column: 1;
+        grid-row: auto;
     }
 
     .lv-listening-entry__art {
