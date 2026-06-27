@@ -378,42 +378,61 @@
         if (!section) return;
 
         var container = section.querySelector('[data-now-feed-items]');
-        var endpoint = section.getAttribute('data-bluesky-endpoint') || 'https://sync.lowvelocity.org/updates/bluesky';
-        var limit = parseInt(section.getAttribute('data-bluesky-limit'), 10) || 25;
         if (!container) return;
 
         var listeningItems = Array.prototype.slice.call(section.querySelectorAll('template[data-now-listening-entry]'))
             .map(createNowListeningItem)
             .filter(Boolean);
+        var statusItems = Array.prototype.slice.call(section.querySelectorAll('template[data-now-status-entry]'))
+            .map(createNowStatusItem)
+            .filter(Boolean);
 
-        fetch(endpoint)
-            .then(function (response) {
-                if (!response.ok) throw new Error('Cached Bluesky feed request failed');
-                return response.json();
-            })
-            .then(function (data) {
-                var blueskyItems = (data.items || []).slice(0, limit).map(createNowBlueskyItem).filter(Boolean);
-                renderNowMixedFeed(container, listeningItems.concat(blueskyItems));
-            })
-            .catch(function () {
-                renderNowMixedFeed(container, listeningItems);
-            })
-            .finally(function () {
-                section.querySelectorAll('template[data-now-listening-entry]').forEach(function (template) {
-                    template.remove();
-                });
-            });
+        renderNowMixedFeed(container, listeningItems.concat(statusItems));
+
+        section.querySelectorAll('template[data-now-listening-entry], template[data-now-status-entry]').forEach(function (template) {
+            template.remove();
+        });
     }
 
-    function createNowBlueskyItem(post) {
-        if (!post || !post.createdAt) return null;
+    function createNowStatusItem(template) {
+        if (!template) return null;
+
+        var source = document.createElement('div');
+        var date = template.getAttribute('data-date') || '';
+        var title = template.getAttribute('data-title') || 'Status update';
+        var url = template.getAttribute('data-url') || '#';
+        var card = document.createElement('article');
+        var body = document.createElement('div');
+        var actions = document.createElement('p');
+        var link = document.createElement('a');
+
+        source.appendChild(template.content.cloneNode(true));
+
+        card.className = 'now-status-entry';
+        body.className = 'mixed-feed__summary now-status-entry__body';
+        body.innerHTML = source.innerHTML.trim();
+
+        if (!body.textContent.trim() && !body.querySelector('img, video, iframe')) {
+            var fallback = document.createElement('p');
+            fallback.textContent = title;
+            body.appendChild(fallback);
+        }
+
+        actions.className = 'mixed-feed__actions now-status-entry__actions';
+        link.className = 'tag-pill mixed-feed__action';
+        link.href = url;
+        link.textContent = 'Read';
+        actions.appendChild(link);
+
+        card.appendChild(body);
+        card.appendChild(actions);
 
         return {
             type: 'status',
-            kicker: 'Bluesky',
-            date: post.createdAt,
-            dateLabel: formatNowFeedDate(post.createdAt),
-            node: createStatusUpdate(post, {visible: true}),
+            kicker: 'Status',
+            date: date,
+            dateLabel: template.getAttribute('data-date-label') || formatNowFeedDate(date),
+            node: card,
         };
     }
 

@@ -6,7 +6,7 @@
     {{#if custom_excerpt}}
         <p>{{custom_excerpt}}</p>
     {{else}}
-        <p>Bluesky posts and listening notes folded into one running stream.</p>
+        <p>Status updates and listening notes folded into one running stream.</p>
     {{/if}}
     <div class="cactus-content now-intro">
         {{content}}
@@ -17,9 +17,7 @@
 <section
     class="mixed-feed now-mixed-feed"
     aria-label="{{t "Now feed"}}"
-    data-now-feed
-    data-bluesky-endpoint="https://sync.lowvelocity.org/updates/bluesky?source=bryan"
-    data-bluesky-limit="25">
+    data-now-feed>
     <div class="mixed-feed__items" data-now-feed-items aria-live="polite">
         <p class="now-feed-status">{{t "Loading now feed…"}}</p>
     </div>
@@ -35,6 +33,19 @@
                 data-image="{{#if feature_image}}{{img_url feature_image size="s"}}{{/if}}"
                 data-image-alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
                 data-summary="{{custom_excerpt}}">
+                {{content}}
+            </template>
+        {{/foreach}}
+    {{/get}}
+
+    {{#get "posts" filter="tag:hash-bluesky" limit="25" include="tags" order="published_at desc" formats="html" as |statuses|}}
+        {{#foreach statuses}}
+            <template
+                data-now-status-entry
+                data-date="{{date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}"
+                data-date-label="{{date published_at format="MMM D, YYYY"}}"
+                data-title="{{title}}"
+                data-url="{{url}}">
                 {{content}}
             </template>
         {{/foreach}}

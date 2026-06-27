@@ -1615,6 +1615,33 @@ html[data-theme="light"] .theme-icon-light {
     color: var(--color-muted);
 }
 
+.now-status-entry__body > :first-child {
+    margin-top: 0;
+}
+
+.now-status-entry__body > :last-child {
+    margin-bottom: 0;
+}
+
+.now-status-entry__body > * + * {
+    margin-top: 0.8rem;
+}
+
+.now-status-entry__body .kg-card {
+    margin: 0.9rem 0 0;
+}
+
+.now-status-entry__body img,
+.now-status-entry__body video,
+.now-status-entry__body iframe {
+    max-width: 100%;
+}
+
+.now-status-entry__body img {
+    height: auto;
+    border-radius: 0.45rem;
+}
+
 @media (max-width: 640px) {
     .now-header {
         margin-bottom: 2.4rem;
