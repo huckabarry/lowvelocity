@@ -1246,6 +1246,30 @@ html[data-theme="light"] .theme-icon-light {
     font-size: 1.5rem;
 }
 
+.cactus-content.lv-listening-post .lv-listening-post__art {
+    margin: 0.85rem 0 0.7rem;
+}
+
+.cactus-content.lv-listening-post h2 {
+    margin: 0;
+    color: var(--color-global-text);
+}
+
+.cactus-content.lv-listening-post h2 + p {
+    margin: 0.2rem 0 0.65rem;
+    color: var(--color-muted);
+}
+
+.cactus-content.lv-listening-post p {
+    margin: 0.7rem 0 0;
+}
+
+.cactus-content.lv-listening-post p:has(a[href*="music.apple.com"]),
+.cactus-content.lv-listening-post p:has(a[href*="song.link"]),
+.cactus-content.lv-listening-post p:has(a[href*="crucialtracks.org"]) {
+    margin: 0.35rem 0 0.85rem;
+}
+
 .cactus-content h3 {
     font-size: 1.25rem;
 }
