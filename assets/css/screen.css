@@ -723,14 +723,6 @@ h6 {
     color: var(--color-accent-2);
 }
 
-.cactus-brand-tagline {
-    max-width: 32rem;
-    margin: 0 0 0.15rem;
-    color: var(--color-muted);
-    font-size: 0.85rem;
-    line-height: 1.35;
-}
-
 .cactus-logo {
     width: 2rem;
     height: 2rem;
@@ -822,6 +814,37 @@ html[data-theme="light"] .theme-icon-light {
 
 .cactus-main {
     width: 100%;
+}
+
+.home-hero {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 0 3rem;
+}
+
+.home-hero-image {
+    width: 4.5rem;
+    height: 4.5rem;
+    flex: 0 0 auto;
+    border: 1px dashed var(--color-rule);
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fff;
+}
+
+.home-hero-copy h1 {
+    margin: 0;
+    color: var(--color-accent-2);
+    font-size: 1.15rem;
+    line-height: 1.2;
+}
+
+.home-hero-copy p {
+    margin: 0.25rem 0 0;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    line-height: 1.35;
 }
 
 .home-intro p,
@@ -1577,19 +1600,6 @@ html[data-theme="light"] .theme-icon-light {
         font-size: 1.5rem;
     }
 
-    .home-template .cactus-header {
-        height: auto;
-        align-items: flex-start;
-    }
-
-    .home-template .cactus-brand {
-        height: auto;
-    }
-
-    .home-template .cactus-nav {
-        padding-top: 0.6rem;
-    }
-
     .cactus-logo {
         position: absolute;
         left: -4.5rem;
@@ -1665,13 +1675,6 @@ html[data-theme="light"] .theme-icon-light {
         margin-bottom: 1.75rem;
     }
 
-    .home-template .cactus-header {
-        height: auto;
-        min-height: 4rem;
-        align-items: flex-start;
-        padding-top: 1rem;
-    }
-
     .status-update {
         grid-template-columns: 1fr;
     }
@@ -1687,14 +1690,6 @@ html[data-theme="light"] .theme-icon-light {
     .cactus-brand {
         height: 4rem;
         font-size: 1.375rem;
-    }
-
-    .home-template .cactus-brand {
-        height: auto;
-    }
-
-    .home-template .cactus-brand-tagline {
-        max-width: min(18rem, calc(100vw - 6.5rem));
     }
 
     .cactus-logo {
