@@ -19,6 +19,7 @@
         syncGhostCommentsTheme();
         initGhostCommentsFrame();
         initListeningPreviewPlayers();
+        initBlueskyPostLinkPreviews();
         initBlueskyNotes();
         initNowMixedFeed();
         initAtprotoEngagement();
@@ -270,6 +271,84 @@
             ];
             reframe(document.querySelectorAll(sources.join(',')));
         }
+    }
+
+    function initBlueskyPostLinkPreviews() {
+        document.querySelectorAll('.cactus-content .lv-atproto-note:not([data-link-previews-ready])').forEach(function (container) {
+            container.setAttribute('data-link-previews-ready', 'true');
+            enhanceBlueskyPostLinkPreviews(container);
+        });
+    }
+
+    function enhanceBlueskyPostLinkPreviews(container) {
+        Array.prototype.slice.call(container.querySelectorAll('p')).forEach(function (paragraph) {
+            if (paragraph.closest('.kg-card, .status-external, .lv-atproto-quote, blockquote')) return;
+
+            var anchors = Array.prototype.slice.call(paragraph.querySelectorAll('a[href]'));
+            if (anchors.length !== 1) return;
+
+            var anchor = anchors[0];
+            if (!/^https?:\/\//i.test(anchor.href)) return;
+
+            var strong = anchor.querySelector('strong');
+            var textNodes = Array.prototype.slice.call(paragraph.childNodes).filter(function (node) {
+                return node.nodeType === 3 && node.textContent.trim();
+            });
+            var hasOnlyAnchor = paragraph.children.length === 1 && !textNodes.length;
+            var paragraphText = paragraph.textContent.trim();
+            var anchorText = anchor.textContent.trim();
+            var isBareLink = hasOnlyAnchor && paragraphText === anchorText && /^https?:\/\//i.test(anchorText);
+            var isGhostPreviewLink = hasOnlyAnchor && strong;
+
+            if (!isBareLink && !isGhostPreviewLink) return;
+
+            paragraph.replaceWith(createBlueskyLinkPreview(anchor, strong));
+        });
+    }
+
+    function createBlueskyLinkPreview(anchor, strong) {
+        var preview = document.createElement('a');
+        var details = document.createElement('span');
+        var domain = document.createElement('span');
+        var title = document.createElement('strong');
+        var description = document.createElement('span');
+        var descriptionText = '';
+
+        preview.className = 'status-external lv-atproto-link-preview';
+        preview.href = anchor.href;
+        preview.rel = anchor.rel || 'noopener';
+        if (anchor.target) preview.target = anchor.target;
+
+        details.className = 'status-external-details';
+
+        try {
+            domain.className = 'status-external-domain';
+            domain.textContent = new URL(anchor.href, window.location.href).hostname.replace(/^www\./, '');
+            details.appendChild(domain);
+        } catch (error) {}
+
+        if (strong) {
+            var descriptionClone = anchor.cloneNode(true);
+            descriptionClone.querySelectorAll('strong').forEach(function (node) {
+                node.remove();
+            });
+            title.textContent = strong.textContent.trim();
+            descriptionText = descriptionClone.textContent.trim();
+        } else {
+            title.textContent = domain.textContent || anchor.textContent.trim() || anchor.href;
+            descriptionText = anchor.href;
+        }
+
+        details.appendChild(title);
+
+        if (descriptionText && descriptionText !== title.textContent) {
+            description.className = 'status-external-description';
+            description.textContent = descriptionText;
+            details.appendChild(description);
+        }
+
+        preview.appendChild(details);
+        return preview;
     }
 
     function initThemeToggle() {

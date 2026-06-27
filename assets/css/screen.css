@@ -1994,6 +1994,11 @@ html[data-theme="light"] .theme-icon-light {
     opacity: 1;
 }
 
+.lv-atproto-link-preview {
+    margin: 1rem 0;
+    background: color-mix(in srgb, var(--color-global-text) 2%, transparent);
+}
+
 .now-status-link-preview strong {
     color: var(--color-accent-2);
     line-height: 1.35;
