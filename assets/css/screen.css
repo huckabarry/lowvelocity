@@ -1127,6 +1127,15 @@ html[data-theme="light"] .theme-icon-light {
 
 .cactus-title-link {
     color: var(--color-accent);
+    font-style: italic;
+}
+
+.cactus-title-link a {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: color-mix(in srgb, currentColor 70%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28em;
 }
 
 .cactus-title a {
