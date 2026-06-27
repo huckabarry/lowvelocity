@@ -2066,7 +2066,7 @@ html[data-theme="light"] .theme-icon-light {
     margin-top: 0.9rem;
     padding: 0.75rem 0.85rem;
     border-style: dashed;
-    background: color-mix(in srgb, var(--color-global-text) 2%, transparent);
+    background: transparent;
 }
 
 .now-status-link-preview:hover {
