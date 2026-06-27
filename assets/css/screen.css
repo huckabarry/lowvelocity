@@ -1139,6 +1139,7 @@ html[data-theme="light"] .theme-icon-light {
 .post-list-item {
     display: grid;
     gap: 0.25rem;
+    min-width: 0;
 }
 
 .post-list-item time {
@@ -1148,7 +1149,12 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .post-list-item a {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
     color: var(--color-global-text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .cactus-more-link {
