@@ -10,8 +10,11 @@
 
         <div class="cactus-meta">
             <time datetime="{{date format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
-            <span aria-hidden="true">/</span>
-            <span>{{reading_time}}</span>
+            {{#has tag="#crucialtracks"}}
+            {{else}}
+                <span aria-hidden="true">/</span>
+                <span>{{reading_time}}</span>
+            {{/has}}
             {{#if primary_tag}}
                 <span aria-hidden="true">/</span>
                 {{#primary_tag}}<a href="{{url}}">{{name}}</a>{{/primary_tag}}
