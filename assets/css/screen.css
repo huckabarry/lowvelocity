@@ -974,7 +974,26 @@ html[data-theme="light"] .theme-icon-light {
     text-decoration: none;
 }
 
+.lv-atproto-card:not(.status-external) {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 0.85rem;
+    padding: 0.8rem;
+    border: 1px dashed var(--color-rule);
+    border-radius: 0.55rem;
+    color: var(--color-global-text);
+    text-decoration: none;
+}
+
 .status-external-thumb {
+    display: block;
+    width: 100%;
+    max-height: 18rem;
+    border-radius: 0.4rem;
+    object-fit: cover;
+}
+
+.lv-atproto-card:not(.status-external) > img {
     display: block;
     width: 100%;
     max-height: 18rem;
@@ -1005,8 +1024,14 @@ html[data-theme="light"] .theme-icon-light {
     gap: 0.2rem;
 }
 
+.lv-atproto-card:not(.status-external) > span {
+    display: grid;
+    gap: 0.2rem;
+}
+
 .status-external-domain,
-.status-external-description {
+.status-external-description,
+.lv-atproto-card:not(.status-external) small {
     color: var(--color-muted);
     font-size: 0.8rem;
 }
