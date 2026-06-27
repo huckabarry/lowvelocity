@@ -54,6 +54,80 @@
         }
     </style>
     {{ghost_head}}
+    <style id="lowvelocity-card-overrides">
+        .cactus-content .kg-bookmark-card a.kg-bookmark-container,
+        .cactus-content .kg-bookmark-card a.kg-bookmark-container:hover,
+        .kg-bookmark-card.lv-atproto-card a.kg-bookmark-container,
+        .kg-bookmark-card.lv-atproto-card a.kg-bookmark-container:hover,
+        .now-status-entry__body .kg-bookmark-card a.kg-bookmark-container,
+        .now-status-entry__body .kg-bookmark-card a.kg-bookmark-container:hover {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(6rem, 34%);
+            gap: 0.75rem;
+            align-items: stretch;
+            padding: 0.8rem;
+            overflow: hidden;
+            border: 1px dashed var(--color-rule);
+            border-radius: 0.55rem;
+            background: transparent;
+            box-shadow: none;
+            color: var(--color-global-text);
+            opacity: 1;
+            text-decoration: none;
+        }
+
+        .cactus-content .kg-bookmark-card a.kg-bookmark-container:hover,
+        .kg-bookmark-card.lv-atproto-card a.kg-bookmark-container:hover,
+        .now-status-entry__body .kg-bookmark-card a.kg-bookmark-container:hover {
+            border-color: var(--color-accent);
+            color: var(--color-global-text);
+        }
+
+        .cactus-content .kg-bookmark-card .kg-bookmark-content,
+        .kg-bookmark-card.lv-atproto-card .kg-bookmark-content,
+        .now-status-entry__body .kg-bookmark-card .kg-bookmark-content {
+            min-width: 0;
+            padding: 0;
+            background: transparent;
+        }
+
+        .cactus-content .kg-bookmark-card .kg-bookmark-thumbnail,
+        .kg-bookmark-card.lv-atproto-card .kg-bookmark-thumbnail,
+        .now-status-entry__body .kg-bookmark-card .kg-bookmark-thumbnail {
+            display: block;
+            min-width: 0;
+            min-height: 5rem;
+            overflow: hidden;
+            border-radius: 0.4rem;
+            background: transparent;
+            opacity: 1;
+        }
+
+        .cactus-content .kg-bookmark-card .kg-bookmark-thumbnail img,
+        .kg-bookmark-card.lv-atproto-card .kg-bookmark-thumbnail img,
+        .now-status-entry__body .kg-bookmark-card .kg-bookmark-thumbnail img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            min-height: 5rem;
+            border-radius: 0;
+            object-fit: cover;
+            opacity: 1;
+            visibility: visible;
+            transform: none;
+        }
+
+        @media (max-width: 520px) {
+            .cactus-content .kg-bookmark-card a.kg-bookmark-container,
+            .cactus-content .kg-bookmark-card a.kg-bookmark-container:hover,
+            .kg-bookmark-card.lv-atproto-card a.kg-bookmark-container,
+            .kg-bookmark-card.lv-atproto-card a.kg-bookmark-container:hover,
+            .now-status-entry__body .kg-bookmark-card a.kg-bookmark-container,
+            .now-status-entry__body .kg-bookmark-card a.kg-bookmark-container:hover {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body class="{{body_class}}">
