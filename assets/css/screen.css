@@ -1980,6 +1980,21 @@ html[data-theme="light"] .theme-icon-light {
     min-width: 0;
 }
 
+.now-media-entry {
+    display: block;
+}
+
+.now-media-entry .media-entry__cover {
+    display: block;
+    margin-bottom: 0.8rem;
+}
+
+.now-media-entry .media-entry__cover img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 0.65rem;
+}
+
 .mixed-feed__audio {
     margin-top: 0.75rem;
 }
