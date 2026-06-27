@@ -38,7 +38,7 @@
         {{/foreach}}
     {{/get}}
 
-    {{#get "posts" filter="tag:hash-bluesky" limit="25" include="tags" order="published_at desc" formats="html" as |statuses|}}
+    {{#get "posts" filter="tag:hash-bluesky" limit="100" include="tags" order="published_at desc" formats="html" as |statuses|}}
         {{#foreach statuses}}
             <template
                 data-now-status-entry
