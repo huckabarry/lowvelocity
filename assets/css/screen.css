@@ -430,8 +430,8 @@ h6,
 .lv-listening-post__art {
     width: 100%;
     max-width: none;
-    margin: 0.85rem 0 0.7rem;
-    order: 1;
+    margin: 0.55rem 0 0.7rem;
+    order: 2;
 }
 
 .lv-listening-entry__art {
@@ -516,20 +516,20 @@ h6,
 }
 
 .lv-listening-entry__links {
-    order: 2;
+    order: 1;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.35rem 0.8rem;
-    margin: 0.2rem 0 0.75rem;
+    margin: 0.2rem 0 0.65rem;
     text-align: center;
 }
 
 .lv-listening-post__body > p:has(a[href*="music.apple.com"]),
 .lv-listening-post__body > p:has(a[href*="song.link"]),
 .lv-listening-post__body > p:has(a[href*="crucialtracks.org"]) {
-    order: 2;
-    margin: 0.2rem 0 0.75rem;
+    order: 1;
+    margin: 0.2rem 0 0.65rem;
 }
 
 .lv-listening-post__body > h2 {
@@ -1261,7 +1261,7 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 .cactus-content.lv-listening-post .lv-listening-post__art {
-    margin: 0.85rem 0 0.7rem;
+    margin: 0.55rem 0 0.7rem;
 }
 
 .cactus-content.lv-listening-post h2 {
@@ -1281,7 +1281,7 @@ html[data-theme="light"] .theme-icon-light {
 .cactus-content.lv-listening-post p:has(a[href*="music.apple.com"]),
 .cactus-content.lv-listening-post p:has(a[href*="song.link"]),
 .cactus-content.lv-listening-post p:has(a[href*="crucialtracks.org"]) {
-    margin: 0.2rem 0 0.75rem;
+    margin: 0.2rem 0 0.65rem;
 }
 
 .cactus-content h3 {
