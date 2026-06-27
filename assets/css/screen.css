@@ -249,9 +249,12 @@ h6,
     font-size: 0.72rem;
 }
 
-.listening-card h2 {
+.listening-card-title {
+    display: block;
     margin: 0 0 0.35rem;
+    color: var(--color-global-text);
     font-size: 0.95rem;
+    font-weight: 700;
     line-height: 1.2;
 }
 
