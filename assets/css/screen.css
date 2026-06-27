@@ -413,6 +413,22 @@ h6,
     margin: 1.5rem 0;
 }
 
+.lv-listening-post {
+    display: grid;
+    grid-template-columns: minmax(120px, 190px) 1fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.lv-listening-post__body .lv-listening-entry {
+    display: block;
+    margin: 0;
+}
+
+.lv-listening-post__body .lv-listening-entry__body {
+    min-width: 0;
+}
+
 .lv-listening-entry__art {
     margin: 0;
 }
@@ -519,6 +535,10 @@ h6,
     }
 
     .lv-listening-entry {
+        grid-template-columns: 1fr;
+    }
+
+    .lv-listening-post {
         grid-template-columns: 1fr;
     }
 
