@@ -9,13 +9,13 @@ const livereload = require('gulp-livereload');
 const postcss = require('gulp-postcss');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
+const cleanCSS = require('gulp-clean-css');
 const beeper = require('beeper');
-const zip = require('gulp-zip');
+const {spawn, spawnSync} = require('child_process');
 
 // postcss plugins
-const easyimport = require('postcss-easy-import');
+const postcssImport = require('postcss-import');
 const autoprefixer = require('autoprefixer');
-const cssnano = require('cssnano');
 
 // translations support
 const { mergeLocales } = require('@tryghost/theme-translations/build');
@@ -44,13 +44,13 @@ function hbs(done) {
 
 function css(done) {
     pump([
-        src('assets/css/screen.css', {sourcemaps: true}),
+        src('assets/css/screen.css'),
         postcss([
-            easyimport,
-            autoprefixer(),
-            cssnano()
+            postcssImport(),
+            autoprefixer()
         ]),
-        dest('assets/built/', {sourcemaps: '.'}),
+        cleanCSS(),
+        dest('assets/built/'),
         livereload()
     ], handleError(done));
 }
@@ -72,32 +72,63 @@ function getJsFiles(version) {
 
 function js(done) {
     pump([
-        order(getJsFiles('v1'), {sourcemaps: true}),
+        order(getJsFiles('v1')),
         concat('main.min.js'),
         uglify(),
-        dest('assets/built/', {sourcemaps: '.'}),
+        dest('assets/built/'),
         livereload()
     ], handleError(done));
 }
 
 function zipper(done) {
     const filename = require('./package.json').name + '.zip';
+    const outputPath = path.join('dist', filename);
 
-    pump([
-        src([
-            '**',
-            '!node_modules', '!node_modules/**',
-            '!**/node_modules', '!**/node_modules/**',
-            '!cactus-sveltekit-blog', '!cactus-sveltekit-blog/**',
-            '!.wrangler', '!.wrangler/**',
-            '!.corepack', '!.corepack/**',
-            '!dist', '!dist/**',
-            '!package-lock.json',
-            '!yarn-error.log'
-        ]),
-        zip(filename),
-        dest('dist/')
-    ], handleError(done));
+    fs.mkdirSync('dist', {recursive: true});
+    if (fs.existsSync(outputPath)) {
+        fs.unlinkSync(outputPath);
+    }
+
+    const files = getThemeFiles();
+
+    const zipProcess = spawn('zip', ['-q', outputPath, ...files], {stdio: 'inherit'});
+    zipProcess.on('error', done);
+    zipProcess.on('close', (code) => {
+        if (code) {
+            done(new Error(`zip exited with code ${code}`));
+            return;
+        }
+
+        done();
+    });
+}
+
+function getThemeFiles() {
+    const result = spawnSync('git', ['ls-files'], {encoding: 'utf8'});
+
+    if (result.status !== 0) {
+        throw new Error(result.stderr || 'Unable to list tracked theme files');
+    }
+
+    return result.stdout
+        .split('\n')
+        .filter(Boolean)
+        .filter((file) => fs.existsSync(file))
+        .filter(isThemeFile);
+}
+
+function isThemeFile(file) {
+    if (file.endsWith('.map')) {
+        return false;
+    }
+
+    return (
+        /^[^/]+\.hbs$/.test(file) ||
+        /^partials\/.*\.hbs$/.test(file) ||
+        /^assets\//.test(file) ||
+        /^locales\/.*\.json$/.test(file) ||
+        ['package.json', 'routes.yaml', 'LICENSE', 'README.md'].includes(file)
+    );
 }
 
 function locales(done) {

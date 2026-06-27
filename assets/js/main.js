@@ -709,36 +709,35 @@
         var replies = Array.isArray(data && data.replies) ? data.replies : [];
         var quotes = Array.isArray(data && data.quotes) ? data.quotes : [];
         var fragment = document.createDocumentFragment();
+        var header = document.createElement('div');
         var title = document.createElement('h2');
         var countsList = document.createElement('div');
         var postUrl = post && post.url;
 
         section.replaceChildren();
+        header.className = 'atproto-engagement__header';
         title.className = 'atproto-engagement__title';
         title.textContent = 'Bluesky discussion';
-        fragment.appendChild(title);
+        header.appendChild(title);
+        if (postUrl) {
+            header.appendChild(createAtprotoReplyButton(postUrl));
+        }
+        fragment.appendChild(header);
 
         countsList.className = 'atproto-engagement__counts';
         [
-            ['likes', 'Likes'],
-            ['reposts', 'Reposts'],
-            ['quotes', 'Quotes'],
-            ['replies', 'Replies'],
+            ['replies', 'Replies', 'reply'],
+            ['reposts', 'Reposts', 'repost'],
+            ['quotes', 'Quotes', 'quote'],
+            ['likes', 'Likes', 'like'],
         ].forEach(function (item) {
-            var metric = document.createElement(postUrl ? 'a' : 'span');
-            var number = document.createElement('strong');
-            var label = document.createElement('span');
-            metric.className = 'atproto-engagement__metric';
-            if (postUrl) {
-                metric.href = postUrl;
-                metric.target = '_blank';
-                metric.rel = 'noopener noreferrer';
-            }
-            number.textContent = formatCompactNumber(Number(counts[item[0]]) || 0);
-            label.textContent = item[1];
-            metric.appendChild(number);
-            metric.appendChild(label);
-            countsList.appendChild(metric);
+            countsList.appendChild(createAtprotoMetric({
+                href: postUrl,
+                key: item[0],
+                label: item[1],
+                icon: item[2],
+                value: Number(counts[item[0]]) || 0,
+            }));
         });
         fragment.appendChild(countsList);
 
@@ -758,6 +757,66 @@
         }
 
         section.appendChild(fragment);
+    }
+
+    function createAtprotoMetric(options) {
+        var metric = document.createElement(options.href ? 'a' : 'span');
+        var icon = createAtprotoIcon(options.icon);
+        var number = document.createElement('strong');
+        var label = document.createElement('span');
+
+        metric.className = 'atproto-engagement__metric atproto-engagement__metric--' + options.key;
+        metric.setAttribute('aria-label', formatCompactNumber(options.value) + ' ' + options.label.toLowerCase());
+
+        if (options.href) {
+            metric.href = options.href;
+            metric.target = '_blank';
+            metric.rel = 'noopener noreferrer';
+        }
+
+        number.textContent = formatCompactNumber(options.value);
+        label.className = 'atproto-engagement__metric-label';
+        label.textContent = options.label;
+
+        metric.appendChild(icon);
+        metric.appendChild(number);
+        metric.appendChild(label);
+        return metric;
+    }
+
+    function createAtprotoReplyButton(postUrl) {
+        var button = document.createElement('a');
+        var label = document.createElement('span');
+
+        button.className = 'atproto-engagement__reply-button';
+        button.href = postUrl;
+        button.target = '_blank';
+        button.rel = 'noopener noreferrer';
+        button.setAttribute('aria-label', 'Reply on Bluesky');
+        label.textContent = 'Reply on Bluesky';
+
+        button.appendChild(createAtprotoIcon('bluesky'));
+        button.appendChild(label);
+        return button;
+    }
+
+    function createAtprotoIcon(name) {
+        var icon = document.createElement('span');
+        icon.className = 'atproto-engagement__icon atproto-engagement__icon--' + name;
+        icon.setAttribute('aria-hidden', 'true');
+        icon.innerHTML = getAtprotoIconSvg(name);
+        return icon;
+    }
+
+    function getAtprotoIconSvg(name) {
+        var icons = {
+            reply: '<svg viewBox="0 0 24 24" focusable="false"><path d="M6.37 3.93c.53-.51 1.28-.83 2.35-.83h8.03c1.07 0 1.82.32 2.35.83.51.49.83 1.18.83 2.18v5.78c0 1-.32 1.69-.83 2.18-.53.51-1.28.83-2.35.83h-2.84l-4.1 4.1c-.24.24-.49.36-.79.36-.57 0-1.01-.42-1.01-.99V14.9H8.72c-1.07 0-1.82-.32-2.35-.83-.51-.49-.83-1.18-.83-2.18V6.11c0-1 .32-1.69.83-2.18Zm2.35.77c-.72 0-1.05.2-1.25.39-.18.17-.33.45-.33 1.02v5.78c0 .57.15.85.33 1.02.2.19.53.39 1.25.39h1.95v3.07l3.07-3.07h3.03c.72 0 1.05-.2 1.25-.39.18-.17.33-.45.33-1.02V6.11c0-.57-.15-.85-.33-1.02-.2-.19-.53-.39-1.25-.39H8.72Z"></path></svg>',
+            repost: '<svg viewBox="0 0 24 24" focusable="false"><path d="M5.05 4.86a.75.75 0 0 1 1.06 0l2.76 2.76a.75.75 0 1 1-1.06 1.06L6.33 7.2v7.05c0 .7.17 1.12.45 1.39.27.27.69.45 1.39.45h5.5a.75.75 0 0 1 0 1.5h-5.5c-1.02 0-1.87-.28-2.45-.86-.58-.58-.89-1.43-.89-2.48V7.2L3.99 8.68a.75.75 0 1 1-1.06-1.06l2.12-2.12Zm13.9 10.46a.75.75 0 0 1 1.06 1.06l-2.76 2.76a.75.75 0 0 1-1.06 0l-2.76-2.76a.75.75 0 1 1 1.06-1.06l1.48 1.48V9.75c0-.7-.17-1.12-.45-1.39-.27-.27-.69-.45-1.39-.45h-5.5a.75.75 0 0 1 0-1.5h5.5c1.02 0 1.87.28 2.45.86.58.58.89 1.43.89 2.48v7.05l1.48-1.48Z"></path></svg>',
+            quote: '<svg viewBox="0 0 24 24" focusable="false"><path d="M7.1 5.2h9.8c1.08 0 1.93.3 2.52.9.59.58.88 1.42.88 2.5v5.1c0 1.08-.29 1.92-.88 2.5-.59.6-1.44.9-2.52.9h-3.2l-3.27 3.04a.8.8 0 0 1-1.35-.58V17.1H7.1c-1.08 0-1.93-.3-2.52-.9-.59-.58-.88-1.42-.88-2.5V8.6c0-1.08.29-1.92.88-2.5.59-.6 1.44-.9 2.52-.9Zm0 1.55c-.65 0-1.1.15-1.4.44-.28.28-.42.74-.42 1.41v5.1c0 .67.14 1.13.43 1.41.28.29.74.44 1.39.44h3.52v2.47l2.47-2.47h3.81c.65 0 1.11-.15 1.39-.44.29-.28.43-.74.43-1.41V8.6c0-.67-.14-1.13-.43-1.41-.28-.29-.74-.44-1.39-.44H7.1Zm1.7 3.05h2.2v3.05H7.9v-2.1c0-.63.3-.95.9-.95Zm5.2 0h2.2v3.05h-3.1v-2.1c0-.63.3-.95.9-.95Z"></path></svg>',
+            like: '<svg viewBox="0 0 24 24" focusable="false"><path d="M16.72 3.8c2.87 0 4.93 2.16 4.93 5.13 0 1.89-.77 3.32-2.08 4.7-1.28 1.35-3.09 2.71-5.17 4.28l-1.89 1.43a.82.82 0 0 1-1 0l-1.89-1.43c-2.08-1.57-3.89-2.93-5.17-4.28-1.31-1.38-2.08-2.81-2.08-4.7 0-2.97 2.06-5.13 4.93-5.13 1.79 0 3.03.89 3.83 1.83.35.41.64.85.87 1.25.23-.4.52-.84.87-1.25.8-.94 2.04-1.83 3.83-1.83Zm0 1.6c-1.19 0-2.02.56-2.61 1.25-.61.71-.96 1.53-1.12 2.03a.82.82 0 0 1-1.56 0c-.16-.5-.51-1.32-1.12-2.03-.59-.69-1.42-1.25-2.61-1.25-1.88 0-3.33 1.38-3.33 3.53 0 1.33.51 2.38 1.64 3.57 1.15 1.21 2.82 2.47 4.94 4.08L12 17.68l1.84-1.39c2.12-1.61 3.79-2.87 4.94-4.08 1.13-1.19 1.64-2.24 1.64-3.57 0-2.15-1.45-3.53-3.33-3.53Z"></path></svg>',
+            bluesky: '<svg viewBox="0 0 24 24" focusable="false"><path d="M5.69 4.78c2.35 1.76 4.88 5.33 5.81 7.27.93-1.94 3.46-5.51 5.81-7.27 1.69-1.27 4.43-2.26 4.43.87 0 .63-.36 5.29-.57 6.05-.72 2.66-3.35 3.34-5.69 2.94 4.09.7 5.13 3.04 2.88 5.39-4.27 4.46-6.14-1.12-6.62-2.55-.09-.26-.13-.38-.24-.38s-.15.12-.24.38c-.48 1.43-2.35 7.01-6.62 2.55-2.25-2.35-1.21-4.69 2.88-5.39-2.34.4-4.97-.28-5.69-2.94-.21-.76-.57-5.42-.57-6.05 0-3.13 2.74-2.14 4.43-.87Z"></path></svg>',
+        };
+        return icons[name] || icons.reply;
     }
 
     function createAtprotoPostList(titleText, posts) {

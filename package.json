@@ -4,7 +4,8 @@
     "version": "1.0.0",
     "private": true,
     "engines": {
-        "ghost": ">=5.0.0"
+        "ghost": ">=5.0.0",
+        "node": ">=22.13 <23"
     },
     "license": "MIT",
     "author": {
@@ -162,17 +163,16 @@
         "@tryghost/theme-translations": "^0.0.9",
         "autoprefixer": "10.5.0",
         "beeper": "2.1.0",
-        "cssnano": "8.0.1",
         "gscan": "6.2.1",
         "gulp": "5.0.1",
+        "gulp-clean-css": "^4.3.0",
         "gulp-concat": "2.6.1",
         "gulp-livereload": "4.0.2",
         "gulp-postcss": "10.0.0",
         "gulp-uglify": "3.0.2",
-        "gulp-zip": "5.1.0",
         "ordered-read-streams": "2.0.0",
         "postcss": "8.5.15",
-        "postcss-easy-import": "4.0.0",
+        "postcss-import": "^16.1.1",
         "pump": "3.0.4"
     }
 }
