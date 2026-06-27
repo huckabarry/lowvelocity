@@ -1,0 +1,55 @@
+{{!< default}}
+
+{{#post}}
+<header class="archive-header now-header">
+    <h1 class="cactus-title">{{title}}</h1>
+    {{#if custom_excerpt}}
+        <p>{{custom_excerpt}}</p>
+    {{/if}}
+    <div class="cactus-content now-intro">
+        {{content}}
+    </div>
+</header>
+{{/post}}
+
+<section class="now-timeline" aria-label="{{t "Now timeline"}}">
+    {{#get "posts" filter="tag:[now,hash-now]" limit="50" include="tags" order="published_at desc" as |now_posts|}}
+        {{#foreach now_posts}}
+            <article class="now-timeline-entry">
+                <div class="now-timeline-meta">
+                    <time datetime="{{date published_at format="YYYY-MM-DD"}}">{{date published_at format="DD MMM YYYY"}}</time>
+                </div>
+                <div class="now-timeline-rail" aria-hidden="true">
+                    <span class="now-timeline-dot"></span>
+                </div>
+                <div class="now-timeline-card">
+                    {{#if primary_tag}}
+                        <div class="now-timeline-kicker">{{primary_tag.name}}</div>
+                    {{/if}}
+                    <h2 class="now-timeline-title">
+                        <a href="{{url}}">{{title}}</a>
+                    </h2>
+                    {{#if feature_image}}
+                        <a class="now-timeline-image" href="{{url}}" aria-label="{{title}}">
+                            <img
+                                srcset="{{img_url feature_image size="s"}} 300w,
+                                        {{img_url feature_image size="m"}} 750w,
+                                        {{img_url feature_image size="l"}} 1140w"
+                                sizes="(max-width: 640px) calc(100vw - 4rem), 520px"
+                                src="{{img_url feature_image size="m"}}"
+                                alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                                loading="lazy"
+                            >
+                        </a>
+                    {{/if}}
+                    <p class="now-timeline-excerpt">
+                        {{#if custom_excerpt}}{{custom_excerpt}}{{else}}{{excerpt words="36"}}{{/if}}
+                    </p>
+                    <a class="now-timeline-read" href="{{url}}">{{t "Read"}}</a>
+                </div>
+            </article>
+        {{else}}
+            <p class="now-timeline-empty">{{t "No now updates are published yet."}}</p>
+        {{/foreach}}
+    {{/get}}
+</section>
