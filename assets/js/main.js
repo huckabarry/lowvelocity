@@ -1258,7 +1258,7 @@
                     status.textContent = '';
                 } else {
                     status.hidden = false;
-                    status.textContent = 'You’ve reached the beginning of this local now archive.';
+                    status.textContent = 'You’ve reached the beginning of this local updates archive.';
                     if (observer) observer.disconnect();
                     sentinel.remove();
                 }
@@ -1293,7 +1293,7 @@
         url.searchParams.set('order', 'published_at desc');
 
         return fetch(url.toString(), {headers: {Accept: 'application/json'}}).then(function (response) {
-            if (!response.ok) throw new Error('Now feed page request failed');
+            if (!response.ok) throw new Error('Updates feed page request failed');
             return response.json();
         });
     }
@@ -1381,7 +1381,7 @@
         if (!sorted.length) {
             var empty = document.createElement('p');
             empty.className = 'now-feed-status';
-            empty.textContent = 'The now feed is temporarily unavailable.';
+            empty.textContent = 'The updates feed is temporarily unavailable.';
             container.appendChild(empty);
             return;
         }

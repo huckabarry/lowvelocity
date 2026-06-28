@@ -1893,15 +1893,15 @@ html[data-theme="light"] .theme-icon-light {
     margin-top: 1.5rem;
 }
 
-.now-header {
+.updates-header {
     margin-bottom: 3rem;
 }
 
-.now-intro {
+.updates-intro {
     margin-top: 1.25rem;
 }
 
-.now-intro:empty {
+.updates-intro:empty {
     display: none;
 }
 
@@ -2318,7 +2318,7 @@ html[data-theme="light"] .theme-icon-light {
 }
 
 @media (max-width: 640px) {
-    .now-header {
+    .updates-header {
         margin-bottom: 2.4rem;
     }
 
