@@ -2093,6 +2093,19 @@ html[data-theme="light"] .theme-icon-light {
     border-radius: 0.65rem;
 }
 
+.now-popfeed-entry {
+    align-items: start;
+}
+
+.now-popfeed-entry .media-entry__cover img {
+    aspect-ratio: 2 / 3;
+    border-radius: 0.45rem;
+}
+
+.now-popfeed-entry__actions {
+    align-items: center;
+}
+
 .mixed-feed__audio {
     margin-top: 0.75rem;
 }

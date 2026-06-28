@@ -471,13 +471,16 @@
         var checkinItems = Array.prototype.slice.call(section.querySelectorAll('template[data-now-checkin-entry]'))
             .map(createNowCheckinItem)
             .filter(Boolean);
+        var popfeedItems = Array.prototype.slice.call(section.querySelectorAll('template[data-now-popfeed-entry]'))
+            .map(createNowPopfeedItem)
+            .filter(Boolean);
 
-        section._nowFeedItems = listeningItems.concat(statusItems, checkinItems);
+        section._nowFeedItems = listeningItems.concat(statusItems, checkinItems, popfeedItems);
         section._nowFeedIds = createNowFeedIdSet(section._nowFeedItems);
 
         renderNowMixedFeed(container, section._nowFeedItems);
 
-        section.querySelectorAll('template[data-now-listening-entry], template[data-now-status-entry], template[data-now-checkin-entry]').forEach(function (template) {
+        section.querySelectorAll('template[data-now-listening-entry], template[data-now-status-entry], template[data-now-checkin-entry], template[data-now-popfeed-entry]').forEach(function (template) {
             template.remove();
         });
 
@@ -599,6 +602,102 @@
         if (place && note === place) return '';
         if (/^map\s*·\s*venue$/i.test(note)) return '';
         return note;
+    }
+
+    function createNowPopfeedItem(template) {
+        if (!template) return null;
+
+        var source = document.createElement('div');
+        var date = template.getAttribute('data-date') || '';
+        var title = template.getAttribute('data-title') || 'Media';
+        var url = template.getAttribute('data-url') || '#';
+        var image = template.getAttribute('data-image') || '';
+        var imageAlt = template.getAttribute('data-image-alt') || title;
+        var summary = template.getAttribute('data-summary') || '';
+
+        source.appendChild(template.content.cloneNode(true));
+
+        var entry = source.querySelector('.lv-popfeed-entry');
+        var mediaType = entry ? entry.getAttribute('data-popfeed-type') || '' : '';
+        var listType = entry ? entry.getAttribute('data-popfeed-list-type') || '' : '';
+        var status = textFrom(source.querySelector('.lv-popfeed-status'));
+        var credit = textFrom(source.querySelector('.lv-popfeed-credit'));
+        var links = Array.prototype.slice.call(source.querySelectorAll('.lv-popfeed-links a'));
+        var card = document.createElement('div');
+        var body = document.createElement('div');
+        var heading = document.createElement('h2');
+        var headingLink = document.createElement('a');
+        var note = document.createElement('p');
+
+        card.className = 'media-entry media-entry--popfeed now-popfeed-entry';
+
+        if (image) {
+            var coverLink = document.createElement('a');
+            var cover = document.createElement('img');
+            coverLink.className = 'media-entry__cover';
+            coverLink.href = url;
+            cover.src = image;
+            cover.alt = imageAlt;
+            cover.loading = 'lazy';
+            coverLink.appendChild(cover);
+            card.appendChild(coverLink);
+        }
+
+        body.className = 'media-entry__body';
+        heading.className = 'mixed-feed__title';
+        headingLink.href = url;
+        headingLink.textContent = title;
+        heading.appendChild(headingLink);
+        body.appendChild(heading);
+
+        if (credit) {
+            var creditElement = document.createElement('p');
+            creditElement.className = 'media-entry__credit';
+            creditElement.textContent = credit;
+            body.appendChild(creditElement);
+        }
+
+        note.className = 'mixed-feed__summary media-entry__note';
+        note.textContent = status || summary;
+        if (note.textContent) body.appendChild(note);
+
+        if (links.length || url) {
+            var actions = document.createElement('div');
+            var read = document.createElement('a');
+            actions.className = 'mixed-feed__actions now-popfeed-entry__actions';
+            read.className = 'now-status-read mixed-feed__action';
+            read.href = url;
+            read.textContent = 'Read';
+            actions.appendChild(read);
+            links.forEach(function (link) {
+                var action = document.createElement('a');
+                action.className = 'tag-pill mixed-feed__action';
+                action.href = link.href;
+                action.target = '_blank';
+                action.rel = 'noopener noreferrer';
+                action.textContent = link.textContent;
+                actions.appendChild(action);
+            });
+            body.appendChild(actions);
+        }
+
+        card.appendChild(body);
+
+        return {
+            type: 'popfeed',
+            kicker: popfeedKicker(mediaType, listType),
+            date: date,
+            dateLabel: template.getAttribute('data-date-label') || formatNowFeedDate(date),
+            id: url,
+            node: card,
+        };
+    }
+
+    function popfeedKicker(mediaType, listType) {
+        if (mediaType === 'book' || /books/i.test(listType || '')) return 'Reading';
+        if (mediaType === 'movie') return 'Movie';
+        if (mediaType === 'tv_show') return 'Show';
+        return 'Media';
     }
 
     function enhanceNowStatusBody(body) {
@@ -1094,6 +1193,13 @@
                 hasMore: true,
                 createItem: createNowCheckinItemFromPost,
             },
+            {
+                filter: section.getAttribute('data-now-popfeed-filter') || 'tag:hash-popfeed',
+                limit: parseInt(section.getAttribute('data-now-popfeed-limit'), 10) || 50,
+                page: 2,
+                hasMore: true,
+                createItem: createNowPopfeedItemFromPost,
+            },
         ];
 
         status.className = 'now-feed-status now-feed-status--loader';
@@ -1227,6 +1333,14 @@
 
     function createNowCheckinItemFromPost(post) {
         return createNowCheckinItem(createNowTemplateFromPost(post));
+    }
+
+    function createNowPopfeedItemFromPost(post) {
+        var template = createNowTemplateFromPost(post);
+        if (post && post.feature_image) template.setAttribute('data-image', post.feature_image);
+        if (post && post.feature_image_alt) template.setAttribute('data-image-alt', post.feature_image_alt);
+        if (post && post.custom_excerpt) template.setAttribute('data-summary', post.custom_excerpt);
+        return createNowPopfeedItem(template);
     }
 
     function createNowTemplateFromPost(post) {
