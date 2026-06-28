@@ -2367,7 +2367,7 @@
             var link = document.createElement('a');
             var meta = document.createElement('p');
 
-            card.className = 'checkin-card';
+            card.className = item.image ? 'checkin-card has-image' : 'checkin-card';
             body.className = 'checkin-card__body';
             link.href = item.url;
             link.textContent = item.title;

@@ -2704,11 +2704,15 @@ html[data-theme="light"] .theme-icon-light {
 
 .checkin-card {
     display: grid;
-    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
     align-items: start;
     padding: 1rem 0;
     border-bottom: 1px dotted color-mix(in srgb, var(--color-global-text) 28%, transparent);
+}
+
+.checkin-card.has-image {
+    grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
 }
 
 .checkin-card__image {
@@ -2766,7 +2770,10 @@ html[data-theme="light"] .theme-icon-light {
     }
 
     .checkin-card {
-        grid-template-columns: minmax(0, 5.5rem) minmax(0, 1fr);
         gap: 0.8rem;
+    }
+
+    .checkin-card.has-image {
+        grid-template-columns: minmax(0, 5.5rem) minmax(0, 1fr);
     }
 }
