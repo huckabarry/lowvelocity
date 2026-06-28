@@ -1,6 +1,11 @@
 {{!< default}}
 
 {{#post}}
+{{#has tag="check-ins"}}
+    <link rel="stylesheet" href="{{asset "vendor/leaflet/leaflet.css"}}">
+    <script src="{{asset "vendor/leaflet/leaflet.js"}}"></script>
+{{/has}}
+
 <article class="{{post_class}} cactus-article">
     <header class="cactus-article-header">
         {{#has tag="#crucialtracks"}}
@@ -62,6 +67,11 @@
     {{else}}
         <div class="cactus-content">
             {{content}}
+            {{#has tag="check-ins"}}
+                <figure class="checkin-post-map-card">
+                    <div class="checkins-map checkin-post-map" data-checkin-post-map aria-label="{{t "Map of this check-in"}}"></div>
+                </figure>
+            {{/has}}
         </div>
     {{/has}}
 

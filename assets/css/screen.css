@@ -2697,6 +2697,15 @@ html[data-theme="light"] .theme-icon-light {
     text-underline-offset: 0.18em;
 }
 
+.checkin-post-map-card {
+    margin-top: 1.75rem;
+}
+
+.checkin-post-map {
+    height: min(52vh, 28rem);
+    margin-bottom: 0;
+}
+
 .checkins-list {
     display: grid;
     gap: 1rem;
@@ -2767,6 +2776,10 @@ html[data-theme="light"] .theme-icon-light {
     .checkins-map {
         height: 26rem;
         border-radius: 1rem;
+    }
+
+    .checkin-post-map {
+        height: 22rem;
     }
 
     .checkin-card {

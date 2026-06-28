@@ -25,6 +25,7 @@
         initAtprotoEngagement();
         initPhotoFeed();
         initCheckinsAtlas();
+        initCheckinPostMaps();
         initGhostGalleryMasonry();
         if (isClientNavigation) initGhostCardEnhancements();
     }
@@ -2441,6 +2442,52 @@
         window.setTimeout(function () {
             map.invalidateSize();
         }, 250);
+    }
+
+    function initCheckinPostMaps() {
+        document.querySelectorAll('[data-checkin-post-map]:not([data-checkin-post-ready])').forEach(function (mapElement) {
+            mapElement.setAttribute('data-checkin-post-ready', 'true');
+
+            var content = mapElement.closest('.cactus-content') || document;
+            var article = content.querySelector('.lv-checkin');
+            if (!article) {
+                mapElement.hidden = true;
+                return;
+            }
+
+            var latitude = parseFloat(article.getAttribute('data-lat') || '');
+            var longitude = parseFloat(article.getAttribute('data-lng') || '');
+            var placeHeading = article.querySelector('.lv-checkin-place h2');
+            var placeText = article.querySelector('.lv-checkin-place p');
+            var note = Array.prototype.slice.call(article.children).find(function (element) {
+                return element.tagName === 'P';
+            });
+            var image = article.querySelector('.lv-checkin-image img');
+            var title = placeHeading && placeHeading.textContent.trim()
+                ? placeHeading.textContent.trim()
+                : (document.querySelector('.cactus-article-title') || document.querySelector('h1'));
+
+            var item = {
+                title: typeof title === 'string' ? title : (title ? title.textContent.replace(/^Checked in at\s+/i, '').trim() : 'Check-in'),
+                url: window.location.href,
+                date: article.getAttribute('data-visited-at') || '',
+                dateLabel: '',
+                place: article.getAttribute('data-place') || (placeText ? placeText.textContent.trim() : ''),
+                category: article.getAttribute('data-category') || '',
+                note: note ? note.textContent.trim() : '',
+                image: image ? image.src : '',
+                imageAlt: image ? image.alt : '',
+                latitude: latitude,
+                longitude: longitude
+            };
+
+            if (!Number.isFinite(item.latitude) || !Number.isFinite(item.longitude)) {
+                mapElement.hidden = true;
+                return;
+            }
+
+            renderCheckinsMap(mapElement, [item]);
+        });
     }
 
     function formatCheckinDate(value, fallback) {
