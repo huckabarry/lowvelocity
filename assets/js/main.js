@@ -2256,7 +2256,7 @@
         wrapper.appendChild(template.content.cloneNode(true));
 
         var article = wrapper.querySelector('.lv-checkin');
-        if (!article) return null;
+        if (!article) return readGhostCheckinTemplate(template, wrapper);
 
         var latitude = parseFloat(article.getAttribute('data-lat') || '');
         var longitude = parseFloat(article.getAttribute('data-lng') || '');
@@ -2283,6 +2283,68 @@
             latitude: latitude,
             longitude: longitude
         };
+    }
+
+    function readGhostCheckinTemplate(template, wrapper) {
+        var heading = wrapper.querySelector('h2');
+        if (!heading) return null;
+
+        var coordinates = readCheckinCoordinates(wrapper);
+        var listItems = Array.prototype.slice.call(wrapper.querySelectorAll('li'));
+        var category = readCheckinListValue(listItems, 'Category');
+        var place = readCheckinListValue(listItems, 'Place');
+        var placeText = heading.nextElementSibling && heading.nextElementSibling.tagName === 'P'
+            ? heading.nextElementSibling.textContent.trim()
+            : '';
+        var noteElement = Array.prototype.slice.call(wrapper.children).find(function (element) {
+            return element.tagName === 'P' && element.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING;
+        });
+        var image = wrapper.querySelector('.lv-checkin-image img, figure img');
+        var title = heading.textContent.trim() || (template.getAttribute('data-title') || '').replace(/^Checked in at\s+/i, '');
+
+        return {
+            title: title || 'Check-in',
+            url: template.getAttribute('data-url') || '#',
+            date: template.getAttribute('data-date') || '',
+            dateLabel: template.getAttribute('data-date-label') || '',
+            place: place || placeText,
+            category: category,
+            note: noteElement ? noteElement.textContent.trim() : '',
+            image: image ? image.src : '',
+            imageAlt: image ? image.alt : '',
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude
+        };
+    }
+
+    function readCheckinListValue(items, label) {
+        var match = items.find(function (item) {
+            return item.textContent.trim().toLowerCase().indexOf(label.toLowerCase()) === 0;
+        });
+        return match ? match.textContent.trim().replace(new RegExp('^' + label + '\\s*:?\\s*', 'i'), '') : '';
+    }
+
+    function readCheckinCoordinates(wrapper) {
+        var mapLink = Array.prototype.slice.call(wrapper.querySelectorAll('a[href*="google.com/maps"]')).find(function (link) {
+            return link.href;
+        });
+        if (!mapLink) return {latitude: NaN, longitude: NaN};
+
+        try {
+            var url = new URL(mapLink.href, window.location.href);
+            var query = url.searchParams.get('query') || '';
+            var match = query.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+            if (match) {
+                return {
+                    latitude: parseFloat(match[1]),
+                    longitude: parseFloat(match[2])
+                };
+            }
+        } catch (error) {
+            // Fall through to the empty coordinate response.
+        }
+
+        return {latitude: NaN, longitude: NaN};
     }
 
     function renderCheckinsList(list, items) {

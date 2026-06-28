@@ -23,16 +23,15 @@
 
     {{#get "posts" filter="tag:check-ins" limit="100" include="tags" order="published_at desc" formats="html" as |checkins|}}
         {{#foreach checkins}}
-            <template
-                data-checkin-entry
-                data-title="{{title}}"
-                data-url="{{url}}"
-                data-date="{{date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}"
-                data-date-label="{{date published_at format="MMM D, YYYY"}}">
-                {{content}}
-            </template>
+            {{> "check-in-entry"}}
         {{else}}
             <template data-checkin-empty></template>
+        {{/foreach}}
+    {{/get}}
+
+    {{#get "posts" filter="tag:check-ins" limit="100" page="2" include="tags" order="published_at desc" formats="html" as |older_checkins|}}
+        {{#foreach older_checkins}}
+            {{> "check-in-entry"}}
         {{/foreach}}
     {{/get}}
 </section>
