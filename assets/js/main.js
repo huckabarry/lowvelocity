@@ -665,10 +665,6 @@
             var actions = document.createElement('div');
             var read = document.createElement('a');
             actions.className = 'mixed-feed__actions now-popfeed-entry__actions';
-            read.className = 'now-status-read mixed-feed__action';
-            read.href = url;
-            read.textContent = 'Read';
-            actions.appendChild(read);
             links.forEach(function (link) {
                 var action = document.createElement('a');
                 action.className = 'tag-pill mixed-feed__action';
@@ -678,6 +674,10 @@
                 action.textContent = link.textContent;
                 actions.appendChild(action);
             });
+            read.className = 'now-status-read mixed-feed__action';
+            read.href = url;
+            read.textContent = 'Read';
+            actions.appendChild(read);
             body.appendChild(actions);
         }
 

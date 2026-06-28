@@ -2104,6 +2104,7 @@ html[data-theme="light"] .theme-icon-light {
 
 .now-popfeed-entry__actions {
     align-items: center;
+    justify-content: flex-end;
 }
 
 .mixed-feed__audio {
