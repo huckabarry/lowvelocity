@@ -2102,6 +2102,48 @@ html[data-theme="light"] .theme-icon-light {
     width: 100%;
 }
 
+.now-checkin-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
+}
+
+.now-checkin-entry.has-image {
+    grid-template-columns: minmax(0, 5rem) minmax(0, 1fr);
+}
+
+.now-checkin-entry__image {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: 0.55rem;
+    background: color-mix(in srgb, var(--color-global-text) 6%, transparent);
+    text-decoration: none;
+}
+
+.now-checkin-entry__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.now-checkin-entry__body {
+    min-width: 0;
+}
+
+.now-checkin-entry__meta {
+    color: var(--color-muted);
+}
+
+.now-checkin-entry__note {
+    font-size: 0.9rem;
+}
+
+.now-checkin-entry__actions {
+    margin-top: 0.6rem;
+}
+
 .now-feed-status {
     margin: 0;
     color: var(--color-muted);
@@ -2303,6 +2345,11 @@ html[data-theme="light"] .theme-icon-light {
 
     .media-entry__cover img {
         width: 3.6rem;
+    }
+
+    .now-checkin-entry.has-image {
+        grid-template-columns: minmax(0, 4.25rem) minmax(0, 1fr);
+        gap: 0.7rem;
     }
 
     .now-status-carousel {

@@ -21,6 +21,8 @@
     data-now-status-limit="100"
     data-now-listening-filter="tag:hash-crucialtracks"
     data-now-listening-limit="25"
+    data-now-checkins-filter="tag:check-ins"
+    data-now-checkins-limit="50"
     data-now-feed>
     <div class="mixed-feed__items" data-now-feed-items aria-live="polite">
         <p class="now-feed-status">{{t "Loading now feed…"}}</p>
@@ -46,6 +48,19 @@
         {{#foreach statuses}}
             <template
                 data-now-status-entry
+                data-date="{{date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}"
+                data-date-label="{{date published_at format="MMM D, YYYY"}}"
+                data-title="{{title}}"
+                data-url="{{url}}">
+                {{content}}
+            </template>
+        {{/foreach}}
+    {{/get}}
+
+    {{#get "posts" filter="tag:check-ins" limit="50" include="tags" order="published_at desc" formats="html" as |checkins|}}
+        {{#foreach checkins}}
+            <template
+                data-now-checkin-entry
                 data-date="{{date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}"
                 data-date-label="{{date published_at format="MMM D, YYYY"}}"
                 data-title="{{title}}"

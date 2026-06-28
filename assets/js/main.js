@@ -468,13 +468,16 @@
         var statusItems = Array.prototype.slice.call(section.querySelectorAll('template[data-now-status-entry]'))
             .map(createNowStatusItem)
             .filter(Boolean);
+        var checkinItems = Array.prototype.slice.call(section.querySelectorAll('template[data-now-checkin-entry]'))
+            .map(createNowCheckinItem)
+            .filter(Boolean);
 
-        section._nowFeedItems = listeningItems.concat(statusItems);
+        section._nowFeedItems = listeningItems.concat(statusItems, checkinItems);
         section._nowFeedIds = createNowFeedIdSet(section._nowFeedItems);
 
         renderNowMixedFeed(container, section._nowFeedItems);
 
-        section.querySelectorAll('template[data-now-listening-entry], template[data-now-status-entry]').forEach(function (template) {
+        section.querySelectorAll('template[data-now-listening-entry], template[data-now-status-entry], template[data-now-checkin-entry]').forEach(function (template) {
             template.remove();
         });
 
@@ -523,6 +526,79 @@
             id: url,
             node: card,
         };
+    }
+
+    function createNowCheckinItem(template) {
+        var item = readCheckinTemplate(template);
+        if (!item) return null;
+
+        var card = document.createElement('article');
+        var body = document.createElement('div');
+        var heading = document.createElement('h2');
+        var headingLink = document.createElement('a');
+        var meta = document.createElement('p');
+        var actions = document.createElement('p');
+        var link = document.createElement('a');
+        var note = normalizeCheckinNote(item);
+
+        card.className = item.image ? 'now-checkin-entry has-image' : 'now-checkin-entry';
+        body.className = 'now-checkin-entry__body';
+        heading.className = 'mixed-feed__title now-checkin-entry__title';
+        headingLink.href = item.url;
+        headingLink.textContent = item.title || 'Check-in';
+        heading.appendChild(headingLink);
+
+        meta.className = 'mixed-feed__summary now-checkin-entry__meta';
+        meta.textContent = [item.place, item.category].filter(Boolean).join(' · ');
+
+        if (item.image) {
+            var imageLink = document.createElement('a');
+            var image = document.createElement('img');
+            imageLink.className = 'now-checkin-entry__image';
+            imageLink.href = item.url;
+            image.src = item.image;
+            image.alt = item.imageAlt || '';
+            image.loading = 'lazy';
+            imageLink.appendChild(image);
+            card.appendChild(imageLink);
+        }
+
+        body.appendChild(heading);
+        if (meta.textContent) body.appendChild(meta);
+
+        if (note) {
+            var noteElement = document.createElement('p');
+            noteElement.className = 'mixed-feed__summary now-checkin-entry__note';
+            noteElement.textContent = note;
+            body.appendChild(noteElement);
+        }
+
+        actions.className = 'mixed-feed__actions now-status-entry__actions now-checkin-entry__actions';
+        link.className = 'now-status-read mixed-feed__action';
+        link.href = item.url;
+        link.textContent = 'Read';
+        actions.appendChild(link);
+        body.appendChild(actions);
+        card.appendChild(body);
+
+        return {
+            type: 'checkin',
+            kicker: 'Check-in',
+            date: item.date || template.getAttribute('data-date') || '',
+            dateLabel: item.dateLabel || template.getAttribute('data-date-label') || '',
+            id: item.url,
+            node: card,
+        };
+    }
+
+    function normalizeCheckinNote(item) {
+        var note = item && item.note ? item.note.trim() : '';
+        var place = item && item.place ? item.place.trim() : '';
+
+        if (!note) return '';
+        if (place && note === place) return '';
+        if (/^map\s*·\s*venue$/i.test(note)) return '';
+        return note;
     }
 
     function enhanceNowStatusBody(body) {
@@ -1011,6 +1087,13 @@
                 hasMore: true,
                 createItem: createNowListeningItemFromPost,
             },
+            {
+                filter: section.getAttribute('data-now-checkins-filter') || 'tag:check-ins',
+                limit: parseInt(section.getAttribute('data-now-checkins-limit'), 10) || 50,
+                page: 2,
+                hasMore: true,
+                createItem: createNowCheckinItemFromPost,
+            },
         ];
 
         status.className = 'now-feed-status now-feed-status--loader';
@@ -1140,6 +1223,10 @@
         if (post && post.feature_image_alt) template.setAttribute('data-image-alt', post.feature_image_alt);
         if (post && post.custom_excerpt) template.setAttribute('data-summary', post.custom_excerpt);
         return createNowListeningItem(template);
+    }
+
+    function createNowCheckinItemFromPost(post) {
+        return createNowCheckinItem(createNowTemplateFromPost(post));
     }
 
     function createNowTemplateFromPost(post) {
