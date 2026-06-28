@@ -32,6 +32,60 @@
 
     var activeListeningPreview = null;
     var activeListeningButton = null;
+    var leafletAssetsPromise = null;
+
+    function ensureLeafletAssets() {
+        if (typeof L !== 'undefined') return Promise.resolve();
+        if (leafletAssetsPromise) return leafletAssetsPromise;
+
+        if (!document.querySelector('link[data-lowvelocity-leaflet], link[href*="vendor/leaflet/leaflet.css"]')) {
+            var stylesheet = document.createElement('link');
+            stylesheet.rel = 'stylesheet';
+            stylesheet.href = '/assets/vendor/leaflet/leaflet.css';
+            stylesheet.setAttribute('data-lowvelocity-leaflet', 'true');
+            document.head.appendChild(stylesheet);
+        }
+
+        leafletAssetsPromise = new Promise(function (resolve, reject) {
+            var existingScript = document.querySelector('script[data-lowvelocity-leaflet], script[src*="vendor/leaflet/leaflet.js"]');
+
+            function resolveIfReady() {
+                if (typeof L !== 'undefined') {
+                    resolve();
+                } else {
+                    reject(new Error('Leaflet did not initialize'));
+                }
+            }
+
+            if (existingScript) {
+                if (typeof L !== 'undefined') {
+                    resolve();
+                    return;
+                }
+
+                existingScript.addEventListener('load', resolveIfReady, {once: true});
+                existingScript.addEventListener('error', function () {
+                    reject(new Error('Leaflet failed to load'));
+                }, {once: true});
+                return;
+            }
+
+            var script = document.createElement('script');
+            script.src = '/assets/vendor/leaflet/leaflet.js';
+            script.async = true;
+            script.setAttribute('data-lowvelocity-leaflet', 'true');
+            script.addEventListener('load', resolveIfReady, {once: true});
+            script.addEventListener('error', function () {
+                reject(new Error('Leaflet failed to load'));
+            }, {once: true});
+            document.head.appendChild(script);
+        }).catch(function (error) {
+            leafletAssetsPromise = null;
+            throw error;
+        });
+
+        return leafletAssetsPromise;
+    }
 
     function pauseActiveListeningPreview() {
         if (activeListeningPreview) {
@@ -2607,42 +2661,60 @@
     function renderCheckinsMap(mapElement, items) {
         if (!mapElement) return;
 
-        if (!items.length || typeof L === 'undefined') {
+        if (!items.length) {
             mapElement.hidden = true;
             return;
         }
 
-        var map = L.map(mapElement, {
-            scrollWheelZoom: false,
-            zoomControl: true
+        ensureLeafletAssets().then(function () {
+            if (typeof L === 'undefined') {
+                mapElement.hidden = true;
+                return;
+            }
+
+            mapElement.hidden = false;
+
+            if (mapElement.__lowvelocityLeafletMap) {
+                mapElement.__lowvelocityLeafletMap.remove();
+                mapElement.__lowvelocityLeafletMap = null;
+            }
+
+            var map = L.map(mapElement, {
+                scrollWheelZoom: false,
+                zoomControl: true
+            });
+
+            mapElement.__lowvelocityLeafletMap = map;
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            var bounds = [];
+
+            items.forEach(function (item) {
+                var marker = L.marker([item.latitude, item.longitude]).addTo(map);
+                var popup = '<strong>' + escapeMarkup(item.title) + '</strong>';
+                if (item.place) popup += '<br>' + escapeMarkup(item.place);
+                if (item.date || item.dateLabel) popup += '<br><small>' + escapeMarkup(formatCheckinDate(item.date, item.dateLabel)) + '</small>';
+                popup += '<br><a href="' + escapeAttribute(item.url) + '">Read</a>';
+                marker.bindPopup(popup);
+                bounds.push([item.latitude, item.longitude]);
+            });
+
+            if (bounds.length === 1) {
+                map.setView(bounds[0], 13);
+            } else {
+                map.fitBounds(bounds, {padding: [28, 28]});
+            }
+
+            window.setTimeout(function () {
+                map.invalidateSize();
+            }, 250);
+        }).catch(function () {
+            mapElement.hidden = true;
         });
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-
-        var bounds = [];
-
-        items.forEach(function (item) {
-            var marker = L.marker([item.latitude, item.longitude]).addTo(map);
-            var popup = '<strong>' + escapeMarkup(item.title) + '</strong>';
-            if (item.place) popup += '<br>' + escapeMarkup(item.place);
-            if (item.date || item.dateLabel) popup += '<br><small>' + escapeMarkup(formatCheckinDate(item.date, item.dateLabel)) + '</small>';
-            popup += '<br><a href="' + escapeAttribute(item.url) + '">Read</a>';
-            marker.bindPopup(popup);
-            bounds.push([item.latitude, item.longitude]);
-        });
-
-        if (bounds.length === 1) {
-            map.setView(bounds[0], 13);
-        } else {
-            map.fitBounds(bounds, {padding: [28, 28]});
-        }
-
-        window.setTimeout(function () {
-            map.invalidateSize();
-        }, 250);
     }
 
     function initCheckinPostMaps() {
