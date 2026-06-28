@@ -127,6 +127,14 @@ jobs:
             }
 
             await ensurePage({
+              title: 'Updates',
+              slug: 'updates',
+              html: '<p>Status updates, listening notes, check-ins, books, movies, and shows folded into one running stream.</p>',
+              custom_excerpt: 'Status updates, listening notes, check-ins, books, movies, and shows folded into one running stream.',
+              status: 'published'
+            });
+
+            await ensurePage({
               title: 'Posts',
               slug: 'posts',
               html: '<p>Essays, field notes, observations, and other dispatches.</p>',
