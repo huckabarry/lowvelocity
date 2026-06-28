@@ -4,11 +4,14 @@
     {{#if custom_excerpt}}
         <p>{{custom_excerpt}}</p>
     {{else}}
-        <p>Status updates, listening notes, check-ins, books, movies, and shows folded into one running stream.</p>
+        {{#if html}}
+            <div class="cactus-content updates-intro">
+                {{content}}
+            </div>
+        {{else}}
+            <p>Status updates, listening notes, check-ins, books, movies, and shows folded into one running stream.</p>
+        {{/if}}
     {{/if}}
-    <div class="cactus-content updates-intro">
-        {{content}}
-    </div>
 </header>
 {{/post}}
 
