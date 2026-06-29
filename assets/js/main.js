@@ -102,6 +102,18 @@
         });
     }
 
+    function createCheckinMapIcon() {
+        if (typeof L === 'undefined' || !L.divIcon) return null;
+
+        return L.divIcon({
+            className: 'lowvelocity-map-marker',
+            html: '<span class="lowvelocity-map-marker__pin" aria-hidden="true"></span>',
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+            popupAnchor: [0, -14]
+        });
+    }
+
     function pauseActiveListeningPreview() {
         if (activeListeningPreview) {
             activeListeningPreview.pause();
@@ -2709,7 +2721,11 @@
             var bounds = [];
 
             items.forEach(function (item) {
-                var marker = L.marker([item.latitude, item.longitude]).addTo(map);
+                var markerIcon = createCheckinMapIcon();
+                var marker = L.marker(
+                    [item.latitude, item.longitude],
+                    markerIcon ? {icon: markerIcon} : {}
+                ).addTo(map);
                 var popup = '<strong>' + escapeMarkup(item.title) + '</strong>';
                 if (item.place) popup += '<br>' + escapeMarkup(item.place);
                 if (item.date || item.dateLabel) popup += '<br><small>' + escapeMarkup(formatCheckinDate(item.date, item.dateLabel)) + '</small>';
