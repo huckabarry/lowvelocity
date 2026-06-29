@@ -33,9 +33,13 @@
     var activeListeningPreview = null;
     var activeListeningButton = null;
     var leafletAssetsPromise = null;
+    var leafletMarkerAssetPath = '/assets/vendor/leaflet/images/';
 
     function ensureLeafletAssets() {
-        if (typeof L !== 'undefined') return Promise.resolve();
+        if (typeof L !== 'undefined') {
+            configureLeafletDefaultIcon();
+            return Promise.resolve();
+        }
         if (leafletAssetsPromise) return leafletAssetsPromise;
 
         if (!document.querySelector('link[data-lowvelocity-leaflet], link[href*="vendor/leaflet/leaflet.css"]')) {
@@ -51,6 +55,7 @@
 
             function resolveIfReady() {
                 if (typeof L !== 'undefined') {
+                    configureLeafletDefaultIcon();
                     resolve();
                 } else {
                     reject(new Error('Leaflet did not initialize'));
@@ -85,6 +90,16 @@
         });
 
         return leafletAssetsPromise;
+    }
+
+    function configureLeafletDefaultIcon() {
+        if (typeof L === 'undefined' || !L.Icon || !L.Icon.Default) return;
+
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: leafletMarkerAssetPath + 'marker-icon-2x.png',
+            iconUrl: leafletMarkerAssetPath + 'marker-icon.png',
+            shadowUrl: leafletMarkerAssetPath + 'marker-shadow.png'
+        });
     }
 
     function pauseActiveListeningPreview() {
