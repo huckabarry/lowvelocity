@@ -6,16 +6,10 @@ const order = require('ordered-read-streams');
 
 // gulp plugins and utils
 const livereload = require('gulp-livereload');
-const postcss = require('gulp-postcss');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
-const cleanCSS = require('gulp-clean-css');
 const beeper = require('beeper');
 const {spawn, spawnSync} = require('child_process');
-
-// postcss plugins
-const postcssImport = require('postcss-import');
-const autoprefixer = require('autoprefixer');
 
 // translations support
 const { mergeLocales } = require('@tryghost/theme-translations/build');
@@ -42,17 +36,39 @@ function hbs(done) {
     ], handleError(done));
 }
 
+function readCssWithImports(file, seen = new Set()) {
+    const resolvedFile = path.resolve(file);
+    if (seen.has(resolvedFile)) {
+        return '';
+    }
+
+    seen.add(resolvedFile);
+
+    const directory = path.dirname(resolvedFile);
+    const css = fs.readFileSync(resolvedFile, 'utf8');
+
+    return css.replace(/@import\s+(?:url\()?["']?([^"')]+)["']?\)?;/g, (match, importPath) => {
+        if (/^(https?:)?\/\//.test(importPath)) {
+            return match;
+        }
+
+        const importedFile = importPath.startsWith('@tryghost/shared-theme-assets/')
+            ? path.join(sharedThemeAssetsPath, importPath.replace('@tryghost/shared-theme-assets/', ''))
+            : path.resolve(directory, importPath);
+
+        return `\n/* ${importPath} */\n${readCssWithImports(importedFile, seen)}\n`;
+    });
+}
+
 function css(done) {
-    pump([
-        src('assets/css/screen.css'),
-        postcss([
-            postcssImport(),
-            autoprefixer()
-        ]),
-        cleanCSS(),
-        dest('assets/built/'),
-        livereload()
-    ], handleError(done));
+    try {
+        fs.mkdirSync('assets/built', {recursive: true});
+        fs.writeFileSync('assets/built/screen.css', readCssWithImports('assets/css/screen.css'));
+        livereload.reload('assets/built/screen.css');
+        done();
+    } catch (err) {
+        handleError(done)(err);
+    }
 }
 
 function getJsFiles(version) {
@@ -146,5 +162,5 @@ const watcher = parallel(hbsWatcher, cssWatcher, jsWatcher, localesWatcher);
 const build = series(css, js, locales);
 
 exports.build = build;
-exports.zip = series(build, zipper);
+exports.zip = series(zipper);
 exports.default = series(build, serve, watcher);

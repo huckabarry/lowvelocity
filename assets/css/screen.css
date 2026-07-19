@@ -215,6 +215,10 @@ h6,
     letter-spacing: -0.02em;
 }
 
+.cactus-brand-title {
+    text-transform: uppercase;
+}
+
 .listening-archive {
     max-width: min(calc(100vw - 2rem), 980px);
     margin-right: auto;

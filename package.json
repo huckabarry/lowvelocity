@@ -156,23 +156,18 @@
     "scripts": {
         "dev": "gulp",
         "test": "gscan .",
-        "zip": "gulp zip"
+        "zip": "node scripts/build-theme-zip.js"
     },
     "devDependencies": {
         "@tryghost/shared-theme-assets": "2.7.1",
         "@tryghost/theme-translations": "^0.0.9",
-        "autoprefixer": "10.5.0",
         "beeper": "2.1.0",
         "gscan": "6.2.1",
         "gulp": "5.0.1",
-        "gulp-clean-css": "^4.3.0",
         "gulp-concat": "2.6.1",
         "gulp-livereload": "4.0.2",
-        "gulp-postcss": "10.0.0",
         "gulp-uglify": "3.0.2",
         "ordered-read-streams": "2.0.0",
-        "postcss": "8.5.15",
-        "postcss-import": "^16.1.1",
         "pump": "3.0.4"
     }
 }
