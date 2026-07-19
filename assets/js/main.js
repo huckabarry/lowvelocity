@@ -27,7 +27,94 @@
         initCheckinsAtlas();
         initCheckinPostMaps();
         initGhostGalleryMasonry();
+        initHomeProfileAvatar();
         if (isClientNavigation) initGhostCardEnhancements();
+    }
+
+    function initHomeProfileAvatar() {
+        var avatar = document.querySelector('img[data-bsky-avatar]');
+        if (!avatar || avatar.getAttribute('data-bsky-avatar-ready') === 'true') return;
+
+        avatar.setAttribute('data-bsky-avatar-ready', 'true');
+
+        var handle = avatar.getAttribute('data-bsky-handle') || '';
+        var fallbackText = avatar.getAttribute('data-avatar-fallback') || '';
+        var cacheKey = 'lowvelocity-bsky-avatar:' + handle;
+        var maxAge = 24 * 60 * 60 * 1000;
+        var hasFetchedAfterError = false;
+
+        function setAvatar(url) {
+            if (!url || avatar.getAttribute('src') === url) return;
+            avatar.setAttribute('src', url);
+        }
+
+        function replaceWithFallback() {
+            if (!avatar.parentNode) return;
+
+            var fallback = document.createElement('span');
+            fallback.className = avatar.className + ' home-profile-card__avatar--fallback';
+            fallback.textContent = fallbackText;
+            fallback.setAttribute('aria-hidden', 'true');
+            avatar.replaceWith(fallback);
+        }
+
+        function readCachedAvatar() {
+            try {
+                var cached = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+                if (!cached || !cached.url || !cached.savedAt) return '';
+                if (Date.now() - cached.savedAt > maxAge) return '';
+                return cached.url;
+            } catch (error) {
+                return '';
+            }
+        }
+
+        function writeCachedAvatar(url) {
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify({
+                    url: url,
+                    savedAt: Date.now()
+                }));
+            } catch (error) {
+                // Avatar caching is only a resilience helper.
+            }
+        }
+
+        function fetchFreshAvatar() {
+            if (!handle || !window.fetch) return Promise.reject(new Error('Bluesky avatar lookup unavailable'));
+
+            return fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=' + encodeURIComponent(handle), {
+                credentials: 'omit'
+            })
+                .then(function (response) {
+                    if (!response.ok) throw new Error('Bluesky avatar lookup failed');
+                    return response.json();
+                })
+                .then(function (profile) {
+                    if (!profile || !profile.avatar) throw new Error('Bluesky profile did not include an avatar');
+                    writeCachedAvatar(profile.avatar);
+                    setAvatar(profile.avatar);
+                });
+        }
+
+        var cachedAvatar = readCachedAvatar();
+        if (cachedAvatar) setAvatar(cachedAvatar);
+
+        avatar.addEventListener('error', function () {
+            if (hasFetchedAfterError) {
+                replaceWithFallback();
+                return;
+            }
+
+            hasFetchedAfterError = true;
+            fetchFreshAvatar().catch(replaceWithFallback);
+        });
+
+        if (!cachedAvatar) {
+            fetchFreshAvatar().catch(function () {
+                // Keep the packaged image source if the profile lookup is unavailable.
+            });
+        }
     }
 
     var activeListeningPreview = null;
