@@ -3,6 +3,10 @@ routes:
     template: standard-site-publication
     content_type: text/plain
 
+  /rss/:
+    template: main-rss
+    content_type: text/xml
+
   /updates/rss/:
     template: updates-rss
     content_type: text/xml
