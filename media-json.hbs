@@ -1,18 +1,18 @@
 {
     "version": "https://jsonfeed.org/version/1.1",
-    "title": {{json title=(concat @site.title " — Media")}},
-    "home_page_url": {{json (concat @site.url "/updates/")}},
-    "feed_url": {{json (concat @site.url "/media/feed.json/")}},
+    "title": "{{@site.title}} — Media",
+    "home_page_url": "{{@site.url}}/updates/",
+    "feed_url": "{{@site.url}}/media/feed.json/",
     "description": "Listening notes, books, movies, and shows.",
     "items": [
         {{#get "posts" filter="tag:[hash-crucialtracks,hash-popfeed]" limit="100" include="authors,tags" order="published_at desc" formats="html"}}
             {{#foreach posts}}
                 {
                     "id": {{json id}},
-                    "url": {{json (url absolute="true")}},
+                    "url": "{{url absolute="true"}}",
                     "title": {{json title}},
-                    "date_published": {{json (date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ")}},
-                    "summary": {{json (excerpt words="50")}},
+                    "date_published": "{{date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}",
+                    "summary": "{{excerpt words="50"}}",
                     "content_html": {{json html}},
                     "image": {{#if feature_image}}{{json (img_url feature_image absolute="true")}}{{else}}null{{/if}},
                     "tags": [
