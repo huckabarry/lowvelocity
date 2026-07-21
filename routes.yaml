@@ -15,6 +15,10 @@ routes:
     template: updates-json
     content_type: application/feed+json
 
+  /media/feed.json/:
+    template: media-json
+    content_type: application/feed+json
+
   /urbanism/:
     controller: channel
     template: custom-urbanism
