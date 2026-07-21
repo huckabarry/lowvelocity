@@ -13,6 +13,8 @@
         initSearchBackdrop();
         initClientNavigation();
         initPageFeatures(false);
+        window.addEventListener('pageshow', refreshCheckinPostMapsSoon);
+        document.addEventListener('cactus:page-load', refreshCheckinPostMapsSoon);
     });
 
     function initPageFeatures(isClientNavigation) {
@@ -26,9 +28,22 @@
         initPhotoFeed();
         initCheckinsAtlas();
         initCheckinPostMaps();
+        refreshCheckinPostMapsSoon();
         initGhostGalleryMasonry();
         initHomeProfileAvatar();
         if (isClientNavigation) initGhostCardEnhancements();
+    }
+
+    function refreshCheckinPostMapsSoon() {
+        if (!document.querySelector('[data-checkin-post-map]')) return;
+
+        window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(initCheckinPostMaps);
+        });
+
+        [150, 600, 1400].forEach(function (delay) {
+            window.setTimeout(initCheckinPostMaps, delay);
+        });
     }
 
     function initHomeProfileAvatar() {
@@ -2773,17 +2788,17 @@
     }
 
     function renderCheckinsMap(mapElement, items) {
-        if (!mapElement) return;
+        if (!mapElement) return Promise.resolve(false);
 
         if (!items.length) {
             mapElement.hidden = true;
-            return;
+            return Promise.resolve(false);
         }
 
-        ensureLeafletAssets().then(function () {
+        return ensureLeafletAssets().then(function () {
             if (typeof L === 'undefined') {
                 mapElement.hidden = true;
-                return;
+                return false;
             }
 
             mapElement.hidden = false;
@@ -2830,14 +2845,21 @@
             window.setTimeout(function () {
                 map.invalidateSize();
             }, 250);
+
+            return true;
         }).catch(function () {
             mapElement.hidden = true;
+            return false;
         });
     }
 
     function initCheckinPostMaps() {
-        document.querySelectorAll('[data-checkin-post-map]:not([data-checkin-post-ready])').forEach(function (mapElement) {
-            mapElement.setAttribute('data-checkin-post-ready', 'true');
+        document.querySelectorAll('[data-checkin-post-map]').forEach(function (mapElement) {
+            var state = mapElement.getAttribute('data-checkin-post-ready');
+            if (state === 'loading') return;
+            if (state === 'true' && mapElement.__lowvelocityLeafletMap && !mapElement.hidden) return;
+
+            mapElement.setAttribute('data-checkin-post-ready', 'loading');
 
             var content = mapElement.closest('.cactus-content') || document;
             var article = content.querySelector('.lv-checkin');
@@ -2875,10 +2897,13 @@
 
             if (!item || !Number.isFinite(item.latitude) || !Number.isFinite(item.longitude)) {
                 mapElement.hidden = true;
+                mapElement.setAttribute('data-checkin-post-ready', 'missing-coordinates');
                 return;
             }
 
-            renderCheckinsMap(mapElement, [item]);
+            renderCheckinsMap(mapElement, [item]).then(function (rendered) {
+                mapElement.setAttribute('data-checkin-post-ready', rendered ? 'true' : 'error');
+            });
         });
     }
 
