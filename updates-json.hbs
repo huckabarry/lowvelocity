@@ -3,9 +3,9 @@
     "title": {{json title=(concat @site.title " — Updates")}},
     "home_page_url": {{json (concat @site.url "/updates/")}},
     "feed_url": {{json (concat @site.url "/updates/feed.json/")}},
-    "description": "Status updates, listening notes, check-ins, books, movies, and shows folded into one running stream.",
+    "description": "Status updates, listening notes, books, movies, and shows folded into one running stream.",
     "items": [
-        {{#get "posts" filter="tag:[hash-bluesky,hash-crucialtracks,check-ins,hash-popfeed]" limit="100" include="authors,tags" order="published_at desc" formats="html"}}
+        {{#get "posts" filter="tag:[hash-bluesky,hash-crucialtracks,hash-popfeed]" limit="100" include="authors,tags" order="published_at desc" formats="html"}}
             {{#foreach posts}}
                 {
                     "id": {{json id}},
