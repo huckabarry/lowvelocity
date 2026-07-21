@@ -42,12 +42,17 @@ routes:
     template: custom-posts
     filter: 'tag:-[status,note,notes,afterword,listening,hash-crucialtracks,check-ins]'
 
+collections:
+  /listening/:
+    permalink: /listening/{slug}/
+    template: custom-listening
+    filter: 'tag:hash-crucialtracks'
+
   /check-ins/:
-    controller: channel
+    permalink: /check-ins/{slug}/
     template: custom-check-ins
     filter: 'tag:check-ins'
 
-collections:
   /notes/:
     permalink: /notes/{slug}/
     template: custom-notes
