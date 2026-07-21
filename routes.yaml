@@ -3,6 +3,14 @@ routes:
     template: standard-site-publication
     content_type: text/plain
 
+  /updates/rss/:
+    template: updates-rss
+    content_type: text/xml
+
+  /updates/feed.json/:
+    template: updates-json
+    content_type: application/feed+json
+
   /urbanism/:
     controller: channel
     template: custom-urbanism
