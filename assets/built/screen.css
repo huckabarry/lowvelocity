@@ -2226,11 +2226,12 @@ button {
 
 .cactus-brand span {
     font-family:"Fira Sans", sans-serif;
-    font-weight:800;
-    letter-spacing:-.02em
+    font-weight:inherit;
+    letter-spacing:inherit
 }
 
 .cactus-brand-title {
+    letter-spacing:-.055em;
     text-transform:uppercase
 }
 
@@ -2728,8 +2729,9 @@ h1, h2, h3, h4, h5, h6 {
     max-width:100%;
     color:var(--color-accent-2);
     font-size:1.25rem;
-    font-weight:var(--header-font-weight, 700);
-    line-height:1.2;
+    font-weight:var(--header-font-weight, 800);
+    line-height:1.05;
+    letter-spacing:-.055em;
     text-decoration:none;
     -webkit-text-stroke:var(--header-font-stroke, 0) currentColor
 }
@@ -4835,4 +4837,3 @@ body.is-menu-open {
 
 
 }
-
