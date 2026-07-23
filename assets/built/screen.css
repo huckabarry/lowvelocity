@@ -2231,7 +2231,7 @@ button {
 }
 
 .cactus-brand-title {
-    letter-spacing:-.035em
+    letter-spacing:-.02em
 }
 
 .listening-archive {
@@ -2728,9 +2728,9 @@ h1, h2, h3, h4, h5, h6 {
     max-width:100%;
     color:var(--color-accent-2);
     font-size:1.25rem;
-    font-weight:var(--header-font-weight, 800);
+    font-weight:var(--header-font-weight, 700);
     line-height:1.05;
-    letter-spacing:-.035em;
+    letter-spacing:-.02em;
     text-decoration:none;
     -webkit-text-stroke:var(--header-font-stroke, 0) currentColor
 }

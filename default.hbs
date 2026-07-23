@@ -21,7 +21,7 @@
     <style>
         :root {
             --space-shell: min(calc(100% - 2rem), {{@custom.content_width}});
-            --header-font-weight: {{#match @custom.header_font_weight "Regular"}}400{{else match @custom.header_font_weight "Medium"}}500{{else match @custom.header_font_weight "Semibold"}}600{{else match @custom.header_font_weight "Bold"}}800{{else match @custom.header_font_weight "Extra Bold"}}900{{else match @custom.header_font_weight "Black"}}900{{else}}800{{/match}};
+            --header-font-weight: {{#match @custom.header_font_weight "Regular"}}400{{else match @custom.header_font_weight "Medium"}}500{{else match @custom.header_font_weight "Semibold"}}600{{else match @custom.header_font_weight "Bold"}}700{{else match @custom.header_font_weight "Extra Bold"}}800{{else match @custom.header_font_weight "Black"}}900{{else}}700{{/match}};
             --header-font-stroke: {{#match @custom.header_font_weight "Black"}}0.2px{{else}}0{{/match}};
             --navigation-font-weight: {{#match @custom.navigation_font_weight "Regular"}}400{{else match @custom.navigation_font_weight "Semibold"}}600{{else match @custom.navigation_font_weight "Bold"}}700{{else}}500{{/match}};
             --font-body: {{#match @custom.body_font "IBM Plex Mono"}}"IBM Plex Mono", monospace{{else match @custom.body_font "Roboto Mono"}}"Roboto Mono", monospace{{else}}var(--gh-font-body, var(--font-mono)){{/match}};
