@@ -1,6 +1,5 @@
 @import "@tryghost/shared-theme-assets/assets/css/v1/screen.css";
 @import "misc/pswp.css";
-@import url("https://fonts.bunny.net/css?family=merriweather:400i");
 
 @font-face {
     font-family: "Roboto Mono";
@@ -206,13 +205,13 @@ h6,
 }
 
 .cactus-brand {
-    font-style: italic;
+    font-style: var(--body-font-style, normal);
 }
 
 .cactus-brand span {
-    font-family: "Merriweather", serif;
-    font-style: italic;
-    font-weight: 400;
+    font-family: var(--font-body);
+    font-style: var(--body-font-style, normal);
+    font-weight: 700;
     letter-spacing: inherit;
     -webkit-text-stroke: 0 currentColor;
 }
@@ -725,8 +724,8 @@ h6 {
     max-width: 100%;
     color: var(--color-accent-2);
     font-size: 1.25rem;
-    font-weight: 400;
-    line-height: 1.15;
+    font-weight: 700;
+    line-height: 1.05;
     letter-spacing: 0;
     text-decoration: none;
     -webkit-text-stroke: 0 currentColor;
