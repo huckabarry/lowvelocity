@@ -211,7 +211,7 @@ h6,
 .cactus-brand span {
     font-family: var(--font-body);
     font-style: var(--body-font-style, normal);
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: inherit;
     -webkit-text-stroke: 0 currentColor;
 }
@@ -724,7 +724,7 @@ h6 {
     max-width: 100%;
     color: var(--color-accent-2);
     font-size: 1.25rem;
-    font-weight: 700;
+    font-weight: 400;
     line-height: 1.05;
     letter-spacing: 0;
     text-decoration: none;
