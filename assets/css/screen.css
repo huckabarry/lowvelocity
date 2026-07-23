@@ -1,6 +1,6 @@
 @import "@tryghost/shared-theme-assets/assets/css/v1/screen.css";
 @import "misc/pswp.css";
-@import url("https://fonts.bunny.net/css?family=fira-sans:400,500,600,700,800,900");
+@import url("https://fonts.bunny.net/css?family=fira-sans:400%2C500%2C600%2C700%2C800%2C900");
 
 @font-face {
     font-family: "Roboto Mono";
