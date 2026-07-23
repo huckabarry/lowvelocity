@@ -1,6 +1,6 @@
 @import "@tryghost/shared-theme-assets/assets/css/v1/screen.css";
 @import "misc/pswp.css";
-@import url("https://fonts.bunny.net/css?family=fira-sans:400%2C500%2C600%2C700%2C800%2C900");
+@import url("https://fonts.bunny.net/css?family=merriweather:400i");
 
 @font-face {
     font-family: "Roboto Mono";
@@ -206,17 +206,19 @@ h6,
 }
 
 .cactus-brand {
-    font-style: normal;
+    font-style: italic;
 }
 
 .cactus-brand span {
-    font-family: "Fira Sans", sans-serif;
-    font-weight: inherit;
+    font-family: "Merriweather", serif;
+    font-style: italic;
+    font-weight: 400;
     letter-spacing: inherit;
+    -webkit-text-stroke: 0 currentColor;
 }
 
 .cactus-brand-title {
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
 }
 
 .listening-archive {
@@ -723,11 +725,11 @@ h6 {
     max-width: 100%;
     color: var(--color-accent-2);
     font-size: 1.25rem;
-    font-weight: var(--header-font-weight, 700);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: 0;
     text-decoration: none;
-    -webkit-text-stroke: var(--header-font-stroke, 0) currentColor;
+    -webkit-text-stroke: 0 currentColor;
 }
 
 .cactus-brand:hover {
