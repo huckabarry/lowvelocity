@@ -11,6 +11,7 @@
                     "id": {{json id}},
                     "url": "{{url absolute="true"}}",
                     "date_published": "{{date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}",
+                    "summary": {{#if custom_excerpt}}{{json custom_excerpt}}{{else}}{{json (excerpt words="50")}}{{/if}},
                     {{#has tag="#popfeed"}}
                     "content_text": {{#if custom_excerpt}}{{json custom_excerpt}}{{else}}{{json title}}{{/if}},
                     {{else}}
