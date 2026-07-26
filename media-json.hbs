@@ -10,9 +10,13 @@
                 {
                     "id": {{json id}},
                     "url": "{{url absolute="true"}}",
-                    "title": {{json title}},
                     "date_published": "{{date published_at format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}",
+                    {{#has tag="#popfeed"}}
+                    "content_text": {{#if custom_excerpt}}{{json custom_excerpt}}{{else}}{{json title}}{{/if}},
+                    {{else}}
+                    "title": {{json title}},
                     "content_html": {{json html}},
+                    {{/has}}
                     "image": {{#if feature_image}}{{json (img_url feature_image absolute="true")}}{{else}}null{{/if}},
                     "tags": [
                         {{#foreach tags}}
