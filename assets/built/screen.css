@@ -4662,7 +4662,7 @@ body.is-menu-open {
 
 .cactus-nav a {
     padding:0;
-    color:var(--color-global-text);
+    color:var(--color-accent);
     font-family:var(--font-heading);
     font-size:1.625rem;
     font-weight:600;
