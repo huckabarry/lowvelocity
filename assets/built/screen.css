@@ -3315,7 +3315,9 @@ html[data-theme=light] .theme-icon-light {
 
 .post-list-item {
     display:grid;
-    gap:.25rem;
+    grid-template-columns:6.15rem minmax(0, 1fr);
+    align-items:baseline;
+    gap:.75rem;
     min-width:0
 }
 
