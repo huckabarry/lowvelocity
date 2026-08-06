@@ -29,7 +29,6 @@
         initCheckinsAtlas();
         initCheckinPostMaps();
         refreshCheckinPostMapsSoon();
-        initGhostGalleryMasonry();
         initHomeProfileAvatar();
         if (isClientNavigation) initGhostCardEnhancements();
     }
@@ -304,109 +303,6 @@
                     setPausedState();
                 });
             });
-        });
-    }
-
-    var ghostGalleryResizeBound = false;
-
-    function initGhostGalleryMasonry() {
-        if (typeof Masonry === 'undefined') return;
-
-        document.querySelectorAll('.cactus-content .kg-gallery-card:not([data-ghost-gallery-ready])').forEach(function (card) {
-            if (card.hasAttribute('data-ghost-gallery-ready')) return;
-
-            var galleryCards = [card];
-            var nextCard = card.nextElementSibling;
-
-            while (nextCard && nextCard.matches('.kg-gallery-card:not([data-ghost-gallery-ready])')) {
-                galleryCards.push(nextCard);
-                nextCard = nextCard.nextElementSibling;
-            }
-
-            var container = card.querySelector('.kg-gallery-container');
-            if (!container) return;
-
-            var images = [];
-            var galleryItems = [];
-
-            galleryCards.forEach(function (galleryCard) {
-                var galleryImages = Array.prototype.slice.call(galleryCard.querySelectorAll('.kg-gallery-image'));
-                var caption = galleryCard.querySelector(':scope > figcaption');
-
-                images = images.concat(galleryImages);
-                galleryItems = galleryItems.concat(galleryImages);
-
-                if (caption) {
-                    caption.classList.add('ghost-gallery-caption');
-                    galleryItems.push(caption);
-                }
-
-                galleryCard.setAttribute('data-ghost-gallery-ready', 'true');
-            });
-
-            if (!images.length) return;
-
-            card.classList.add('ghost-gallery-card');
-            if (galleryCards.length > 1) card.classList.add('ghost-gallery-run');
-
-            var sizer = document.createElement('div');
-            sizer.className = 'kg-gallery-sizer';
-            container.replaceChildren(sizer);
-
-            galleryItems.forEach(function (item) {
-                container.appendChild(item);
-            });
-
-            galleryCards.slice(1).forEach(function (galleryCard) {
-                galleryCard.remove();
-            });
-
-            var masonry = new Masonry(container, {
-                itemSelector: '.kg-gallery-image, .ghost-gallery-caption',
-                columnWidth: '.kg-gallery-sizer',
-                percentPosition: true,
-                transitionDuration: 0,
-            });
-            card._ghostGalleryMasonry = masonry;
-
-            function relayout() {
-                if (!document.documentElement.contains(container)) return;
-                masonry.layout();
-                card.classList.add('initialized');
-            }
-
-            var relayoutAfterImage = throttle(relayout, 80);
-
-            images.forEach(function (image) {
-                var img = image.querySelector('img');
-                if (!img || img.complete) return;
-                img.addEventListener('load', relayoutAfterImage, {once: true});
-                img.addEventListener('error', relayoutAfterImage, {once: true});
-            });
-
-            masonry.on('layoutComplete', function () {
-                card.classList.add('initialized');
-            });
-
-            relayout();
-            window.requestAnimationFrame(function () {
-                window.requestAnimationFrame(relayout);
-            });
-            window.setTimeout(relayout, 400);
-        });
-
-        if (!ghostGalleryResizeBound) {
-            ghostGalleryResizeBound = true;
-            window.addEventListener('resize', throttle(relayoutGhostGalleryCards, 120));
-        }
-    }
-
-    function relayoutGhostGalleryCards() {
-        document.querySelectorAll('.cactus-content .kg-gallery-card[data-ghost-gallery-ready]').forEach(function (card) {
-            var masonry = card._ghostGalleryMasonry;
-            if (!masonry) return;
-            masonry.reloadItems();
-            masonry.layout();
         });
     }
 
