@@ -3592,7 +3592,8 @@ html[data-theme=light] .theme-icon-light {
 .cactus-content .kg-gallery-row {
     display:flex;
     gap:.8rem;
-    width:100%
+    width:100%;
+    margin:0!important
 }
 
 .cactus-content .kg-gallery-image {
