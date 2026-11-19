@@ -126,13 +126,17 @@
          website, and every social account via Ghost's {{#social_accounts}} helper with icons in partials/icons/. --}}
     {{#primary_author}}
     <aside class="author-card" aria-label="{{t "About the author"}}">
-        {{#if profile_image}}
-            <a class="author-card__avatar" href="{{url}}" tabindex="-1" aria-hidden="true"><img src="{{img_url profile_image size="s"}}" alt="" width="80" height="80" loading="lazy"></a>
-        {{/if}}
+        <div class="author-card__head">
+            {{#if profile_image}}
+                <a class="author-card__avatar" href="{{url}}" tabindex="-1" aria-hidden="true"><img src="{{img_url profile_image size="s"}}" alt="" width="72" height="72" loading="lazy"></a>
+            {{/if}}
+            <div>
+                <p class="author-card__eyebrow">{{t "Written by"}}</p>
+                <p class="author-card__name"><a href="{{url}}">{{name}}</a></p>
+                {{#if location}}<p class="author-card__location">{{> "icons/location"}}{{location}}</p>{{/if}}
+            </div>
+        </div>
         <div class="author-card__text">
-            <p class="author-card__eyebrow">{{t "Written by"}}</p>
-            <p class="author-card__name"><a href="{{url}}">{{name}}</a></p>
-            {{#if location}}<p class="author-card__location">{{> "icons/location"}}{{location}}</p>{{/if}}
             {{#if bio}}<p class="author-card__bio">{{bio}}</p>{{/if}}
             <div class="author-card__social">
                 {{#if website}}<a class="author-card__icon" href="{{website}}" rel="me noopener" aria-label="{{t "Website"}}" title="{{t "Website"}}">{{> "icons/social-website"}}</a>{{/if}}
@@ -188,20 +192,20 @@
     .is-clean .cactus-content blockquote { color: inherit; border-left: 0.2rem solid color-mix(in srgb, var(--color-global-text) 28%, transparent); }
     .is-clean .cactus-content blockquote p { margin: 0.6rem 0; }
     /* Author card after each post. */
-    .author-card { display: flex; gap: 1.1rem; align-items: flex-start; margin-top: 3rem; padding: 1.4rem; border-radius: 0.9rem; background: color-mix(in srgb, var(--color-global-text) 6%, transparent); font-family: var(--font-heading); font-style: normal; }
+    .author-card { margin-top: 3rem; padding: 1.4rem; border-radius: 0.9rem; background: color-mix(in srgb, var(--color-global-text) 6%, transparent); font-family: var(--font-heading); font-style: normal; }
+    /* Photo beside the name, label and location; bio and icons run the full width below. */
+    .author-card__head { display: flex; gap: 1rem; align-items: center; }
     .author-card__avatar { flex: 0 0 auto; }
     .author-card__avatar img { display: block; width: 4.5rem; height: 4.5rem; border-radius: 50%; object-fit: cover; }
-    .author-card__text { min-width: 0; }
-    .author-card__text p { margin: 0; }
+    .author-card p { margin: 0; }
     .author-card__eyebrow { color: color-mix(in srgb, var(--color-global-text) 55%, transparent); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .author-card__name { margin-top: 0.15rem !important; font-weight: 600; font-size: 1.2rem; line-height: 1.3; }
     .author-card__name a { color: var(--color-global-text); text-decoration: none; }
     .author-card__name a:hover { text-decoration: underline; }
     .author-card__location { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.2rem !important; color: color-mix(in srgb, var(--color-global-text) 60%, transparent); font-size: 0.85rem; }
-    .author-card__bio { margin-top: 0.6rem !important; color: color-mix(in srgb, var(--color-global-text) 82%, transparent); line-height: 1.5; }
+    .author-card__bio { margin-top: 1rem !important; color: color-mix(in srgb, var(--color-global-text) 82%, transparent); line-height: 1.5; }
     .author-card__social { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.85rem; }
     .author-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 2.1rem; height: 2.1rem; border-radius: 50%; color: var(--color-global-text); background: color-mix(in srgb, var(--color-global-text) 9%, transparent); text-decoration: none; transition: background 0.15s, color 0.15s; }
     .author-card__icon:hover { color: var(--color-global-bg); background: var(--color-link); }
     .author-card__icon-text { font-size: 0.65rem; }
-    @media (max-width: 480px) { .author-card { flex-direction: column; gap: 0.8rem; } }
 </style>
