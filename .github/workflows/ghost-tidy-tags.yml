@@ -25,6 +25,7 @@ on:
         type: choice
         options:
           - internal-tags
+          - old-pages
           - everything
 
 permissions:
@@ -68,6 +69,7 @@ jobs:
           args=()
           if [ "$MODE" = "apply" ]; then args+=(--apply); fi
           if [ "$SCOPE" = "internal-tags" ]; then args+=(--internal-tags); fi
+          if [ "$SCOPE" = "old-pages" ]; then args+=(--old-pages); fi
           node scripts/ghost-tidy/tidy.mjs "${args[@]}"
 
       - name: Upload backup

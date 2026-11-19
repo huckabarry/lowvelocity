@@ -3,6 +3,7 @@
 //   node scripts/ghost-tidy/tidy.mjs            dry run: prints every change, writes nothing
 //   node scripts/ghost-tidy/tidy.mjs --apply    makes the changes
 //   add --internal-tags to only delete internal (#) tags, except #no-bluesky and #label-*
+//   add --old-pages to only set the old theme's leftover pages back to draft
 //
 // Needs GHOST_ADMIN_URL and GHOST_ADMIN_API_KEY (an integration's id:secret Admin API key).
 // Before changing anything, --apply saves the current posts, pages and tags to ./ghost-tidy-backup/.
@@ -30,12 +31,36 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const APPLY = process.argv.includes('--apply');
 // --internal-tags: only delete internal (#) tags, nothing else. Keeps the ones the sync Worker reads.
 const INTERNAL_ONLY = process.argv.includes('--internal-tags');
+// --old-pages: set the old theme's leftover pages back to draft (nothing is deleted).
+const OLD_PAGES_ONLY = process.argv.includes('--old-pages');
+const OLD_PAGES = ['hero-section', 'blog', 'library', 'field-notes', 'gallery', 'posts'];
 const KEEP_INTERNAL = (slug) => slug === 'hash-no-bluesky' || slug.startsWith('hash-label-');
 const ghostUrl = (process.env.GHOST_ADMIN_URL || '').replace(/\/$/, '');
 const adminKey = process.env.GHOST_ADMIN_API_KEY || '';
 if (!ghostUrl || !adminKey.includes(':')) {
   console.error('Set GHOST_ADMIN_URL and GHOST_ADMIN_API_KEY (id:secret).');
   process.exit(1);
+}
+
+if (OLD_PAGES_ONLY) {
+  console.log(`${APPLY ? 'APPLY' : 'DRY RUN'}: unpublish old-theme pages, ${ghostUrl}\n`);
+  const found = await all('pages', `filter=slug:[${OLD_PAGES.join(',')}]%2Bstatus:published`);
+  if (APPLY) {
+    fs.mkdirSync('ghost-tidy-backup', { recursive: true });
+    fs.writeFileSync(path.join('ghost-tidy-backup', 'old-pages.json'), JSON.stringify(found, null, 2));
+  }
+  for (const page of found) {
+    if (!OLD_PAGES.includes(page.slug) || page.status !== 'published') {
+      console.log(`  skip "${page.title}" (/${page.slug}/): not on the list`);
+      continue;
+    }
+    console.log(`  unpublish "${page.title}" (/${page.slug}/) → draft`);
+    if (APPLY) await api('PUT', `pages/${page.id}/`, { pages: [{ status: 'draft', updated_at: page.updated_at }] });
+  }
+  const missing = OLD_PAGES.filter((slug) => !found.some((p) => p.slug === slug));
+  if (missing.length) console.log(`  already unpublished or not found: ${missing.map((s) => `/${s}/`).join(', ')}`);
+  console.log(`\n${APPLY ? 'Done.' : 'Dry run only. Nothing was changed.'}`);
+  process.exit(0);
 }
 
 if (INTERNAL_ONLY) {
