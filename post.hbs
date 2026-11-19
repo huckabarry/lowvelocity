@@ -122,22 +122,24 @@
         </footer>
     {{/if}}
 
-    {{!-- Author card: name, photo, bio and links from the author's Ghost profile (Settings → Staff). --}}
+    {{!-- Author card from the author's Ghost profile (Settings → Staff): photo, name, location, bio,
+         website, and every social account via Ghost's {{#social_accounts}} helper with icons in partials/icons/. --}}
     {{#primary_author}}
     <aside class="author-card" aria-label="{{t "About the author"}}">
         {{#if profile_image}}
-            <a class="author-card__avatar" href="{{url}}" tabindex="-1" aria-hidden="true"><img src="{{img_url profile_image size="xs"}}" alt="" width="64" height="64" loading="lazy"></a>
+            <a class="author-card__avatar" href="{{url}}" tabindex="-1" aria-hidden="true"><img src="{{img_url profile_image size="s"}}" alt="" width="80" height="80" loading="lazy"></a>
         {{/if}}
         <div class="author-card__text">
+            <p class="author-card__eyebrow">{{t "Written by"}}</p>
             <p class="author-card__name"><a href="{{url}}">{{name}}</a></p>
+            {{#if location}}<p class="author-card__location">{{> "icons/location"}}{{location}}</p>{{/if}}
             {{#if bio}}<p class="author-card__bio">{{bio}}</p>{{/if}}
-            <p class="author-card__links">
-                {{#if website}}<a href="{{website}}" rel="me noopener">{{t "Website"}}</a>{{/if}}
-                {{#if bluesky}}<a href="{{social_url type="bluesky"}}" rel="me noopener">Bluesky</a>{{/if}}
-                {{#if mastodon}}<a href="{{social_url type="mastodon"}}" rel="me noopener">Mastodon</a>{{/if}}
-                {{#if threads}}<a href="{{social_url type="threads"}}" rel="me noopener">Threads</a>{{/if}}
-                {{#if instagram}}<a href="{{social_url type="instagram"}}" rel="me noopener">Instagram</a>{{/if}}
-            </p>
+            <div class="author-card__social">
+                {{#if website}}<a class="author-card__icon" href="{{website}}" rel="me noopener" aria-label="{{t "Website"}}" title="{{t "Website"}}">{{> "icons/social-website"}}</a>{{/if}}
+                {{#social_accounts this}}
+                    <a class="author-card__icon" href="{{href}}" target="_blank" rel="me noopener" aria-label="{{name}}" title="{{name}}">{{#> (concat "icons/social-" type)}}<span class="author-card__icon-text">{{name}}</span>{{/undefined}}</a>
+                {{/social_accounts}}
+            </div>
         </div>
     </aside>
     {{/primary_author}}
@@ -186,16 +188,20 @@
     .is-clean .cactus-content blockquote { color: inherit; border-left: 0.2rem solid color-mix(in srgb, var(--color-global-text) 28%, transparent); }
     .is-clean .cactus-content blockquote p { margin: 0.6rem 0; }
     /* Author card after each post. */
-    .author-card { display: flex; gap: 1rem; align-items: flex-start; margin-top: 3rem; padding: 1.25rem; border-radius: 0.75rem; background: color-mix(in srgb, var(--color-global-text) 6%, transparent); font-family: var(--font-heading); font-style: normal; }
+    .author-card { display: flex; gap: 1.1rem; align-items: flex-start; margin-top: 3rem; padding: 1.4rem; border-radius: 0.9rem; background: color-mix(in srgb, var(--color-global-text) 6%, transparent); border: 1px solid color-mix(in srgb, var(--color-global-text) 9%, transparent); font-family: var(--font-heading); font-style: normal; }
     .author-card__avatar { flex: 0 0 auto; }
-    .author-card__avatar img { display: block; width: 4rem; height: 4rem; border-radius: 50%; object-fit: cover; }
+    .author-card__avatar img { display: block; width: 4.5rem; height: 4.5rem; border-radius: 50%; object-fit: cover; }
     .author-card__text { min-width: 0; }
     .author-card__text p { margin: 0; }
-    .author-card__name { font-weight: 600; font-size: 1.05rem; }
+    .author-card__eyebrow { color: color-mix(in srgb, var(--color-global-text) 55%, transparent); font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .author-card__name { margin-top: 0.15rem !important; font-weight: 600; font-size: 1.2rem; line-height: 1.3; }
     .author-card__name a { color: var(--color-global-text); text-decoration: none; }
     .author-card__name a:hover { text-decoration: underline; }
-    .author-card__bio { margin-top: 0.35rem !important; color: color-mix(in srgb, var(--color-global-text) 80%, transparent); line-height: 1.5; }
-    .author-card__links { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin-top: 0.6rem !important; font-size: 0.9rem; }
-    .author-card__links:empty { display: none; }
-    .author-card__links a { color: var(--color-link); }
+    .author-card__location { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.2rem !important; color: color-mix(in srgb, var(--color-global-text) 60%, transparent); font-size: 0.85rem; }
+    .author-card__bio { margin-top: 0.6rem !important; color: color-mix(in srgb, var(--color-global-text) 82%, transparent); line-height: 1.5; }
+    .author-card__social { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.85rem; }
+    .author-card__icon { display: inline-flex; align-items: center; justify-content: center; width: 2.1rem; height: 2.1rem; border-radius: 50%; color: var(--color-global-text); background: color-mix(in srgb, var(--color-global-text) 9%, transparent); text-decoration: none; transition: background 0.15s, color 0.15s; }
+    .author-card__icon:hover { color: var(--color-global-bg); background: var(--color-link); }
+    .author-card__icon-text { font-size: 0.65rem; }
+    @media (max-width: 480px) { .author-card { flex-direction: column; gap: 0.8rem; } }
 </style>
