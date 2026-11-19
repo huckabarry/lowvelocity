@@ -4,11 +4,14 @@
         <title><![CDATA[{{@site.title}}]]></title>
         <description><![CDATA[{{@site.description}}]]></description>
         <link>{{@site.url}}/</link>
+        <language>{{@site.locale}}</language>
+        {{#if @site.icon}}
         <image>
-            <url>{{@site.url}}/favicon.png</url>
-            <title>{{@site.title}}</title>
+            <url>{{img_url @site.icon absolute="true"}}</url>
+            <title><![CDATA[{{@site.title}}]]></title>
             <link>{{@site.url}}/</link>
         </image>
+        {{/if}}
         <generator>Ghost</generator>
         <lastBuildDate>{{date format="ddd, DD MMM YYYY HH:mm:ss ZZ"}}</lastBuildDate>
         <atom:link href="{{@site.url}}/rss/" rel="self" type="application/rss+xml"/>
