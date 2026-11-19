@@ -18,6 +18,7 @@
 //   5. The Updates page is unpublished (set back to draft).
 //   6. Tag names and descriptions are set, and the About page body is replaced with about.html.
 // Tags not in the retired list (for example #no-bluesky or #label-*) are kept as they are.
+// Posts not in tag-plan.json (drafts) only lose retired tags; they get no section.
 
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -51,19 +52,21 @@ const RETIRED = new Set([
 ]);
 // Everything the script decides itself; any other tag on a post is carried over untouched.
 const MANAGED = new Set([...RETIRED, ...Object.keys(SECTIONS), BOOKS.slug]);
+// Every post and page ends up with this one author (the other Bryan accounts are retired by hand).
+const AUTHOR = 'bryan';
 
-function token() {
-  const [id, secret] = adminKey.split(':');
+function token(key = adminKey) {
+  const [id, secret] = key.split(':');
   const now = Math.floor(Date.now() / 1000);
   const enc = (v) => Buffer.from(JSON.stringify(v)).toString('base64url');
   const body = `${enc({ alg: 'HS256', typ: 'JWT', kid: id })}.${enc({ iat: now, exp: now + 300, aud: '/admin/' })}`;
   return `${body}.${crypto.createHmac('sha256', Buffer.from(secret, 'hex')).update(body).digest('base64url')}`;
 }
 
-async function api(method, route, body) {
+async function api(method, route, body, key) {
   const res = await fetch(`${ghostUrl}/ghost/api/admin/${route}`, {
     method,
-    headers: { Authorization: `Ghost ${token()}`, 'Accept-Version': 'v6.0', ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    headers: { Authorization: `Ghost ${token(key)}`, 'Accept-Version': 'v6.0', ...(body ? { 'Content-Type': 'application/json' } : {}) },
     body: body ? JSON.stringify(body) : undefined,
   });
   if (method === 'DELETE' && res.status === 204) return null;
@@ -84,9 +87,15 @@ async function all(resource, query) {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const names = (tags) => tags.map((t) => t.name).join(', ') || '(none)';
 
-const posts = await all('posts', 'include=tags&filter=status:[published,draft,scheduled]&formats=lexical');
+const posts = await all('posts', 'include=tags,authors&filter=status:[published,draft,scheduled]&formats=lexical');
 const tags = await all('tags', 'include=count.posts&filter=visibility:[public,internal]');
-const pages = await all('pages', 'filter=slug:[about,updates]&formats=lexical');
+const pages = await all('pages', 'include=authors&filter=status:[published,draft,scheduled]&formats=lexical');
+const users = await all('users', 'include=count.posts');
+const owner = users.find((u) => u.slug === AUTHOR);
+if (!owner) {
+  console.error(`No staff user with slug ${AUTHOR}.`);
+  process.exit(1);
+}
 const tagBySlug = new Map(tags.map((t) => [t.slug, t]));
 console.log(`${APPLY ? 'APPLY' : 'DRY RUN'}: ${posts.length} posts, ${tags.length} tags, ${ghostUrl}\n`);
 
@@ -134,33 +143,37 @@ for (const [slug, want] of [...Object.entries(SECTIONS), [BOOKS.slug, BOOKS]]) {
   if (APPLY) tagBySlug.set(slug, (await api('PUT', `tags/${have.id}/`, { tags: [{ name: want.name, description: want.description, updated_at: have.updated_at }] })).tags[0]);
 }
 
-// 2. Post tags.
-console.log('\n== Posts: tags (first tag = section)');
+// 2. Post tags and author.
+console.log(`\n== Posts: tags (first tag = section) and author (${owner.name}, ${AUTHOR})`);
 let edits = 0;
 const unplanned = [];
 for (const post of posts) {
   if (toDelete.has(post.slug)) continue;
   const section = sectionOf.get(post.slug);
-  if (!section) {
-    unplanned.push(post);
-    continue;
-  }
   const old = post.tags.map((t) => t.slug);
-  const next = [section];
-  if (section !== 'photography' && old.some((s) => PHOTO_SIGNS.has(s))) next.push('photography');
-  if (old.some((s) => BOOK_SIGNS.has(s))) next.push(BOOKS.slug);
-  for (const s of old) if (!MANAGED.has(s) && !next.includes(s)) next.push(s);
-  if (next.join(',') === old.join(',')) continue;
+  let next;
+  if (section) {
+    next = [section];
+    if (section !== 'photography' && old.some((s) => PHOTO_SIGNS.has(s))) next.push('photography');
+    if (old.some((s) => BOOK_SIGNS.has(s))) next.push(BOOKS.slug);
+    for (const s of old) if (!MANAGED.has(s) && !next.includes(s)) next.push(s);
+  } else {
+    // Not in the plan (drafts): only drop retired tags, so they can be deleted. No section is chosen.
+    unplanned.push(post);
+    next = old.filter((s) => !RETIRED.has(s));
+  }
+  const authorsOk = post.authors.length === 1 && post.authors[0].id === owner.id;
+  if (next.join(',') === old.join(',') && authorsOk) continue;
   edits++;
   const display = next.map((s) => (s === BOOKS.slug ? BOOKS.name : SECTIONS[s]?.name || tagBySlug.get(s)?.name || s));
-  console.log(`  ${post.title.slice(0, 48).padEnd(48)} ${names(post.tags)}  →  ${display.join(', ')}`);
+  console.log(`  ${post.title.slice(0, 48).padEnd(48)} ${names(post.tags)}  →  ${display.join(', ') || '(no tags)'}${section ? '' : `  [${post.status}, retired tags only]`}${authorsOk ? '' : `  | author ${post.authors.map((a) => a.slug).join('+')} → ${AUTHOR}`}`);
   if (APPLY) {
-    await api('PUT', `posts/${post.id}/`, { posts: [{ tags: next.map((s) => ({ id: tagBySlug.get(s).id })), updated_at: post.updated_at }] });
+    await api('PUT', `posts/${post.id}/`, { posts: [{ tags: next.map((s) => ({ id: tagBySlug.get(s).id })), authors: [{ id: owner.id }], updated_at: post.updated_at }] });
     await sleep(2000); // pace the webhook → sync Worker → standard.site updates
   }
 }
 console.log(`  ${edits} posts to change.`);
-if (unplanned.length) console.log(`  Not in the plan, left alone: ${unplanned.map((p) => `${p.title} [${p.status}]`).join('; ')}`);
+if (unplanned.length) console.log(`  Not in the plan (no section given, retired tags removed): ${unplanned.map((p) => `${p.title} [${p.status}]`).join('; ')}`);
 
 // 3. Delete the imported Bluesky posts.
 console.log('\n== Posts: delete imported Bluesky posts');
@@ -191,6 +204,18 @@ if (!about) {
   if (APPLY) await api('PUT', `pages/${about.id}/?source=html`, { pages: [{ html: aboutHtml, updated_at: about.updated_at }] });
 }
 
+// 5b. Page authors (after the page edits above, from a fresh copy so updated_at is current).
+console.log(`\n== Pages: author → ${AUTHOR}`);
+const pagesNow = APPLY ? await all('pages', 'include=authors&filter=status:[published,draft,scheduled]') : pages;
+let pageEdits = 0;
+for (const page of pagesNow) {
+  if (page.authors.length === 1 && page.authors[0].id === owner.id) continue;
+  pageEdits++;
+  console.log(`  ${page.title.slice(0, 48).padEnd(48)} [${page.status}] author ${page.authors.map((a) => a.slug).join('+')} → ${AUTHOR}`);
+  if (APPLY) await api('PUT', `pages/${page.id}/`, { pages: [{ authors: [{ id: owner.id }], updated_at: page.updated_at }] });
+}
+console.log(`  ${pageEdits} pages to change.`);
+
 // 6. Delete retired tags once nothing uses them.
 console.log('\n== Tags: delete retired tags');
 const fresh = APPLY ? await all('tags', 'include=count.posts&filter=visibility:[public,internal]') : tags;
@@ -204,5 +229,25 @@ for (const tag of fresh.filter((t) => RETIRED.has(t.slug))) {
   console.log(`  delete ${tag.name} (${tag.slug}, was on ${tags.find((t) => t.id === tag.id)?.count.posts ?? 0} posts)`);
   if (APPLY) await api('DELETE', `tags/${tag.id}/`);
 }
+
+// 7. Staff accounts: who could be retired, and whose token deploys routes.yaml.
+console.log('\n== Staff accounts (retire by hand in Ghost → Settings → Staff)');
+let tokenOwner = null;
+if (process.env.GHOST_STAFF_ACCESS_TOKEN?.includes(':')) {
+  try {
+    tokenOwner = (await api('GET', 'users/me/', null, process.env.GHOST_STAFF_ACCESS_TOKEN)).users[0];
+  } catch (error) {
+    console.log(`  Could not check GHOST_STAFF_ACCESS_TOKEN: ${error.message}`);
+  }
+}
+for (const user of users) {
+  const role = user.roles?.map((r) => r.name).join(', ') || '?';
+  const notes = [];
+  if (user.id === owner.id) notes.push('keeps every post');
+  if (tokenOwner && user.id === tokenOwner.id) notes.push('owns GHOST_STAFF_ACCESS_TOKEN: do not suspend or delete');
+  if (user.id !== owner.id && !(tokenOwner && user.id === tokenOwner.id)) notes.push(APPLY ? 'no posts left, safe to suspend or delete' : 'safe to retire after apply');
+  console.log(`  ${user.name} (${user.slug}, ${user.email ? user.email.replace(/^(.).*(@.*)$/, '$1…$2') : 'no email'}, ${role}, ${user.status}): ${notes.join('; ')}`);
+}
+if (!tokenOwner) console.log('  The staff token owner is unknown, so check it before retiring any account.');
 
 console.log(`\n${APPLY ? 'Done.' : 'Dry run only. Nothing was changed.'}`);

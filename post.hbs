@@ -121,6 +121,26 @@
             {{/foreach}}
         </footer>
     {{/if}}
+
+    {{!-- Author card: name, photo, bio and links from the author's Ghost profile (Settings → Staff). --}}
+    {{#primary_author}}
+    <aside class="author-card" aria-label="{{t "About the author"}}">
+        {{#if profile_image}}
+            <a class="author-card__avatar" href="{{url}}" tabindex="-1" aria-hidden="true"><img src="{{img_url profile_image size="xs"}}" alt="" width="64" height="64" loading="lazy"></a>
+        {{/if}}
+        <div class="author-card__text">
+            <p class="author-card__name"><a href="{{url}}">{{name}}</a></p>
+            {{#if bio}}<p class="author-card__bio">{{bio}}</p>{{/if}}
+            <p class="author-card__links">
+                {{#if website}}<a href="{{website}}" rel="me noopener">{{t "Website"}}</a>{{/if}}
+                {{#if bluesky}}<a href="{{social_url type="bluesky"}}" rel="me noopener">Bluesky</a>{{/if}}
+                {{#if mastodon}}<a href="{{social_url type="mastodon"}}" rel="me noopener">Mastodon</a>{{/if}}
+                {{#if threads}}<a href="{{social_url type="threads"}}" rel="me noopener">Threads</a>{{/if}}
+                {{#if instagram}}<a href="{{social_url type="instagram"}}" rel="me noopener">Instagram</a>{{/if}}
+            </p>
+        </div>
+    </aside>
+    {{/primary_author}}
 </article>
 
 {{#if comments}}
@@ -165,4 +185,17 @@
     .is-clean .cactus-content { font-size: 1.0625rem; line-height: 1.6; }
     .is-clean .cactus-content blockquote { color: inherit; border-left: 0.2rem solid color-mix(in srgb, var(--color-global-text) 28%, transparent); }
     .is-clean .cactus-content blockquote p { margin: 0.6rem 0; }
+    /* Author card after each post. */
+    .author-card { display: flex; gap: 1rem; align-items: flex-start; margin-top: 3rem; padding: 1.25rem; border-radius: 0.75rem; background: color-mix(in srgb, var(--color-global-text) 6%, transparent); font-family: var(--font-heading); font-style: normal; }
+    .author-card__avatar { flex: 0 0 auto; }
+    .author-card__avatar img { display: block; width: 4rem; height: 4rem; border-radius: 50%; object-fit: cover; }
+    .author-card__text { min-width: 0; }
+    .author-card__text p { margin: 0; }
+    .author-card__name { font-weight: 600; font-size: 1.05rem; }
+    .author-card__name a { color: var(--color-global-text); text-decoration: none; }
+    .author-card__name a:hover { text-decoration: underline; }
+    .author-card__bio { margin-top: 0.35rem !important; color: color-mix(in srgb, var(--color-global-text) 80%, transparent); line-height: 1.5; }
+    .author-card__links { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin-top: 0.6rem !important; font-size: 0.9rem; }
+    .author-card__links:empty { display: none; }
+    .author-card__links a { color: var(--color-link); }
 </style>
