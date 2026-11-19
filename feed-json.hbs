@@ -1,0 +1,44 @@
+{
+    "version": "https://jsonfeed.org/version/1.1",
+    "title": {{json @site.title}},
+    "home_page_url": "{{@site.url}}/",
+    "feed_url": "{{@site.url}}/feed.json/",
+    "description": {{json @site.description}},
+    "language": {{json @site.locale}},
+    {{#if @site.icon}}
+    "icon": "{{{img_url @site.icon absolute="true"}}}",
+    "favicon": "{{{img_url @site.icon absolute="true"}}}",
+    {{/if}}
+    "items": [
+        {{#get "posts" filter="tag:-[updates,status,note,notes,afterword,hash-bluesky,hash-atproto,listening,hash-crucialtracks,check-ins,hash-swarm,hash-foursquare,hash-popfeed,books,reading,movies,watching,shows]" limit="100" include="authors,tags" order="published_at desc" formats="html"}}
+            {{#foreach posts}}
+                {
+                    "id": "{{{url absolute="true"}}}",
+                    "url": "{{{url absolute="true"}}}",
+                    "title": {{json title}},
+                    "summary": {{#if custom_excerpt}}{{json custom_excerpt}}{{else}}{{json (excerpt words="50")}}{{/if}},
+                    "content_html": {{json html}},
+                    {{#if feature_image}}
+                    "image": "{{{img_url feature_image absolute="true"}}}",
+                    {{/if}}
+                    "date_published": "{{date published_at format="YYYY-MM-DDTHH:mm:ssZ"}}",
+                    "date_modified": "{{date updated_at format="YYYY-MM-DDTHH:mm:ssZ"}}",
+                    "authors": [
+                        {{#foreach authors}}
+                            {
+                                "name": {{json name}},
+                                "url": "{{{url absolute="true"}}}"{{#if profile_image}},
+                                "avatar": "{{{img_url profile_image absolute="true"}}}"{{/if}}
+                            }{{#unless @last}},{{/unless}}
+                        {{/foreach}}
+                    ],
+                    "tags": [
+                        {{#foreach tags}}
+                            {{json name}}{{#unless @last}},{{/unless}}
+                        {{/foreach}}
+                    ]
+                }{{#unless @last}},{{/unless}}
+            {{/foreach}}
+        {{/get}}
+    ]
+}
