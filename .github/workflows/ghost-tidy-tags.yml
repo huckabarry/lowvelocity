@@ -1,0 +1,70 @@
+name: "Ghost: tidy tags (one-off)"
+
+# Run "dry-run" first and read the log. Then run "apply" with the confirmation phrase.
+# The apply run uploads a backup of every post, page and tag (before changes) as an artifact.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "dry-run or apply"
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - apply
+      confirm:
+        description: 'For apply, type: tidy my tags'
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ghost-tidy-tags
+  cancel-in-progress: false
+
+jobs:
+  tidy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Check confirmation
+        if: inputs.mode == 'apply'
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$CONFIRM" != "tidy my tags" ]; then
+            echo "::error::Apply needs the confirmation phrase: tidy my tags"
+            exit 1
+          fi
+
+      - name: Tidy tags
+        env:
+          GHOST_ADMIN_URL: ${{ secrets.GHOST_ADMIN_URL }}
+          GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
+          MODE: ${{ inputs.mode }}
+        run: |
+          if [ "$MODE" = "apply" ]; then
+            node scripts/ghost-tidy/tidy.mjs --apply
+          else
+            node scripts/ghost-tidy/tidy.mjs
+          fi
+
+      - name: Upload backup
+        if: always() && inputs.mode == 'apply'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghost-tidy-backup
+          path: ghost-tidy-backup/
+          if-no-files-found: ignore
+          retention-days: 90

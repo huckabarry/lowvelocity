@@ -12,6 +12,18 @@ The Ghost theme for **[lowvelocity.org](https://lowvelocity.org)**: long-form wr
 
 The Worker also handles the standard.site records and the `/.well-known/site.standard.publication` file. Nothing in this repo does that.
 
+## Tags
+
+Since November 2026 a post's **first tag** decides its section, and each post is in one section:
+
+| Tag | Section | Page | Feeds |
+| --- | --- | --- | --- |
+| Urbanism | Urbanism | `/urbanism/` | `/urbanism/rss/`, `/urbanism/feed.json/` |
+| Field Notes | Field Notes | `/field-notes/` | `/field-notes/rss/`, `/field-notes/feed.json/` |
+| Photography | Latest Photos | `/gallery/` (any post tagged Photography) | `/gallery/rss/`, `/gallery/feed.json/` |
+
+**Books** is a topic tag, never first. Each tag's description (Ghost → Tags) is the subtitle under its section. The site-wide feeds are `/rss/` and `/feed.json/`. Internal tags the sync Worker reads: `#no-bluesky` (don't announce on Bluesky) and `#label-*` (content labels).
+
 ## Deploying
 
 Merging into `main` deploys automatically (`.github/workflows/deploy-theme.yml`):

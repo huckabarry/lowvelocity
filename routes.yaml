@@ -7,10 +7,22 @@ routes:
     template: feed-json
     content_type: application/feed+json
 
+  /urbanism/feed.json/:
+    template: feed-json-urbanism
+    content_type: application/feed+json
+
+  /field-notes/feed.json/:
+    template: feed-json-field-notes
+    content_type: application/feed+json
+
+  /gallery/feed.json/:
+    template: feed-json-gallery
+    content_type: application/feed+json
+
   /urbanism/:
     controller: channel
     template: custom-urbanism
-    filter: 'primary_tag:[urbanism,housing,transportation,public-finance]'
+    filter: 'primary_tag:urbanism'
     data: tag.urbanism
 
   /field-notes/:
@@ -22,8 +34,8 @@ routes:
   /gallery/:
     controller: channel
     template: custom-gallery
-    filter: 'tag:[gallery,hash-gallery,photography,hash-photography]'
-    data: tag.gallery
+    filter: 'tag:photography'
+    data: tag.photography
 
   /posts/:
     controller: channel

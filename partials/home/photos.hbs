@@ -1,8 +1,8 @@
-{{#get "posts" filter="primary_tag:[gallery,photography]+tag:-hash-bluesky+feature_image:-null" limit="10" as |photo_posts|}}
+{{#get "posts" filter="primary_tag:photography+feature_image:-null" limit="10" as |photo_posts|}}
     {{#if photo_posts}}
     <section class="cactus-section home-section home-photos-section">
         <h2 class="cactus-title"><a href="{{@site.url}}/gallery/">{{t "Latest Photos"}}</a></h2>
-        {{> "section-description" slug="gallery"}}
+        {{> "section-description" slug="photography"}}
         <ul class="home-photos" role="list">
             {{#foreach photo_posts}}
             <li>
