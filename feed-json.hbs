@@ -16,8 +16,15 @@
                     "id": "{{{url absolute="true"}}}",
                     "url": "{{{url absolute="true"}}}",
                     "title": {{json title}},
-                    {{!-- Use the post's stored plain-text excerpt: the excerpt helper returns an object that json would print as {"string": ...}. --}}
-                    "summary": {{#if custom_excerpt}}{{json custom_excerpt}}{{else}}{{json excerpt}}{{/if}},
+                    {{!-- Use the post's stored plain-text excerpt: the excerpt helper returns an object that json would print as {"string": ...}.
+                         Leave summary out when there's no text (photo posts): null breaks some readers, including Micro.blog. --}}
+                    {{#if custom_excerpt}}
+                    "summary": {{json custom_excerpt}},
+                    {{else}}
+                    {{#if excerpt}}
+                    "summary": {{json excerpt}},
+                    {{/if}}
+                    {{/if}}
                     {{!-- JSON Feed needs content on every item; photo-only posts have no body. --}}
                     {{#if html}}
                     "content_html": {{json html}},
