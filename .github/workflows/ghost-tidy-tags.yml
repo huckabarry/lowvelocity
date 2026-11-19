@@ -18,6 +18,14 @@ on:
         description: 'For apply, type: tidy my tags'
         required: false
         default: ""
+      scope:
+        description: "everything (the full tidy-up) or internal-tags (only delete # tags)"
+        required: true
+        default: internal-tags
+        type: choice
+        options:
+          - internal-tags
+          - everything
 
 permissions:
   contents: read
@@ -55,12 +63,12 @@ jobs:
           # Only read: tells you which staff user owns it before you retire accounts.
           GHOST_STAFF_ACCESS_TOKEN: ${{ secrets.GHOST_STAFF_ACCESS_TOKEN }}
           MODE: ${{ inputs.mode }}
+          SCOPE: ${{ inputs.scope }}
         run: |
-          if [ "$MODE" = "apply" ]; then
-            node scripts/ghost-tidy/tidy.mjs --apply
-          else
-            node scripts/ghost-tidy/tidy.mjs
-          fi
+          args=()
+          if [ "$MODE" = "apply" ]; then args+=(--apply); fi
+          if [ "$SCOPE" = "internal-tags" ]; then args+=(--internal-tags); fi
+          node scripts/ghost-tidy/tidy.mjs "${args[@]}"
 
       - name: Upload backup
         if: always() && inputs.mode == 'apply'
