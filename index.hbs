@@ -35,8 +35,13 @@
     .home-section { margin-bottom: 3rem; }
     .cactus-title a { text-decoration: none; }
     .cactus-title a:hover { text-decoration: underline; }
-    .home-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
-    .home-photos a { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 4px; }
-    .home-photos img { display: block; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s; }
+    .archive-header { margin-bottom: 2rem; }
+    .archive-header + .archive-section { margin-top: 0; }
+    /* Masonry: CSS columns keep each photo's own shape. 2 columns on phones, 3 wider. */
+    .home-photos { columns: 2; column-gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+    .home-photos li { break-inside: avoid; margin-bottom: 0.5rem; }
+    .home-photos a { display: block; overflow: hidden; border-radius: 4px; }
+    .home-photos img { display: block; width: 100%; height: auto; transition: opacity 0.2s; }
     .home-photos a:hover img { opacity: 0.85; }
+    @media (min-width: 600px) { .home-photos { columns: 3; } }
 </style>
