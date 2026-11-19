@@ -7,6 +7,9 @@ routes:
     template: feed-json
     content_type: application/feed+json
 
+  /archive/:
+    template: archive
+
   /urbanism/feed.json/:
     template: feed-json-urbanism
     content_type: application/feed+json
