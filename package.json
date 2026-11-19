@@ -95,7 +95,7 @@
                     "IBM Plex Mono"
                 ],
                 "default": "Ghost typography",
-                "description": "Font used for articles and general site text"
+                "description": "Site text. On posts, only with Post style \"Clean, body font\" or \"Classic\""
             },
             "body_font_style": {
                 "type": "select",
@@ -147,11 +147,12 @@
                 "type": "select",
                 "options": [
                     "Clean",
+                    "Clean, body font",
                     "Classic"
                 ],
                 "default": "Clean",
                 "group": "post",
-                "description": "Clean: sans text with date and author pills. Classic: the site-wide fonts"
+                "description": "Clean: sans text, date and author pills. Clean, body font: pills, Body font text"
             },
             "discussion": {
                 "type": "select",

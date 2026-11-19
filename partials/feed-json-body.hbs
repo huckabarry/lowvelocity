@@ -1,0 +1,60 @@
+{{!-- JSON Feed 1.1 body, shared by the site feed and the section feeds.
+     feed_filter: Ghost filter for the posts. feed_path: the page the feed belongs to ("/", "/urbanism/").
+     feed_name: added to the title ("Low Velocity: Urbanism"); empty for the site feed. --}}
+{
+    "version": "https://jsonfeed.org/version/1.1",
+    "title": {{#if feed_name}}{{json (concat @site.title ": " feed_name)}}{{else}}{{json @site.title}}{{/if}},
+    "home_page_url": "{{@site.url}}{{feed_path}}",
+    "feed_url": "{{@site.url}}{{feed_path}}feed.json/",
+    "description": {{json @site.description}},
+    "language": {{json @site.locale}},
+    {{#if @site.icon}}
+    "icon": "{{{img_url @site.icon absolute="true"}}}",
+    "favicon": "{{{img_url @site.icon absolute="true"}}}",
+    {{/if}}
+    "items": [
+        {{#get "posts" filter=feed_filter limit="100" include="authors,tags" order="published_at desc" formats="html"}}
+            {{#foreach posts}}
+                {
+                    "id": "{{{url absolute="true"}}}",
+                    "url": "{{{url absolute="true"}}}",
+                    "title": {{json title}},
+                    {{!-- Use the post's stored plain-text excerpt: the excerpt helper returns an object that json would print as {"string": ...}.
+                         Leave summary out when there's no text (photo posts): null breaks some readers, including Micro.blog. --}}
+                    {{#if custom_excerpt}}
+                    "summary": {{json custom_excerpt}},
+                    {{else}}
+                    {{#if excerpt}}
+                    "summary": {{json excerpt}},
+                    {{/if}}
+                    {{/if}}
+                    {{!-- JSON Feed needs content on every item; photo-only posts have no body. --}}
+                    {{#if html}}
+                    "content_html": {{json html}},
+                    {{else}}
+                    "content_text": {{json title}},
+                    {{/if}}
+                    {{#if feature_image}}
+                    "image": "{{{img_url feature_image absolute="true"}}}",
+                    {{/if}}
+                    "date_published": "{{date published_at format="YYYY-MM-DDTHH:mm:ssZ"}}",
+                    "date_modified": "{{date updated_at format="YYYY-MM-DDTHH:mm:ssZ"}}",
+                    "authors": [
+                        {{#foreach authors}}
+                            {
+                                "name": {{json name}},
+                                "url": "{{{url absolute="true"}}}"{{#if profile_image}},
+                                "avatar": "{{{img_url profile_image absolute="true"}}}"{{/if}}
+                            }{{#unless @last}},{{/unless}}
+                        {{/foreach}}
+                    ],
+                    "tags": [
+                        {{#foreach tags}}
+                            {{json name}}{{#unless @last}},{{/unless}}
+                        {{/foreach}}
+                    ]
+                }{{#unless @last}},{{/unless}}
+            {{/foreach}}
+        {{/get}}
+    ]
+}

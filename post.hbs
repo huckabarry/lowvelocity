@@ -6,7 +6,7 @@
     <script src="{{asset "vendor/leaflet/leaflet.js"}}"></script>
 {{/has}}
 
-<article class="{{post_class}} cactus-article{{#match @custom.post_style "Clean"}} is-clean{{/match}}">
+<article class="{{post_class}} cactus-article{{#match @custom.post_style "~^" "Clean"}} is-clean{{/match}}{{#match @custom.post_style "Clean, body font"}} is-body-font{{/match}}">
     <header class="cactus-article-header">
         {{#has tag="#crucialtracks"}}
             <h1 class="is-visually-hidden">{{title}}</h1>
@@ -15,7 +15,7 @@
             <h1 class="cactus-title cactus-article-title">{{title}}</h1>
         {{/has}}
 
-        {{#match @custom.post_style "Clean"}}
+        {{#match @custom.post_style "~^" "Clean"}}
         {{!-- Clean: date and author as quiet pills (Design → Theme → Post → Post style). --}}
         <div class="cactus-meta post-pills">
             <time class="post-pill" datetime="{{date format="YYYY-MM-DD"}}">
@@ -158,9 +158,10 @@
     .post-pill { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.2rem 0.6rem; border-radius: 0.5rem; background: color-mix(in srgb, var(--color-global-text) 9%, transparent); color: var(--color-global-text); font-family: var(--font-heading); font-style: normal; font-size: 0.9rem; line-height: 1.4; text-decoration: none; }
     a.post-pill:hover { background: color-mix(in srgb, var(--color-global-text) 15%, transparent); color: var(--color-global-text); }
     .post-pill svg { opacity: 0.75; }
-    .is-clean .cactus-excerpt,
-    .is-clean .cactus-content,
-    .is-clean figcaption { font-family: var(--font-heading); font-style: normal; }
+    /* "Clean" sets post text in the heading font; "Clean, body font" keeps the Body font settings. */
+    .is-clean:not(.is-body-font) .cactus-excerpt,
+    .is-clean:not(.is-body-font) .cactus-content,
+    .is-clean:not(.is-body-font) figcaption { font-family: var(--font-heading); font-style: normal; }
     .is-clean .cactus-content { font-size: 1.0625rem; line-height: 1.6; }
     .is-clean .cactus-content blockquote { color: inherit; border-left: 0.2rem solid color-mix(in srgb, var(--color-global-text) 28%, transparent); }
     .is-clean .cactus-content blockquote p { margin: 0.6rem 0; }
