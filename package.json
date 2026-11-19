@@ -161,7 +161,7 @@
             },
             "related_posts_title": {
                 "type": "text",
-                "default": "You might also like...",
+                "default": "You Might Also Like...",
                 "group": "post",
                 "visibility": "show_related_posts:true"
             },
