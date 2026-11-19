@@ -165,18 +165,17 @@
                 "group": "post",
                 "visibility": "show_related_posts:true"
             },
-            "show_bluesky_profile_card": {
-                "type": "boolean",
-                "default": true,
+            "homepage_sections": {
+                "type": "text",
+                "default": "pinned, photos, urbanism, posts, bluesky",
                 "group": "homepage",
-                "description": "Bluesky follow card at the bottom of the homepage"
+                "description": "Any of: pinned, photos, urbanism, posts, bluesky. Remove a word to hide it"
             },
             "bluesky_handle": {
                 "type": "text",
                 "default": "lowvelocity.org",
                 "group": "homepage",
-                "description": "Bluesky handle for the follow card, without the @",
-                "visibility": "show_bluesky_profile_card:true"
+                "description": "Bluesky handle for the follow card, without the @"
             }
         }
     },
