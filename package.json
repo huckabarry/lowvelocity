@@ -169,7 +169,7 @@
                 "type": "text",
                 "default": "pinned, photos, urbanism, posts, bluesky",
                 "group": "homepage",
-                "description": "Any of: pinned, photos, urbanism, posts, bluesky. Remove a word to hide it"
+                "description": "In the order you want: pinned, photos, urbanism, posts, bluesky"
             },
             "bluesky_handle": {
                 "type": "text",
