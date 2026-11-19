@@ -75,6 +75,8 @@
         </div>
     {{/has}}
 
+    {{!-- Ghost → Settings → Design → Theme → Post → Discussion --}}
+    {{#match @custom.discussion "!=" "Ghost comments only"}}
     {{#has tag="#bluesky"}}
         <section
             class="atproto-engagement"
@@ -96,6 +98,7 @@
             <p class="atproto-engagement__status">{{t "Loading Bluesky discussion…"}}</p>
         </section>
     {{/has}}
+    {{/match}}
 
     {{#if tags}}
         <footer class="post-tags">
@@ -107,6 +110,7 @@
 </article>
 
 {{#if comments}}
+{{#match @custom.discussion "!=" "Bluesky replies only"}}
     <section class="cactus-comments">
         {{#match @custom.color_scheme "Dark"}}
             {{comments mode="dark"}}
@@ -124,6 +128,7 @@
             })();
         </script>
     </section>
+{{/match}}
 {{/if}}
 
 {{/post}}
