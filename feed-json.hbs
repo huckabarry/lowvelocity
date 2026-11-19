@@ -16,8 +16,14 @@
                     "id": "{{{url absolute="true"}}}",
                     "url": "{{{url absolute="true"}}}",
                     "title": {{json title}},
-                    "summary": {{#if custom_excerpt}}{{json custom_excerpt}}{{else}}{{json (excerpt words="50")}}{{/if}},
+                    {{!-- Use the post's stored plain-text excerpt: the excerpt helper returns an object that json would print as {"string": ...}. --}}
+                    "summary": {{#if custom_excerpt}}{{json custom_excerpt}}{{else}}{{json excerpt}}{{/if}},
+                    {{!-- JSON Feed needs content on every item; photo-only posts have no body. --}}
+                    {{#if html}}
                     "content_html": {{json html}},
+                    {{else}}
+                    "content_text": {{json title}},
+                    {{/if}}
                     {{#if feature_image}}
                     "image": "{{{img_url feature_image absolute="true"}}}",
                     {{/if}}
