@@ -42,6 +42,8 @@ jobs:
         env:
           GHOST_ADMIN_URL: ${{ secrets.GHOST_ADMIN_URL }}
           GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
+          # Ghost only lets a staff user's token change routes, not an integration key.
+          GHOST_STAFF_ACCESS_TOKEN: ${{ secrets.GHOST_STAFF_ACCESS_TOKEN }}
         shell: bash
         run: |
           set -euo pipefail
@@ -49,10 +51,13 @@ jobs:
           ghost_url="${GHOST_ADMIN_URL%/}"
           archive="dist/$(node -p "require('./package.json').name").zip"
 
+          # generate_token [ENV_VAR_NAME]: signs a short-lived Admin API token with
+          # an id:secret key (GHOST_ADMIN_API_KEY by default).
           generate_token() {
-            node <<'NODE'
+            local key_var="${1:-GHOST_ADMIN_API_KEY}"
+            GHOST_SIGNING_KEY="${!key_var}" node <<'NODE'
           const crypto = require('node:crypto');
-          const [id, secret] = process.env.GHOST_ADMIN_API_KEY.split(':');
+          const [id, secret] = process.env.GHOST_SIGNING_KEY.split(':');
           const now = Math.floor(Date.now() / 1000);
           const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
           const body = `${encode({alg: 'HS256', typ: 'JWT', kid: id})}.${encode({iat: now, exp: now + 300, aud: '/admin/'})}`;
@@ -82,86 +87,13 @@ jobs:
             "${ghost_url}/ghost/api/admin/themes/${encoded_name}/activate" \
             >/dev/null
 
-          node <<'NODE'
-          const crypto = require('node:crypto');
-
-          const ghostUrl = process.env.GHOST_ADMIN_URL.replace(/\/$/, '');
-          const [id, secret] = process.env.GHOST_ADMIN_API_KEY.split(':');
-
-          function token() {
-            const now = Math.floor(Date.now() / 1000);
-            const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
-            const body = `${encode({alg: 'HS256', typ: 'JWT', kid: id})}.${encode({iat: now, exp: now + 300, aud: '/admin/'})}`;
-            const signature = crypto.createHmac('sha256', Buffer.from(secret, 'hex')).update(body).digest('base64url');
-            return `${body}.${signature}`;
-          }
-
-          async function ghost(path, options = {}) {
-            const response = await fetch(`${ghostUrl}${path}`, {
-              ...options,
-              headers: {
-                Authorization: `Ghost ${token()}`,
-                'Accept-Version': 'v6.0',
-                'Content-Type': 'application/json',
-                ...(options.headers || {})
-              }
-            });
-            if (response.status === 404) return null;
-            if (!response.ok) throw new Error(`${options.method || 'GET'} ${path} returned ${response.status}: ${await response.text()}`);
-            return response.json();
-          }
-
-          (async () => {
-            async function ensurePage(page) {
-              const existing = await ghost(`/ghost/api/admin/pages/slug/${page.slug}/?formats=html`);
-              if (existing?.pages?.length) {
-                console.log(`${page.title} page already exists.`);
-                return;
-              }
-
-              await ghost('/ghost/api/admin/pages/?source=html', {
-                method: 'POST',
-                body: JSON.stringify({pages: [page]})
-              });
-              console.log(`Created ${page.title} page.`);
-            }
-
-            await ensurePage({
-              title: 'Updates',
-              slug: 'updates',
-              html: '<p>Status updates, listening notes, check-ins, books, movies, and shows folded into one running stream.</p>',
-              custom_excerpt: 'Status updates, listening notes, check-ins, books, movies, and shows folded into one running stream.',
-              status: 'published'
-            });
-
-            await ensurePage({
-              title: 'Posts',
-              slug: 'posts',
-              html: '<p>Essays, field notes, observations, and other dispatches.</p>',
-              custom_excerpt: 'Essays, field notes, observations, and other dispatches.',
-              status: 'published'
-            });
-
-            await ensurePage({
-              title: 'Check-ins',
-              slug: 'check-ins',
-              html: '<p>Places recently visited, mapped from native Low Velocity check-in posts.</p>',
-              custom_excerpt: 'Places recently visited, mapped from native Low Velocity check-in posts.',
-              status: 'published'
-            });
-          })().catch((error) => {
-            console.error(error);
-            process.exit(1);
-          });
-          NODE
-
           set +e
           routes_status=$(curl --silent --show-error \
             --output /tmp/routes-response.txt \
             --write-out '%{http_code}' \
             --request POST \
             --form "routes=@routes.yaml;type=application/x-yaml" \
-            --header "Authorization: Ghost $(generate_token)" \
+            --header "Authorization: Ghost $(generate_token GHOST_STAFF_ACCESS_TOKEN)" \
             --header "Accept-Version: v6.0" \
             "${ghost_url}/ghost/api/admin/settings/routes/yaml")
           routes_curl_status=$?
@@ -170,6 +102,7 @@ jobs:
           if [[ "${routes_curl_status}" -eq 0 && "${routes_status}" -ge 200 && "${routes_status}" -lt 300 ]]; then
             echo "Deployed and activated ${theme_name}, then uploaded routes.yaml."
           else
-            echo "::warning::Deployed and activated ${theme_name}, but routes.yaml upload did not complete cleanly (curl ${routes_curl_status}, HTTP ${routes_status:-000}). Upload routes.yaml manually in Ghost Admin if route settings change."
+            echo "::error::Deployed and activated ${theme_name}, but Ghost rejected routes.yaml (curl ${routes_curl_status}, HTTP ${routes_status:-000}). The site is still using the old routes."
             cat /tmp/routes-response.txt || true
+            exit 1
           fi
