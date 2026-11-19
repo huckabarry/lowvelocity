@@ -3,6 +3,10 @@ routes:
     template: main-rss
     content_type: text/xml
 
+  /feed.json/:
+    template: feed-json
+    content_type: application/feed+json
+
   /urbanism/:
     controller: channel
     template: custom-urbanism
