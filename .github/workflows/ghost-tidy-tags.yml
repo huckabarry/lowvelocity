@@ -52,6 +52,8 @@ jobs:
         env:
           GHOST_ADMIN_URL: ${{ secrets.GHOST_ADMIN_URL }}
           GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
+          # Only read: tells you which staff user owns it before you retire accounts.
+          GHOST_STAFF_ACCESS_TOKEN: ${{ secrets.GHOST_STAFF_ACCESS_TOKEN }}
           MODE: ${{ inputs.mode }}
         run: |
           if [ "$MODE" = "apply" ]; then
