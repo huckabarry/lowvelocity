@@ -1,0 +1,12 @@
+{{#get "posts" filter="tag:[urbanism,housing,transportation,public-finance]" limit="5" include="tags" as |urbanism_posts|}}
+    {{#if urbanism_posts}}
+    <section class="cactus-section home-section">
+        <h2 class="cactus-title"><a href="{{@site.url}}/urbanism/">{{t "Urbanism"}}</a></h2>
+        <ul class="post-list" role="list">
+            {{#foreach urbanism_posts}}
+                {{> "post-preview"}}
+            {{/foreach}}
+        </ul>
+    </section>
+    {{/if}}
+{{/get}}

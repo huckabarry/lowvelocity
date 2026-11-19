@@ -1,0 +1,12 @@
+{{#get "posts" filter="featured:true" limit="3" include="tags" as |pinned_posts|}}
+    {{#if pinned_posts}}
+    <section class="cactus-section home-section">
+        <h2 class="cactus-title">{{t "Pinned"}}</h2>
+        <ul class="post-list" role="list">
+            {{#foreach pinned_posts}}
+                {{> "post-preview"}}
+            {{/foreach}}
+        </ul>
+    </section>
+    {{/if}}
+{{/get}}

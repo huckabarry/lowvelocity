@@ -1,0 +1,13 @@
+{{#if @custom.bluesky_handle}}
+<section class="home-profile-card" aria-label="Follow {{@site.title}} on Bluesky">
+    <a class="home-profile-card__identity" href="https://bsky.app/profile/{{@custom.bluesky_handle}}" target="_blank" rel="me noopener noreferrer">
+        {{#if @site.icon}}
+        <img class="home-profile-card__avatar" src="{{img_url @site.icon absolute="true"}}" alt="" loading="lazy" data-avatar-fallback="LV">
+        {{/if}}
+        <span class="home-profile-card__text">
+            <strong>{{@site.title}}</strong>
+            <span>@{{@custom.bluesky_handle}} on Bluesky</span>
+        </span>
+    </a>
+</section>
+{{/if}}
