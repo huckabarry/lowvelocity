@@ -18,6 +18,65 @@
 </style>
 {{/if}}
 
+{{!-- Homepage sections: Ghost → Settings → Design → Theme → Homepage → "Homepage sections".
+     Each word turns a section on; the order on the page is fixed. --}}
+
+{{#match @custom.homepage_sections "~" "pinned"}}
+{{#get "posts" filter="featured:true" limit="3" include="tags" as |pinned_posts|}}
+    {{#if pinned_posts}}
+    <section class="cactus-section home-section">
+        <h2 class="cactus-title cactus-title-small">{{t "Pinned"}}</h2>
+        <ul class="post-list" role="list">
+            {{#foreach pinned_posts}}
+                {{> "post-preview"}}
+            {{/foreach}}
+        </ul>
+    </section>
+    {{/if}}
+{{/get}}
+{{/match}}
+
+{{#match @custom.homepage_sections "~" "photos"}}
+{{#get "posts" filter="tag:[gallery,photography]+tag:-hash-bluesky+feature_image:-null" limit="6" as |photo_posts|}}
+    {{#if photo_posts}}
+    <section class="cactus-section home-section">
+        <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/gallery/">{{t "Latest photos"}}</a></h2>
+        <ul class="home-photos" role="list">
+            {{#foreach photo_posts}}
+            <li>
+                <a href="{{url}}" aria-label="{{title}}">
+                    <img
+                        srcset="{{img_url feature_image size="s"}} 300w, {{img_url feature_image size="m"}} 750w"
+                        sizes="(min-width: 760px) 230px, 33vw"
+                        src="{{img_url feature_image size="s"}}"
+                        alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                        loading="lazy"
+                    >
+                </a>
+            </li>
+            {{/foreach}}
+        </ul>
+    </section>
+    {{/if}}
+{{/get}}
+{{/match}}
+
+{{#match @custom.homepage_sections "~" "urbanism"}}
+{{#get "posts" filter="tag:[urbanism,housing,transportation,public-finance]" limit="5" include="tags" as |urbanism_posts|}}
+    {{#if urbanism_posts}}
+    <section class="cactus-section home-section">
+        <h2 class="cactus-title cactus-title-link"><a href="{{@site.url}}/urbanism/">{{t "Urbanism"}}</a></h2>
+        <ul class="post-list" role="list">
+            {{#foreach urbanism_posts}}
+                {{> "post-preview"}}
+            {{/foreach}}
+        </ul>
+    </section>
+    {{/if}}
+{{/get}}
+{{/match}}
+
+{{#match @custom.homepage_sections "~" "posts"}}
 <header class="archive-header">
     <h1 class="cactus-title">Field Notes</h1>
     <p>Travel, photography, urbanism, and notes from being out in the world.</p>
@@ -34,8 +93,9 @@
         {{/get}}
     </ul>
 </section>
+{{/match}}
 
-{{#if @custom.show_bluesky_profile_card}}
+{{#match @custom.homepage_sections "~" "bluesky"}}
 {{#if @custom.bluesky_handle}}
 <section class="home-profile-card" aria-label="Follow {{@site.title}} on Bluesky">
     <a class="home-profile-card__identity" href="https://bsky.app/profile/{{@custom.bluesky_handle}}" target="_blank" rel="me noopener noreferrer">
@@ -49,4 +109,12 @@
     </a>
 </section>
 {{/if}}
-{{/if}}
+{{/match}}
+
+<style>
+    .home-section { margin-bottom: 3rem; }
+    .home-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+    .home-photos a { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 4px; }
+    .home-photos img { display: block; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s; }
+    .home-photos a:hover img { opacity: 0.85; }
+</style>
