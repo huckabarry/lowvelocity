@@ -56,7 +56,7 @@ const MANAGED = new Set([...RETIRED, ...Object.keys(SECTIONS), BOOKS.slug]);
 const AUTHOR = 'bryan';
 
 function token(key = adminKey) {
-  const [id, secret] = key.split(':');
+  const [id, secret] = key.trim().split(':');
   const now = Math.floor(Date.now() / 1000);
   const enc = (v) => Buffer.from(JSON.stringify(v)).toString('base64url');
   const body = `${enc({ alg: 'HS256', typ: 'JWT', kid: id })}.${enc({ iat: now, exp: now + 300, aud: '/admin/' })}`;
@@ -90,7 +90,7 @@ const names = (tags) => tags.map((t) => t.name).join(', ') || '(none)';
 const posts = await all('posts', 'include=tags,authors&filter=status:[published,draft,scheduled]&formats=lexical');
 const tags = await all('tags', 'include=count.posts&filter=visibility:[public,internal]');
 const pages = await all('pages', 'include=authors&filter=status:[published,draft,scheduled]&formats=lexical');
-const users = await all('users', 'include=count.posts');
+const users = await all('users', 'include=count.posts,roles');
 const owner = users.find((u) => u.slug === AUTHOR);
 if (!owner) {
   console.error(`No staff user with slug ${AUTHOR}.`);
@@ -237,7 +237,8 @@ if (process.env.GHOST_STAFF_ACCESS_TOKEN?.includes(':')) {
   try {
     tokenOwner = (await api('GET', 'users/me/', null, process.env.GHOST_STAFF_ACCESS_TOKEN)).users[0];
   } catch (error) {
-    console.log(`  Could not check GHOST_STAFF_ACCESS_TOKEN: ${error.message}`);
+    const cause = error.cause ? ` (${error.cause.code || ''} ${error.cause.message || error.cause})` : '';
+    console.log(`  Could not check GHOST_STAFF_ACCESS_TOKEN: ${error.message}${cause}`);
   }
 }
 for (const user of users) {
