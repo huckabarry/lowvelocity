@@ -126,7 +126,9 @@
     </section>
 {{/if}}
 
+{{/post}}
+
+{{!-- Outside {{#post}} (as in Dawn) so the related-posts query can read post.tags and post.id. --}}
 {{#if @custom.show_related_posts}}
     {{> "related-posts"}}
 {{/if}}
-{{/post}}
