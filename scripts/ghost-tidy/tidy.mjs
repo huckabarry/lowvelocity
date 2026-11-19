@@ -2,6 +2,7 @@
 //
 //   node scripts/ghost-tidy/tidy.mjs            dry run: prints every change, writes nothing
 //   node scripts/ghost-tidy/tidy.mjs --apply    makes the changes
+//   add --internal-tags to only delete internal (#) tags, except #no-bluesky and #label-*
 //
 // Needs GHOST_ADMIN_URL and GHOST_ADMIN_API_KEY (an integration's id:secret Admin API key).
 // Before changing anything, --apply saves the current posts, pages and tags to ./ghost-tidy-backup/.
@@ -27,11 +28,43 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const APPLY = process.argv.includes('--apply');
+// --internal-tags: only delete internal (#) tags, nothing else. Keeps the ones the sync Worker reads.
+const INTERNAL_ONLY = process.argv.includes('--internal-tags');
+const KEEP_INTERNAL = (slug) => slug === 'hash-no-bluesky' || slug.startsWith('hash-label-');
 const ghostUrl = (process.env.GHOST_ADMIN_URL || '').replace(/\/$/, '');
 const adminKey = process.env.GHOST_ADMIN_API_KEY || '';
 if (!ghostUrl || !adminKey.includes(':')) {
   console.error('Set GHOST_ADMIN_URL and GHOST_ADMIN_API_KEY (id:secret).');
   process.exit(1);
+}
+
+if (INTERNAL_ONLY) {
+  console.log(`${APPLY ? 'APPLY' : 'DRY RUN'}: delete internal tags, ${ghostUrl}\n`);
+  const internal = await all('tags', 'include=count.posts&filter=visibility:internal');
+  if (APPLY) {
+    fs.mkdirSync('ghost-tidy-backup', { recursive: true });
+    fs.writeFileSync(path.join('ghost-tidy-backup', 'internal-tags.json'), JSON.stringify(internal, null, 2));
+  }
+  for (const tag of internal) {
+    // Belt and braces: never touch a public tag, even if the filter above were ignored.
+    if (tag.visibility !== 'internal' || !tag.slug.startsWith('hash-')) {
+      console.log(`  skip ${tag.name}: not an internal tag`);
+      continue;
+    }
+    if (KEEP_INTERNAL(tag.slug)) {
+      console.log(`  keep ${tag.name} (the sync Worker reads it)`);
+      continue;
+    }
+    const usedBy = [];
+    for (const resource of ['posts', 'pages']) {
+      const found = await all(resource, `filter=tag:${tag.slug}%2Bstatus:[published,draft,scheduled]&fields=title,status`);
+      for (const item of found) usedBy.push(`${resource === 'pages' ? 'page' : 'post'} "${item.title}" [${item.status}]`);
+    }
+    console.log(`  delete ${tag.name}${usedBy.length ? `, removing it from: ${usedBy.join('; ')}` : ' (unused)'}`);
+    if (APPLY) await api('DELETE', `tags/${tag.id}/`);
+  }
+  console.log(`\n${APPLY ? 'Done.' : 'Dry run only. Nothing was changed.'}`);
+  process.exit(0);
 }
 
 const plan = JSON.parse(fs.readFileSync(path.join(here, 'tag-plan.json'), 'utf8'));
