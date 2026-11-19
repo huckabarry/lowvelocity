@@ -929,15 +929,27 @@
             section.setAttribute('data-atproto-ready', 'true');
 
             var endpoint = section.getAttribute('data-atproto-endpoint') || 'https://sync.lowvelocity.org/updates/bluesky/thread';
-            var rkey = atprotoRkeyFromSection(section);
             var status = section.querySelector('.atproto-engagement__status');
-            if (!rkey) {
-                if (status) status.textContent = 'Bluesky discussion is unavailable for this post.';
-                return;
-            }
-
             var url = new URL(endpoint, window.location.href);
-            url.searchParams.set('rkey', rkey);
+
+            if (section.hasAttribute('data-atproto-from-meta')) {
+                // Announced posts carry their Bluesky post's address in a meta tag.
+                var meta = document.querySelector('meta[name="lowvelocity:bluesky-post"]');
+                var uri = meta ? (meta.getAttribute('content') || '').trim() : '';
+                if (!/^at:\/\/did:[a-z0-9:%._-]+\/app\.bsky\.feed\.post\/[A-Za-z0-9._:~-]+$/i.test(uri)) {
+                    section.remove();
+                    return;
+                }
+                section.hidden = false;
+                url.searchParams.set('uri', uri);
+            } else {
+                var rkey = atprotoRkeyFromSection(section);
+                if (!rkey) {
+                    if (status) status.textContent = 'Bluesky discussion is unavailable for this post.';
+                    return;
+                }
+                url.searchParams.set('rkey', rkey);
+            }
 
             fetch(url.toString(), {headers: {Accept: 'application/json'}})
                 .then(function (response) {

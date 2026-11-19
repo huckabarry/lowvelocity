@@ -84,6 +84,17 @@
             aria-label="{{t "Bluesky discussion"}}">
             <p class="atproto-engagement__status">{{t "Loading Bluesky discussion…"}}</p>
         </section>
+    {{else}}
+        {{!-- Shown only when the sync Worker has added a lowvelocity:bluesky-post meta tag (an announced post). --}}
+        <section
+            class="atproto-engagement"
+            data-atproto-engagement
+            data-atproto-from-meta
+            data-atproto-endpoint="https://sync.lowvelocity.org/updates/bluesky/thread"
+            aria-label="{{t "Bluesky discussion"}}"
+            hidden>
+            <p class="atproto-engagement__status">{{t "Loading Bluesky discussion…"}}</p>
+        </section>
     {{/has}}
 
     {{#if tags}}

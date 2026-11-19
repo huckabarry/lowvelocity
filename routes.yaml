@@ -27,22 +27,6 @@ routes:
     filter: 'tag:-[status,note,notes,afterword,listening,hash-crucialtracks,check-ins]'
 
 collections:
-  /listening/:
-    permalink: /listening/{slug}/
-    template: custom-listening
-    filter: 'tag:hash-crucialtracks'
-
-  /check-ins/:
-    permalink: /check-ins/{slug}/
-    template: custom-check-ins
-    filter: 'tag:check-ins'
-
-  /notes/:
-    permalink: /notes/{slug}/
-    template: custom-notes
-    filter: 'tag:[status,note,notes,afterword]'
-    data: tag.status
-
   /:
     permalink: /{slug}/
     template: index
