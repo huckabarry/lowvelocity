@@ -1,23 +1,7 @@
 routes:
-  /.well-known/site.standard.publication/:
-    template: standard-site-publication
-    content_type: text/plain
-
   /rss/:
     template: main-rss
     content_type: text/xml
-
-  /updates/rss/:
-    template: updates-rss
-    content_type: text/xml
-
-  /updates/feed.json/:
-    template: updates-json
-    content_type: application/feed+json
-
-  /media/feed.json/:
-    template: media-json
-    content_type: application/feed+json
 
   /urbanism/:
     controller: channel
