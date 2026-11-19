@@ -55,6 +55,11 @@
     </style>
     {{ghost_head}}
     <link rel="alternate" type="application/feed+json" title="{{@site.title}}" href="{{@site.url}}/feed.json/">
+    <style id="lowvelocity-section-spacing">
+        /* Section pages and the homepage: 32px from a section's title to its subtitle, and from the subtitle to its list or photos. */
+        .archive-header, .photos-intro { margin-bottom: 2rem; }
+        .archive-header + .cactus-section, .photos-intro + .photo-section { margin-top: 0; }
+    </style>
     <style id="lowvelocity-card-overrides">
         .cactus-content .kg-bookmark-card a.kg-bookmark-container,
         .cactus-content .kg-bookmark-card a.kg-bookmark-container:hover,
