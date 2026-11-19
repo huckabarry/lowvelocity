@@ -119,7 +119,8 @@
             "light_mode_accent_color": {
                 "type": "color",
                 "default": "#d45478",
-                "description": "Links, navigation accents, and quotes in light mode"
+                "description": "Links, navigation accents, and quotes in light mode",
+                "visibility": "use_separate_mode_accent_colors:true"
             },
             "dark_mode_background_color": {
                 "type": "color",
@@ -134,12 +135,24 @@
             "dark_mode_accent_color": {
                 "type": "color",
                 "default": "#2abc89",
-                "description": "Links, navigation accents, and quotes in dark mode"
+                "description": "Links, navigation accents, and quotes in dark mode",
+                "visibility": "use_separate_mode_accent_colors:true"
             },
             "use_separate_mode_accent_colors": {
                 "type": "boolean",
                 "default": false,
                 "description": "Override the Brand accent with separate light and dark accents"
+            },
+            "discussion": {
+                "type": "select",
+                "options": [
+                    "Bluesky replies and Ghost comments",
+                    "Bluesky replies only",
+                    "Ghost comments only"
+                ],
+                "default": "Bluesky replies and Ghost comments",
+                "group": "post",
+                "description": "Bluesky replies need an announced post; Ghost comments need commenting turned on"
             },
             "show_related_posts": {
                 "type": "boolean",
@@ -149,7 +162,21 @@
             "related_posts_title": {
                 "type": "text",
                 "default": "You might also like...",
-                "group": "post"
+                "group": "post",
+                "visibility": "show_related_posts:true"
+            },
+            "show_bluesky_profile_card": {
+                "type": "boolean",
+                "default": true,
+                "group": "homepage",
+                "description": "Bluesky follow card at the bottom of the homepage"
+            },
+            "bluesky_handle": {
+                "type": "text",
+                "default": "lowvelocity.org",
+                "group": "homepage",
+                "description": "Bluesky handle for the follow card, without the @",
+                "visibility": "show_bluesky_profile_card:true"
             }
         }
     },

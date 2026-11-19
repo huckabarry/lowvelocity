@@ -1,5 +1,23 @@
 {{!< default}}
 
+{{!-- Ghost → Settings → Design → Brand → Publication cover. Shown only when one is uploaded. --}}
+{{#if @site.cover_image}}
+<figure class="home-cover">
+    <img
+        srcset="{{img_url @site.cover_image size="m"}} 750w,
+                {{img_url @site.cover_image size="l"}} 1140w,
+                {{img_url @site.cover_image size="xl"}} 1920w"
+        sizes="(min-width: 760px) 700px, 100vw"
+        src="{{img_url @site.cover_image size="l"}}"
+        alt="{{@site.title}}"
+    >
+</figure>
+<style>
+    .home-cover { margin: 0 0 2.5rem; }
+    .home-cover img { display: block; width: 100%; height: auto; max-height: 26rem; object-fit: cover; border-radius: 4px; }
+</style>
+{{/if}}
+
 <header class="archive-header">
     <h1 class="cactus-title">Field Notes</h1>
     <p>Travel, photography, urbanism, and notes from being out in the world.</p>
@@ -17,14 +35,18 @@
     </ul>
 </section>
 
-<section class="home-profile-card" aria-label="Follow Low Velocity on Bluesky">
-    <a class="home-profile-card__identity" href="https://bsky.app/profile/lowvelocity.org" target="_blank" rel="me noopener noreferrer">
+{{#if @custom.show_bluesky_profile_card}}
+{{#if @custom.bluesky_handle}}
+<section class="home-profile-card" aria-label="Follow {{@site.title}} on Bluesky">
+    <a class="home-profile-card__identity" href="https://bsky.app/profile/{{@custom.bluesky_handle}}" target="_blank" rel="me noopener noreferrer">
         {{#if @site.icon}}
         <img class="home-profile-card__avatar" src="{{img_url @site.icon absolute="true"}}" alt="" loading="lazy" data-avatar-fallback="LV">
         {{/if}}
         <span class="home-profile-card__text">
             <strong>{{@site.title}}</strong>
-            <span>@lowvelocity.org on Bluesky</span>
+            <span>@{{@custom.bluesky_handle}} on Bluesky</span>
         </span>
     </a>
 </section>
+{{/if}}
+{{/if}}
