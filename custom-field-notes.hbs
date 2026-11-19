@@ -2,12 +2,12 @@
 
 <header class="archive-header">
     <h1 class="cactus-title">Field Notes</h1>
-    <p>Travel, photography, urbanism, and notes from being out in the world.</p>
+    {{> "section-description" slug="field-notes"}}
 </header>
 
 <section class="cactus-section archive-section">
     <ul class="post-list" role="list">
-        {{#get "posts" filter="tag:[field-notes,urbanism,housing,transportation,public-finance]" limit="100" include="tags" order="published_at desc" as |field_notes|}}
+        {{#get "posts" filter="primary_tag:field-notes" limit="100" include="tags" order="published_at desc" as |field_notes|}}
             {{#foreach field_notes}}
                 {{> "post-preview"}}
             {{else}}
