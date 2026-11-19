@@ -1,6 +1,6 @@
 # Low Velocity theme
 
-The Ghost theme for **[lowvelocity.org](https://lowvelocity.org)**: long-form writing on urbanism and photography. It started as Ghost's official Cactus theme and has since been heavily customized.
+The Ghost theme for **[lowvelocity.org](https://lowvelocity.org)**: long-form writing on urbanism and photography. It's built from Ghost's official [Dawn](https://github.com/TryGhost/Dawn) theme, restyled with a look inspired by the Cactus theme, and heavily customized since.
 
 ## What's in it
 
@@ -45,4 +45,4 @@ These are kept for now but aren't used on the live site:
 
 ## License
 
-Based on [Cactus](https://github.com/TryGhost/Themes) by the Ghost Foundation, released under the [MIT license](LICENSE).
+Built from [Dawn](https://github.com/TryGhost/Dawn) by the Ghost Foundation, released under the [MIT license](LICENSE). The "cactus" in file and class names comes from the design that inspired the look.
