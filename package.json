@@ -143,6 +143,16 @@
                 "description": "Links, navigation accents, and quotes in dark mode",
                 "visibility": "use_separate_mode_accent_colors:true"
             },
+            "post_style": {
+                "type": "select",
+                "options": [
+                    "Clean",
+                    "Classic"
+                ],
+                "default": "Clean",
+                "group": "post",
+                "description": "Clean: sans text with date and author pills. Classic: the site-wide fonts"
+            },
             "discussion": {
                 "type": "select",
                 "options": [
