@@ -1,6 +1,6 @@
 {{#get "posts" filter="tag:[gallery,photography]+tag:-hash-bluesky+feature_image:-null" limit="6" as |photo_posts|}}
     {{#if photo_posts}}
-    <section class="cactus-section home-section">
+    <section class="cactus-section home-section home-photos-section">
         <h2 class="cactus-title"><a href="{{@site.url}}/gallery/">{{t "Latest photos"}}</a></h2>
         <ul class="home-photos" role="list">
             {{#foreach photo_posts}}
@@ -8,7 +8,7 @@
                 <a href="{{url}}" aria-label="{{title}}">
                     <img
                         srcset="{{img_url feature_image size="s"}} 300w, {{img_url feature_image size="m"}} 750w"
-                        sizes="(min-width: 760px) 230px, 33vw"
+                        sizes="(min-width: 760px) 470px, 66vw"
                         src="{{img_url feature_image size="s"}}"
                         alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
                         loading="lazy"
