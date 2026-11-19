@@ -1,0 +1,7 @@
+{{!-- The description of a Ghost tag (Ghost → Tags → the tag → Description), shown under a section heading.
+      Usage: {{> "section-description" slug="urbanism"}}. Shows nothing when the description is empty. --}}
+{{#get "tags" filter="slug:{{slug}}" limit="1" as |section_tags|}}
+    {{#foreach section_tags}}
+        {{#if description}}<p class="section-description">{{description}}</p>{{/if}}
+    {{/foreach}}
+{{/get}}
