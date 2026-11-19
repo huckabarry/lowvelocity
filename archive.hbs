@@ -1,0 +1,60 @@
+{{!< default}}
+
+{{!-- /archive/ (routes.yaml): every post, newest first, grouped by year.
+      Ghost's get helper returns at most 100 posts per call, so this asks for up to three pages (300 posts).
+      The script below groups the list under year headings; without it the list still shows full dates. --}}
+<header class="archive-header">
+    <h1 class="cactus-title">{{t "Archive"}}</h1>
+    <p>{{t "Everything on Low Velocity, newest first."}}</p>
+</header>
+
+<section class="cactus-section archive-section" data-archive>
+    <ul class="post-list" role="list">
+        {{#get "posts" limit="100" page="1" order="published_at desc" as |page_one|}}{{#foreach page_one}}{{> "archive-item"}}{{/foreach}}{{/get}}
+        {{#get "posts" limit="100" page="2" order="published_at desc" as |page_two|}}{{#foreach page_two}}{{> "archive-item"}}{{/foreach}}{{/get}}
+        {{#get "posts" limit="100" page="3" order="published_at desc" as |page_three|}}{{#foreach page_three}}{{> "archive-item"}}{{/foreach}}{{/get}}
+    </ul>
+</section>
+
+<style>
+    .archive-year { display: flex; align-items: baseline; gap: 0.6rem; margin: 2.5rem 0 1rem; font-size: 1.25rem; }
+    .archive-year:first-child { margin-top: 0; }
+    .archive-year span { color: var(--color-muted); font-size: 0.85rem; font-weight: 400; }
+    .archive-section.is-grouped .post-list-item { grid-template-columns: 4rem minmax(0, 1fr); }
+</style>
+<script>
+    (function () {
+        var section = document.querySelector('[data-archive]');
+        var list = section && section.querySelector('.post-list');
+        if (!list) return;
+        var items = Array.prototype.slice.call(list.querySelectorAll('li[data-year]'));
+        var counts = {};
+        items.forEach(function (li) { var y = li.getAttribute('data-year'); counts[y] = (counts[y] || 0) + 1; });
+        var frag = document.createDocumentFragment();
+        var year = null;
+        var group = null;
+        items.forEach(function (li) {
+            var y = li.getAttribute('data-year');
+            if (y !== year) {
+                year = y;
+                var heading = document.createElement('h2');
+                heading.className = 'cactus-title archive-year';
+                heading.id = 'y' + y;
+                heading.textContent = y + ' ';
+                var count = document.createElement('span');
+                count.textContent = counts[y] + (counts[y] === 1 ? ' post' : ' posts');
+                heading.appendChild(count);
+                group = document.createElement('ul');
+                group.className = 'post-list';
+                group.setAttribute('role', 'list');
+                frag.appendChild(heading);
+                frag.appendChild(group);
+            }
+            var time = li.querySelector('time');
+            if (time && time.getAttribute('data-short')) time.textContent = time.getAttribute('data-short');
+            group.appendChild(li);
+        });
+        list.replaceWith(frag);
+        section.classList.add('is-grouped');
+    })();
+</script>
