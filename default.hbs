@@ -59,11 +59,14 @@
         /* "Subscribe by email" link under the site title and menu, and spacing for the "newsletter" page's Signup card on the homepage and at the end of posts. */
         .lv-subscribe-link { display: inline-block; margin-top: 0.5rem; color: var(--color-accent); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
         .lv-subscribe-link:hover { text-decoration: underline; }
+        .lv-site-description { margin: 0.35rem 0 0.6rem; color: var(--color-muted); font-size: 0.875rem; line-height: 1.4; }
         /* Phones: the header was a fixed 4rem tall with everything centered, so the extra link pushed the title above the icons.
            Let the header grow, keep the title row level with the icons, and tuck the link under it. */
         @media (max-width: 639px) {
-            .cactus-header:has(.lv-subscribe-link) { height: auto; align-items: flex-start; margin-bottom: 1rem; }
+            .cactus-header:has(.lv-subscribe-link, .lv-site-description) { height: auto; align-items: flex-start; margin-bottom: 1rem; }
+            .lv-site-description { width: calc(100vw - 2.5rem); margin: -0.6rem 0 0; font-size: 0.8125rem; }
             .lv-subscribe-link { margin-top: -0.5rem; white-space: nowrap; }
+            .lv-site-description + .cactus-nav + .lv-subscribe-link { margin-top: 0.5rem; }
         }
         .lv-newsletter-embed { margin: 2.5rem 0 0; }
         .home-subscribe .lv-newsletter-embed { margin-top: 0; }
@@ -159,6 +162,8 @@
                 <a class="cactus-brand" href="{{@site.url}}" aria-label="{{@site.title}}">
                     <span class="cactus-brand-title">{{@site.title}} <span aria-hidden="true">//</span></span>
                 </a>
+                {{!-- Site description from Ghost → Settings → General. Leave it empty there to hide this line. --}}
+                {{#if @site.description}}<p class="lv-site-description">{{@site.description}}</p>{{/if}}
 
                 <nav class="cactus-nav" id="navigation-menu" aria-label="{{t "Main menu"}}">
                     {{navigation}}
