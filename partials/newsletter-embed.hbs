@@ -1,0 +1,10 @@
+{{!-- Shows the content of the published Ghost page with the slug "newsletter" (usually just a Signup card).
+     Edit that page in Ghost to change the wording, colors or layout; nothing here needs to change.
+     If the page doesn't exist or isn't published, nothing shows. --}}
+{{#get "pages" filter="slug:newsletter" limit="1" as |newsletter_pages|}}
+    {{#foreach newsletter_pages}}
+        <div class="lv-newsletter-embed cactus-content">
+            {{content}}
+        </div>
+    {{/foreach}}
+{{/get}}

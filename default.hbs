@@ -56,23 +56,12 @@
     {{ghost_head}}
     <link rel="alternate" type="application/feed+json" title="{{@site.title}}" href="{{@site.url}}/feed.json/">
     <style id="lowvelocity-subscribe">
-        /* "Subscribe by email" link under the site title and menu, and the sign-up box at the end of posts. Colors follow the theme's accent. */
+        /* "Subscribe by email" link under the site title and menu, and spacing for the "newsletter" page's Signup card on the homepage and at the end of posts. */
         .lv-subscribe-link { display: inline-block; margin-top: 0.5rem; color: var(--color-accent); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
         .lv-subscribe-link:hover { text-decoration: underline; }
-        .lv-subscribe-button {
-            display: inline-flex; align-items: center; height: 2.4rem; padding: 0 1.1rem;
-            border-radius: 999px; background: var(--color-accent); color: #fff;
-            font-size: 0.875rem; font-weight: 600; line-height: 1; text-decoration: none; white-space: nowrap;
-        }
-        html[data-theme="dark"] .lv-subscribe-button { color: #111; }
-        .lv-subscribe-button:hover { filter: brightness(0.92); }
-        .lv-subscribe-box {
-            margin: 2.5rem 0 0; padding: 1.25rem 1.25rem 1.35rem; border-radius: 0.75rem;
-            background: color-mix(in srgb, var(--color-accent) 9%, transparent);
-        }
-        .lv-subscribe-box__title { margin: 0 0 0.35rem; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; }
-        .home-subscribe .lv-subscribe-box { margin-top: 0; }
-        .lv-subscribe-box__text { margin: 0 0 1rem; color: var(--color-muted); font-size: 0.9rem; line-height: 1.5; }
+        .lv-newsletter-embed { margin: 2.5rem 0 0; }
+        .home-subscribe .lv-newsletter-embed { margin-top: 0; }
+        .lv-newsletter-embed > :first-child { margin-top: 0; }
     </style>
     <style id="lowvelocity-section-spacing">
         /* Section pages and the homepage: 32px from a section's title to its subtitle, and from the subtitle to its list or photos. */
