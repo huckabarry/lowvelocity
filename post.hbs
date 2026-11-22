@@ -122,14 +122,7 @@
         </footer>
     {{/if}}
 
-    {{!-- Sign-up box for visitors. A #/portal/ link (not an inline form) so it also works after the theme's in-place page loads. --}}
-    {{#if @site.members_enabled}}{{#unless @member}}{{#unless @site.members_invite_only}}
-    <aside class="lv-subscribe-box" aria-label="{{t "Subscribe"}}">
-        <p class="lv-subscribe-box__title">{{t "Get new posts by email"}}</p>
-        <p class="lv-subscribe-box__text">{{t "New essays and field notes from"}} {{@site.title}}, {{t "sent when they're published. Free, and you can unsubscribe anytime."}}</p>
-        <a class="lv-subscribe-button" href="#/portal/signup" data-portal="signup">{{t "Subscribe"}}</a>
-    </aside>
-    {{/unless}}{{/unless}}{{/if}}
+    {{> "subscribe-box" title=(t "Get the urbanism essays by email") text=(t "Planning, housing and getting around, sent when I publish them. Field notes and photos are more of a scrapbook, so they stay here on the site.")}}
 
     {{!-- Author card from the author's Ghost profile (Settings → Staff): photo, name, location, bio,
          website, and every social account via Ghost's {{#social_accounts}} helper with icons in partials/icons/. --}}
