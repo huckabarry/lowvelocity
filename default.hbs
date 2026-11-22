@@ -56,17 +56,14 @@
     {{ghost_head}}
     <link rel="alternate" type="application/feed+json" title="{{@site.title}}" href="{{@site.url}}/feed.json/">
     <style id="lowvelocity-subscribe">
-        /* "Subscribe by email" link under the site title and menu, and spacing for the "newsletter" page's Signup card on the homepage and at the end of posts. */
-        .lv-subscribe-link { display: inline-block; margin-top: 0.5rem; color: var(--color-accent); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
-        .lv-subscribe-link:hover { text-decoration: underline; }
+        /* The "//" after the site title in the accent color, the newsletter page's Signup card spacing, and the site description under the title. */
+        .cactus-brand-title > span[aria-hidden] { color: var(--color-accent); }
         .lv-site-description { margin: 0.35rem 0 0.6rem; color: var(--color-muted); font-size: 0.875rem; line-height: 1.4; }
-        /* Phones: the header was a fixed 4rem tall with everything centered, so the extra link pushed the title above the icons.
-           Let the header grow, keep the title row level with the icons, and tuck the link under it. */
+        /* Phones: the header is a fixed 4rem tall with everything centered, so the description would push the title above the icons.
+           Let the header grow, keep the title row level with the icons, and tuck the description under it (not while the menu is open). */
         @media (max-width: 639px) {
-            .cactus-header:not(.menu-open):has(.lv-subscribe-link, .lv-site-description) { height: auto; align-items: flex-start; margin-bottom: 1.75rem; }
+            .cactus-header:not(.menu-open):has(.lv-site-description) { height: auto; align-items: flex-start; margin-bottom: 1.75rem; }
             .lv-site-description { width: calc(100vw - 2.5rem); margin: -0.6rem 0 0; font-size: 0.8125rem; }
-            .lv-subscribe-link { margin-top: -0.5rem; white-space: nowrap; }
-            .lv-site-description + .cactus-nav + .lv-subscribe-link { margin-top: 0.5rem; }
         }
         .lv-newsletter-embed { margin: 2.5rem 0 0; }
         .home-subscribe .lv-newsletter-embed { margin-top: 0; }
@@ -168,10 +165,6 @@
                 <nav class="cactus-nav" id="navigation-menu" aria-label="{{t "Main menu"}}">
                     {{navigation}}
                 </nav>
-                {{!-- Subscribe link for visitors, on every screen size (Ghost's floating Portal button doesn't show on phones). Hidden for signed-in members. --}}
-                {{#if @site.members_enabled}}{{#unless @member}}{{#unless @site.members_invite_only}}
-                <a class="lv-subscribe-link" href="#/portal/signup" data-portal="signup">{{t "Subscribe by email"}} &rarr;</a>
-                {{/unless}}{{/unless}}{{/if}}
             </div>
 
             <div class="cactus-actions">
