@@ -1,0 +1,26 @@
+{{!-- Homepage "Recently Read": cover images of the newest posts whose first tag is Books.
+     Shows only when "books" is in Design → Homepage sections. Posts without a feature image are skipped. --}}
+{{#get "posts" filter="primary_tag:books+feature_image:-null" limit="10" as |book_posts|}}
+    {{#if book_posts}}
+    <section class="cactus-section home-section home-books-section">
+        <h2 class="cactus-title"><a href="{{@site.url}}/tag/books/">{{t "Recently Read"}}</a></h2>
+        {{> "section-description" slug="books"}}
+        <ul class="home-books" role="list">
+            {{#foreach book_posts}}
+            <li>
+                <a href="{{url}}">
+                    <img
+                        srcset="{{img_url feature_image size="s"}} 300w, {{img_url feature_image size="m"}} 750w"
+                        sizes="10rem"
+                        src="{{img_url feature_image size="s"}}"
+                        alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                        loading="lazy"
+                    >
+                    <span class="home-books__title">{{title}}</span>
+                </a>
+            </li>
+            {{/foreach}}
+        </ul>
+    </section>
+    {{/if}}
+{{/get}}
