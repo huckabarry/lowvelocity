@@ -4,13 +4,14 @@
 </header>
 
 <section class="cactus-section archive-section">
+    {{#get "posts" filter="primary_tag:field-notes" limit="7" include="tags" order="published_at desc" as |field_notes field_notes_pages|}}
     <ul class="post-list" role="list">
-        {{#get "posts" filter="primary_tag:field-notes" limit="100" include="tags" order="published_at desc" as |field_notes|}}
-            {{#foreach field_notes}}
-                {{> "post-preview"}}
-            {{else}}
-                <li>No field notes are published yet.</li>
-            {{/foreach}}
-        {{/get}}
+        {{#foreach field_notes}}
+            {{> "post-preview"}}
+        {{else}}
+            <li>No field notes are published yet.</li>
+        {{/foreach}}
     </ul>
+    {{#if field_notes_pages.next}}<p class="home-more"><a href="{{@site.url}}/field-notes/">{{t "More field notes"}} &rarr;</a></p>{{/if}}
+    {{/get}}
 </section>
