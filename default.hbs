@@ -73,6 +73,9 @@
         /* Section pages and the homepage: 32px from a section's title to its subtitle, and from the subtitle to its list or photos. */
         .archive-header, .photos-intro { margin-bottom: 2rem; }
         .archive-header + .cactus-section, .photos-intro + .photo-section { margin-top: 0; }
+        /* A section heading sits close to its description line (the heading's own 2rem gap stays when there's no description). */
+        .cactus-title:has(+ .section-description) { margin-bottom: 0.5rem; }
+        .section-description { margin-top: 0; }
     </style>
     <style id="lowvelocity-card-overrides">
         .cactus-content .kg-bookmark-card a.kg-bookmark-container,
