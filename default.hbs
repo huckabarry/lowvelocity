@@ -59,6 +59,12 @@
         /* "Subscribe by email" link under the site title and menu, and spacing for the "newsletter" page's Signup card on the homepage and at the end of posts. */
         .lv-subscribe-link { display: inline-block; margin-top: 0.5rem; color: var(--color-accent); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
         .lv-subscribe-link:hover { text-decoration: underline; }
+        /* Phones: the header was a fixed 4rem tall with everything centered, so the extra link pushed the title above the icons.
+           Let the header grow, keep the title row level with the icons, and tuck the link under it. */
+        @media (max-width: 639px) {
+            .cactus-header:has(.lv-subscribe-link) { height: auto; align-items: flex-start; margin-bottom: 1rem; }
+            .lv-subscribe-link { margin-top: -0.5rem; white-space: nowrap; }
+        }
         .lv-newsletter-embed { margin: 2.5rem 0 0; }
         .home-subscribe .lv-newsletter-embed { margin-top: 0; }
         .lv-newsletter-embed > :first-child { margin-top: 0; }
