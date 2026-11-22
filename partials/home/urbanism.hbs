@@ -1,4 +1,4 @@
-{{#get "posts" filter="primary_tag:urbanism" limit="5" include="tags" as |urbanism_posts|}}
+{{#get "posts" filter="primary_tag:urbanism" limit="7" include="tags" as |urbanism_posts urbanism_pages|}}
     {{#if urbanism_posts}}
     <section class="cactus-section home-section">
         <h2 class="cactus-title"><a href="{{@site.url}}/urbanism/">{{t "Urbanism"}}</a></h2>
@@ -8,6 +8,7 @@
                 {{> "post-preview"}}
             {{/foreach}}
         </ul>
+        {{#if urbanism_pages.next}}<p class="home-more"><a href="{{@site.url}}/urbanism/">{{t "More urbanism"}} &rarr;</a></p>{{/if}}
     </section>
     {{/if}}
 {{/get}}

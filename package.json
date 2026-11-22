@@ -180,7 +180,7 @@
                 "type": "text",
                 "default": "pinned, photos, urbanism, subscribe, posts, bluesky",
                 "group": "homepage",
-                "description": "In the order you want: pinned, photos, urbanism, subscribe, posts, bluesky"
+                "description": "In the order you want: pinned, photos, urbanism, subscribe, books, posts, bluesky"
             },
             "bluesky_handle": {
                 "type": "text",

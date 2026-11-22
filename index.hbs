@@ -27,6 +27,7 @@
         {{#match section "~" "photos"}}{{> "home/photos"}}{{/match}}
         {{#match section "~" "urbanism"}}{{> "home/urbanism"}}{{/match}}
         {{#match section "~" "subscribe"}}{{> "home/subscribe"}}{{/match}}
+        {{#match section "~" "books"}}{{> "home/books"}}{{/match}}
         {{#match section "~" "posts"}}{{> "home/posts"}}{{/match}}
         {{#match section "~" "bluesky"}}{{> "home/bluesky"}}{{/match}}
     {{/foreach}}
@@ -39,6 +40,10 @@
     .home-section .section-description { margin: 0 0 2rem; }
     .cactus-title a { text-decoration: none; }
     .cactus-title a:hover { text-decoration: underline; }
+    /* "More …" link under a section's list, since the heading link isn't obvious. */
+    .home-more { margin: 1rem 0 0; font-size: 0.875rem; }
+    .home-more a { color: var(--color-accent); font-weight: 600; text-decoration: none; }
+    .home-more a:hover { text-decoration: underline; }
     /* Latest Photos: a sideways-scrolling strip, like a Bluesky post with many images.
        Photos keep their own shape at a fixed height and snap into place. */
     .home-photos { display: flex; gap: 0.5rem; margin: 0; padding: 0 0 0.5rem; list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: thin; }
@@ -52,4 +57,15 @@
         .home-photos { margin-inline: -1.25rem; padding-inline: 1.25rem; scroll-padding-inline: 1.25rem; }
     }
     @media (min-width: 640px) { .home-photos img { height: 20rem; } }
+    /* Recently Read: book covers in a sideways-scrolling row, each with its title underneath. */
+    .home-books { display: flex; gap: 1rem; margin: 0; padding: 0 0 0.5rem; list-style: none; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+    .home-books li { flex: 0 0 8rem; scroll-snap-align: start; }
+    .home-books a { display: block; color: inherit; text-decoration: none; }
+    .home-books img { display: block; width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 0.25rem; background: color-mix(in srgb, var(--color-global-text) 6%, transparent); box-shadow: 0 1px 3px rgb(0 0 0 / 0.18); transition: opacity 0.2s; }
+    .home-books a:hover img { opacity: 0.85; }
+    .home-books__title { display: -webkit-box; margin-top: 0.5rem; overflow: hidden; font-size: 0.8125rem; line-height: 1.35; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    @media (max-width: 639px) {
+        .home-books { margin-inline: -1.25rem; padding-inline: 1.25rem; scroll-padding-inline: 1.25rem; }
+    }
+    @media (min-width: 640px) { .home-books li { flex-basis: 9rem; } }
 </style>

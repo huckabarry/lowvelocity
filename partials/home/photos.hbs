@@ -1,4 +1,4 @@
-{{#get "posts" filter="primary_tag:photography+feature_image:-null" limit="10" as |photo_posts|}}
+{{#get "posts" filter="primary_tag:photography+feature_image:-null" limit="10" as |photo_posts photo_pages|}}
     {{#if photo_posts}}
     <section class="cactus-section home-section home-photos-section">
         <h2 class="cactus-title"><a href="{{@site.url}}/gallery/">{{t "Latest Photos"}}</a></h2>
@@ -18,6 +18,7 @@
             </li>
             {{/foreach}}
         </ul>
+        {{#if photo_pages.next}}<p class="home-more"><a href="{{@site.url}}/gallery/">{{t "More photos"}} &rarr;</a></p>{{/if}}
     </section>
     {{/if}}
 {{/get}}
