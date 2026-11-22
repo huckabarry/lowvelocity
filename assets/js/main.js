@@ -2150,6 +2150,13 @@
             var currentMain = document.querySelector('#main');
             if (!nextMain || !currentMain) throw new Error('Page content is missing');
 
+            // Ghost's sign-up forms (Signup cards, data-members-form) are only wired up when the page first loads,
+            // so a page that has one gets a normal full load instead of an in-place swap.
+            if (nextMain.querySelector('[data-members-form]')) {
+                window.location.assign(url.href);
+                return;
+            }
+
             function swap() {
                 updateHead(nextDocument);
                 document.body.className = nextDocument.body.className;

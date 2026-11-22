@@ -1,7 +1,5 @@
-{{!-- Homepage newsletter section. Add "subscribe" to Design → Homepage sections, e.g. right after "urbanism". --}}
-{{#if @site.members_enabled}}{{#unless @member}}{{#unless @site.members_invite_only}}
+{{!-- Homepage newsletter section: the content of the "newsletter" page (a Ghost Signup card you edit in Ghost).
+     Add "subscribe" to Design → Homepage sections, e.g. right after "urbanism". --}}
 <section class="cactus-section home-section home-subscribe">
-    <h2 class="cactus-title">{{t "Newsletter"}}</h2>
-    {{> "subscribe-box" text=(t "The urbanism essays also go out by email, sent when I publish them. Field notes and photos are more of a scrapbook, so they stay here on the site.")}}
+    {{> "newsletter-embed"}}
 </section>
-{{/unless}}{{/unless}}{{/if}}
