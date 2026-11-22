@@ -55,6 +55,24 @@
     </style>
     {{ghost_head}}
     <link rel="alternate" type="application/feed+json" title="{{@site.title}}" href="{{@site.url}}/feed.json/">
+    <style id="lowvelocity-subscribe">
+        /* "Subscribe by email" link under the site title and menu, and the sign-up box at the end of posts. Colors follow the theme's accent. */
+        .lv-subscribe-link { display: inline-block; margin-top: 0.5rem; color: var(--color-accent); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
+        .lv-subscribe-link:hover { text-decoration: underline; }
+        .lv-subscribe-button {
+            display: inline-flex; align-items: center; height: 2.4rem; padding: 0 1.1rem;
+            border-radius: 999px; background: var(--color-accent); color: #fff;
+            font-size: 0.875rem; font-weight: 600; line-height: 1; text-decoration: none; white-space: nowrap;
+        }
+        html[data-theme="dark"] .lv-subscribe-button { color: #111; }
+        .lv-subscribe-button:hover { filter: brightness(0.92); }
+        .lv-subscribe-box {
+            margin: 2.5rem 0 0; padding: 1.25rem 1.25rem 1.35rem; border-radius: 0.75rem;
+            background: color-mix(in srgb, var(--color-accent) 9%, transparent);
+        }
+        .lv-subscribe-box__title { margin: 0 0 0.35rem; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; }
+        .lv-subscribe-box__text { margin: 0 0 1rem; color: var(--color-muted); font-size: 0.9rem; line-height: 1.5; }
+    </style>
     <style id="lowvelocity-section-spacing">
         /* Section pages and the homepage: 32px from a section's title to its subtitle, and from the subtitle to its list or photos. */
         .archive-header, .photos-intro { margin-bottom: 2rem; }
@@ -149,6 +167,10 @@
                 <nav class="cactus-nav" id="navigation-menu" aria-label="{{t "Main menu"}}">
                     {{navigation}}
                 </nav>
+                {{!-- Subscribe link for visitors, on every screen size (Ghost's floating Portal button doesn't show on phones). Hidden for signed-in members. --}}
+                {{#if @site.members_enabled}}{{#unless @member}}{{#unless @site.members_invite_only}}
+                <a class="lv-subscribe-link" href="#/portal/signup" data-portal="signup">{{t "Subscribe by email"}} &rarr;</a>
+                {{/unless}}{{/unless}}{{/if}}
             </div>
 
             <div class="cactus-actions">
