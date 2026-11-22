@@ -63,7 +63,7 @@
         /* Phones: the header was a fixed 4rem tall with everything centered, so the extra link pushed the title above the icons.
            Let the header grow, keep the title row level with the icons, and tuck the link under it. */
         @media (max-width: 639px) {
-            .cactus-header:has(.lv-subscribe-link, .lv-site-description) { height: auto; align-items: flex-start; margin-bottom: 1rem; }
+            .cactus-header:not(.menu-open):has(.lv-subscribe-link, .lv-site-description) { height: auto; align-items: flex-start; margin-bottom: 1.75rem; }
             .lv-site-description { width: calc(100vw - 2.5rem); margin: -0.6rem 0 0; font-size: 0.8125rem; }
             .lv-subscribe-link { margin-top: -0.5rem; white-space: nowrap; }
             .lv-site-description + .cactus-nav + .lv-subscribe-link { margin-top: 0.5rem; }
